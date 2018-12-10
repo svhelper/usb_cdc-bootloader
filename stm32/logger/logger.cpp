@@ -187,6 +187,11 @@ void debug_println(float f) {
     debug_append("\n", 1);
 }
 
+void debug_print_int(int i) { debug_print(i); }
+void debug_print_unsigned(size_t l) { debug_print(l); }
+void debug_print_char(char ch) { debug_print(ch); }
+void debug_print_float(float f) { debug_print(f); }
+
 void debug_printhex(uint8_t v) {
     //  Write a char in hexadecimal to the buffered debug log.
     #define MAX_BYTE_LENGTH 2

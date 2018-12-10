@@ -15,6 +15,10 @@ void debug_write(uint8_t ch);       //  Write a character to the buffered debug 
 void debug_print(const char *s);    //  Write a string to the buffered debug log.
 void debug_println(const char *s);  //  Write a string plus newline to the buffered debug log.
 void debug_printhex(uint8_t ch);    //  Write a char in hexadecimal to the buffered debug log.
+void debug_print_int(int i);
+void debug_print_unsigned(size_t l);
+void debug_print_char(char ch);
+void debug_print_float(float f);    //  Note: Always prints with 2 decimal places.
 void debug_flush(void);             //  Flush the buffer of the debug log so that buffered data will appear.
 #ifdef __cplusplus
 }  //  End of extern C scope.

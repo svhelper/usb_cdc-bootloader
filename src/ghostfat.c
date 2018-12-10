@@ -1,7 +1,6 @@
-
-#include "uf2.h"
-
 #include <string.h>
+#include <logger.h>
+#include "uf2.h"
 #include "target.h"
 #include "dmesg.h"
 
@@ -135,9 +134,10 @@ static void flushFlash(void) {
 
         // disable bootloader or something
     }
-
+    debug_print("flushFlash "); debug_print_unsigned((size_t) flashAddr); debug_println(""); debug_flush();
     DBG("Flush at %x", flashAddr);
     if (memcmp(flashBuf, (void *)flashAddr, FLASH_PAGE_SIZE) != 0) {
+        debug_print("flushFlash write "); debug_print_unsigned((size_t) flashAddr); debug_println(""); debug_flush();
         DBG("Write flush at %x", flashAddr);
 
         target_flash_unlock();
@@ -267,11 +267,13 @@ static void write_block_core(uint32_t block_no, const uint8_t *data, bool quiet,
 
     if ((bl->flags & UF2_FLAG_NOFLASH) || bl->payloadSize > 256 || (bl->targetAddr & 0xff) ||
         bl->targetAddr < USER_FLASH_START || bl->targetAddr + bl->payloadSize > USER_FLASH_END) {
+        debug_print("write_block_core skip "); debug_print_unsigned((size_t) bl->targetAddr); debug_println(""); debug_flush();
         DBG("Skip block at %x", bl->targetAddr);
         // this happens when we're trying to re-flash CURRENT.UF2 file previously
         // copied from a device; we still want to count these blocks to reset properly
     } else {
         // logval("write block at", bl->targetAddr);
+        debug_print("write_block_core "); debug_print_unsigned((size_t) bl->targetAddr); debug_println(""); debug_flush();
         DBG("Write block at %x", bl->targetAddr);
         flash_write(bl->targetAddr, bl->data, bl->payloadSize);
     }
