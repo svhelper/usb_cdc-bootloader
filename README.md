@@ -3,6 +3,8 @@ The dapboot project is an open-source USB [Device Firmware Upgrade](http://www.u
 
 Currently, the only targets officially supported are the STM32F103x series.
 
+WinUSB implementation from https://github.com/trezor/trezor-mcu
+
 ## Build instructions
 The default target is a generic STM32F103 dev board with an LED on PC13, commonly referred to as a "bluepill" board.
 
