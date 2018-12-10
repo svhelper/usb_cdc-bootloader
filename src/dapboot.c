@@ -91,7 +91,7 @@ int main(void) {
         dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
        	usb_msc_init(usbd_dev, 0x82, 64, 0x01, 64, "Example Ltd", "UF2 Bootloader",
 		    "42.00", UF2_NUM_BLOCKS, read_block, write_block);
-        winusb_setup(usbd_dev);
+        winusb_setup(usbd_dev, 0);
 
         uint32_t cycleCount = 0;
         

@@ -17,8 +17,9 @@
  */
 
 #include <libopencm3/usb/usbd.h>
-#include "util.h"
 #include "winusb.h"
+
+#define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 static int usb_descriptor_type(uint16_t wValue) {
 	return wValue >> 8;
