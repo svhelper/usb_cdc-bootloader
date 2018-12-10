@@ -123,13 +123,14 @@ static const struct usb_device_capability_descriptor* capabilities[] = {
     (const struct usb_device_capability_descriptor*)&webusb_platform,
 };
 
+/* Not needed for updated libopencm3
 static const struct usb_bos_descriptor bos = {
     .bLength = USB_DT_BOS_SIZE,
     .bDescriptorType = USB_DT_BOS,
     .wTotalLength = USB_DT_BOS_SIZE + sizeof(webusb_platform),
     .bNumDeviceCaps = sizeof(capabilities)/sizeof(capabilities[0]),
     .capabilities = capabilities
-};
+}; */
 
 static char serial_number[USB_SERIAL_NUM_LENGTH+1];
 
@@ -155,9 +156,14 @@ usbd_device* usb_setup(void) {
     int num_strings = sizeof(usb_strings)/sizeof(const char*);
 
     const usbd_driver* driver = target_usb_init();
+    //  Updated for libopencm3
+    usbd_device* usbd_dev = usbd_init(driver, &dev, &config, 
+                                      usb_strings, num_strings,
+                                      usbd_control_buffer, sizeof(usbd_control_buffer));
+    /* Previously:                                      
     usbd_device* usbd_dev = usbd_init(driver, &dev, &config, &bos,
                                       usb_strings, num_strings,
                                       usbd_control_buffer, sizeof(usbd_control_buffer));
-
+    */
     return usbd_dev;
 }
