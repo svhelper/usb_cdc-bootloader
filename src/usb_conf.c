@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/dfu.h>
 #include <libopencm3/usb/msc.h>
 #include "target.h"
@@ -121,19 +122,6 @@ static const struct usb_config_descriptor config = {
     .interface = interfaces,
 };
 
-static const struct usb_device_capability_descriptor* capabilities[] = {
-    (const struct usb_device_capability_descriptor*)&webusb_platform,
-};
-
-/* Not needed for updated libopencm3
-static const struct usb_bos_descriptor bos = {
-    .bLength = USB_DT_BOS_SIZE,
-    .bDescriptorType = USB_DT_BOS,
-    .wTotalLength = USB_DT_BOS_SIZE + sizeof(webusb_platform),
-    .bNumDeviceCaps = sizeof(capabilities)/sizeof(capabilities[0]),
-    .capabilities = capabilities
-}; */
-
 static char serial_number[USB_SERIAL_NUM_LENGTH+1];
 
 static const char *usb_strings[] = {
@@ -145,6 +133,7 @@ static const char *usb_strings[] = {
 
 /* Buffer to be used for control requests. */
 static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE] __attribute__ ((aligned (2)));
+//  TODO: static uint8_t usbd_control_buffer[256] __attribute__ ((aligned (2)));
 
 void usb_set_serial_number(const char* serial) {
     serial_number[0] = '\0';
@@ -154,25 +143,14 @@ void usb_set_serial_number(const char* serial) {
     }
 }
 
-static void set_config(usbd_device *dev, uint16_t wValue)
-{
-	(void)wValue;
-
-	usbd_ep_setup(dev, ENDPOINT_ADDRESS_IN,  USB_ENDPOINT_ATTR_INTERRUPT, 64, 0);
-	usbd_ep_setup(dev, ENDPOINT_ADDRESS_OUT, USB_ENDPOINT_ATTR_INTERRUPT, 64, rx_callback);
-}
-
-// static usbd_device *usbd_dev;
-static uint8_t usbd_control_buffer[256] __attribute__ ((aligned (2)));
-
 static const struct usb_device_capability_descriptor* capabilities[] = {
-	(const struct usb_device_capability_descriptor*)&webusb_platform_capability_descriptor,
+	(const struct usb_device_capability_descriptor*) &webusb_platform_capability_descriptor,
 };
 
 static const struct usb_bos_descriptor bos_descriptor = {
 	.bLength = USB_DT_BOS_SIZE,
 	.bDescriptorType = USB_DT_BOS,
-	.bNumDeviceCaps = sizeof(capabilities)/sizeof(capabilities[0]),
+	.bNumDeviceCaps = sizeof(capabilities) / sizeof(capabilities[0]),
 	.capabilities = capabilities
 };
 
@@ -183,7 +161,8 @@ usbd_device* usb_setup(void) {
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
 
-	usbd_register_set_config_callback(usbd_dev, set_config);
+	// usbd_register_set_config_callback(usbd_dev, set_config);
+
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
 	winusb_setup(usbd_dev, 0);
@@ -191,6 +170,24 @@ usbd_device* usb_setup(void) {
 }
 
 /* Previously:                                      
+static const struct usb_device_capability_descriptor* capabilities[] = {
+    (const struct usb_device_capability_descriptor*)&webusb_platform,
+};
+
+static const struct usb_bos_descriptor bos = {
+    .bLength = USB_DT_BOS_SIZE,
+    .bDescriptorType = USB_DT_BOS,
+    .wTotalLength = USB_DT_BOS_SIZE + sizeof(webusb_platform),
+    .bNumDeviceCaps = sizeof(capabilities)/sizeof(capabilities[0]),
+    .capabilities = capabilities
+};
+
+static void set_config(usbd_device *dev, uint16_t wValue) {
+	(void)wValue;
+	usbd_ep_setup(dev, ENDPOINT_ADDRESS_IN,  USB_ENDPOINT_ATTR_INTERRUPT, 64, 0);
+	usbd_ep_setup(dev, ENDPOINT_ADDRESS_OUT, USB_ENDPOINT_ATTR_INTERRUPT, 64, rx_callback);
+}
+
 usbd_dev = usbd_init(&otgfs_usb_driver, &dev_descr, &config, 
     usb_strings, sizeof(usb_strings)/sizeof(const char *), 
     usbd_control_buffer, sizeof(usbd_control_buffer));

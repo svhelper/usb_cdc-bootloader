@@ -18,8 +18,9 @@
 
 #include <stdint.h>
 #include <string.h>
-// #include "util.h"
 #include "usb21_standard.h"
+
+#define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 static uint16_t build_bos_descriptor(const struct usb_bos_descriptor *bos,
 									 uint8_t *buf, uint16_t len)
