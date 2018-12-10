@@ -18,6 +18,8 @@
 
 #include <string.h>
 #include <libopencm3/cm3/vector.h>
+#include <bluepill.h>
+#include <logger.h>
 #include "target.h"
 
 static void delay(int n) {
@@ -26,8 +28,13 @@ static void delay(int n) {
 }
 
 int main(void) {
-    /* Setup clocks */
-    target_clock_setup();
+    enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
+    //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
+    platform_setup();     //  STM32 platform setup.
+    debug_println("----firmware");  debug_flush();
+
+    //  Clock already setup in platform_setup()
+    //  target_clock_setup();
 
     /* Initialize GPIO/LEDs if needed */
     target_gpio_setup();

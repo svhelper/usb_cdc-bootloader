@@ -65,11 +65,7 @@ static void jump_to_application(void) {
 uint32_t msTimer;
 extern int msc_started;
 
-int main(void) {
-    enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
-    //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
-    platform_setup();     //  STM32 platform setup.
-    
+int main(void) {    
     bool appValid = validate_application();
 
     if (appValid && target_get_force_app()) {
@@ -77,7 +73,10 @@ int main(void) {
          return 0;
     }
     
-    //  TODO: Move platform_setup() here.
+    enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
+    //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
+    platform_setup();     //  STM32 platform setup.
+    debug_println("----bootloader");  debug_flush();
 
     //  Clock already setup in platform_setup()
     //  target_clock_setup();
