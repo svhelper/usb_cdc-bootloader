@@ -14,7 +14,7 @@ GTAGS
 *.hex
 *.elf
 *.axf
-*.map
+# *.map
 *.uf2
 
 # ignore local makefile settings
