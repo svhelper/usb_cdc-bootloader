@@ -48,7 +48,6 @@
         "**/*.hex": true,
         "**/*.elf": true,
         "**/*.axf": true,
-        "**/*.map": true,
         "src/local.mk": true
     },
     "files.associations": {
