@@ -18,7 +18,10 @@
 
 #include <string.h>
 #include <libopencm3/cm3/vector.h>
-
+#include <libopencm3/usb/usbd.h>
+#include <libopencm3/usb/msc.h>
+#include <bluepill.h>
+#include <logger.h>
 #include "dapboot.h"
 #include "target.h"
 #include "usb_conf.h"
@@ -27,8 +30,6 @@
 #include "winusb.h"
 #include "config.h"
 #include "uf2.h"
-
-#include <libopencm3/usb/msc.h>
 
 static inline void __set_MSP(uint32_t topOfMainStack) {
     asm("msr msp, %0" : : "r" (topOfMainStack));
@@ -65,6 +66,10 @@ uint32_t msTimer;
 extern int msc_started;
 
 int main(void) {
+    enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
+    //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
+    platform_setup();     //  STM32 platform setup.
+    
     bool appValid = validate_application();
 
     if (appValid && target_get_force_app()) {
@@ -72,8 +77,10 @@ int main(void) {
          return 0;
     }
     
-    /* Setup clocks */
-    target_clock_setup();
+    //  TODO: Move platform_setup() here.
+
+    //  Clock already setup in platform_setup()
+    //  target_clock_setup();
 
     /* Initialize GPIO/LEDs if needed */
     target_gpio_setup();
