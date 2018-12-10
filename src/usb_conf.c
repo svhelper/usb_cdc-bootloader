@@ -19,13 +19,14 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/dfu.h>
 #include <libopencm3/usb/msc.h>
+#include <logger.h>
 #include "target.h"
 #include "dfu.h"
 #include "webusb.h"
+#include "winusb.h"
 #include "usb21_standard.h"
 #include "usb_conf.h"
 
@@ -155,6 +156,7 @@ static const struct usb_bos_descriptor bos_descriptor = {
 };
 
 usbd_device* usb_setup(void) {
+    debug_println("usb_setup"); debug_flush(); ////
     int num_strings = sizeof(usb_strings)/sizeof(const char*);
     const usbd_driver* driver = target_usb_init();
     usbd_device* usbd_dev = usbd_init(driver, &dev, &config, 

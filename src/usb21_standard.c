@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <logger.h>
 #include "usb21_standard.h"
 
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
@@ -88,6 +89,7 @@ static void usb21_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_object_store) {
+    debug_println("usb21_setup"); debug_flush(); ////
 	usb21_bos = binary_object_store;
 
 	/* Register the control request handler _before_ the config is set */

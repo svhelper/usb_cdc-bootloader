@@ -17,6 +17,7 @@
  */
 
 #include <string.h>
+#include <logger.h>
 #include "webusb.h"
 #include "usb21_standard.h"
 
@@ -99,7 +100,7 @@ static void webusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void webusb_setup(usbd_device* usbd_dev, const char* https_url) {
+    debug_println("webusb_setup"); debug_flush(); ////
 	webusb_https_url = https_url;
-
 	usbd_register_set_config_callback(usbd_dev, webusb_set_config);
 }

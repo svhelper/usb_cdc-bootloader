@@ -17,6 +17,7 @@
  */
 
 #include <libopencm3/usb/usbd.h>
+#include <logger.h>
 #include "winusb.h"
 
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
@@ -140,6 +141,7 @@ static void winusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
+	debug_println("winusb_setup"); debug_flush(); ////
 	winusb_wcid.functions[0].bInterfaceNumber = interface;
 
 	usbd_register_set_config_callback(usbd_dev, winusb_set_config);
