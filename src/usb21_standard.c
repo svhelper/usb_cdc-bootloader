@@ -18,7 +18,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "util.h"
+// #include "util.h"
 #include "usb21_standard.h"
 
 static uint16_t build_bos_descriptor(const struct usb_bos_descriptor *bos,
