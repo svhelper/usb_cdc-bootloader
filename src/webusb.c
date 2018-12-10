@@ -17,10 +17,10 @@
  */
 
 #include <string.h>
-
-#include "util.h"
 #include "webusb.h"
 #include "usb21_standard.h"
+
+#define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 const struct webusb_platform_descriptor webusb_platform_capability_descriptor = {
 	.bLength = WEBUSB_PLATFORM_DESCRIPTOR_SIZE,

@@ -21,13 +21,15 @@
 #include <string.h>
 
 #include <libopencm3/usb/dfu.h>
+#include <libopencm3/usb/msc.h>
 #include "target.h"
 #include "dfu.h"
 #include "webusb.h"
-
-#include <libopencm3/usb/msc.h>
-
+#include "usb21_standard.h"
 #include "usb_conf.h"
+
+static const char* origin_url = "https://lupyuen.github.io/pxt-maker";
+// static const char* origin_url = "trezor.io/start";
 
 static const struct usb_device_descriptor dev = {
     .bLength = USB_DT_DEVICE_SIZE,
@@ -152,18 +154,46 @@ void usb_set_serial_number(const char* serial) {
     }
 }
 
+static void set_config(usbd_device *dev, uint16_t wValue)
+{
+	(void)wValue;
+
+	usbd_ep_setup(dev, ENDPOINT_ADDRESS_IN,  USB_ENDPOINT_ATTR_INTERRUPT, 64, 0);
+	usbd_ep_setup(dev, ENDPOINT_ADDRESS_OUT, USB_ENDPOINT_ATTR_INTERRUPT, 64, rx_callback);
+}
+
+// static usbd_device *usbd_dev;
+static uint8_t usbd_control_buffer[256] __attribute__ ((aligned (2)));
+
+static const struct usb_device_capability_descriptor* capabilities[] = {
+	(const struct usb_device_capability_descriptor*)&webusb_platform_capability_descriptor,
+};
+
+static const struct usb_bos_descriptor bos_descriptor = {
+	.bLength = USB_DT_BOS_SIZE,
+	.bDescriptorType = USB_DT_BOS,
+	.bNumDeviceCaps = sizeof(capabilities)/sizeof(capabilities[0]),
+	.capabilities = capabilities
+};
+
 usbd_device* usb_setup(void) {
     int num_strings = sizeof(usb_strings)/sizeof(const char*);
-
     const usbd_driver* driver = target_usb_init();
-    //  Updated for libopencm3
     usbd_device* usbd_dev = usbd_init(driver, &dev, &config, 
-                                      usb_strings, num_strings,
-                                      usbd_control_buffer, sizeof(usbd_control_buffer));
-    /* Previously:                                      
-    usbd_device* usbd_dev = usbd_init(driver, &dev, &config, &bos,
-                                      usb_strings, num_strings,
-                                      usbd_control_buffer, sizeof(usbd_control_buffer));
-    */
+        usb_strings, num_strings,
+        usbd_control_buffer, sizeof(usbd_control_buffer));
+
+	usbd_register_set_config_callback(usbd_dev, set_config);
+	usb21_setup(usbd_dev, &bos_descriptor);
+	webusb_setup(usbd_dev, origin_url);
+	winusb_setup(usbd_dev, 0);
     return usbd_dev;
 }
+
+/* Previously:                                      
+usbd_dev = usbd_init(&otgfs_usb_driver, &dev_descr, &config, 
+    usb_strings, sizeof(usb_strings)/sizeof(const char *), 
+    usbd_control_buffer, sizeof(usbd_control_buffer));
+usbd_device* usbd_dev = usbd_init(driver, &dev, &config, &bos,
+    usb_strings, num_strings,
+    usbd_control_buffer, sizeof(usbd_control_buffer)); */
