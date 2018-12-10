@@ -31,6 +31,7 @@
                 "PLATFORMIO=30602",
                 "STM32F1",
                 "STM32F103xB",
+                "UF2_FAMILY=0x5ee21072",
                 "HAVE_LED=1",
                 "LED_GPIO_PORT=GPIOC",
                 "LED_GPIO_PIN=GPIO13",
