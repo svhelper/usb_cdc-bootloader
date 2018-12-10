@@ -9,8 +9,11 @@ The default target is a generic STM32F103 dev board with an LED on PC13, commonl
 To build other targets, you can override the
 `TARGET` variable when invoking `make`.
 
+    git clone --recurse-submodules https://github.com/lupyuen/bluepill-bootloader
+    cd bluepill-bootloader
+
     make clean
-    make TARGET=STLINK
+    make TARGET=BLUEPILL
 
 ### Targets
 
