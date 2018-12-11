@@ -171,6 +171,7 @@ void ghostfat_1ms() {
     ms++;
 
     if (resetTime && ms >= resetTime) {
+        debug_println("ghostfat_1ms target_manifest_app");  debug_flush();  ////
         flushFlash();
         target_manifest_app();
         while (1);

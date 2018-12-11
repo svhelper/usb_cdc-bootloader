@@ -131,7 +131,7 @@ usbd_device* usb_setup(void) {
         usb_strings, 3,
         usbd_control_buffer, sizeof(usbd_control_buffer));
     
-    debug_println("usb_msc_init UF2_NUM_BLOCKS "); debug_print_int(UF2_NUM_BLOCKS); debug_println(""); debug_flush();
+    debug_print("usb_msc_init UF2_NUM_BLOCKS "); debug_print_int(UF2_NUM_BLOCKS); debug_println(""); debug_flush();
 	usb_msc_init(msc_dev, 0x82, 64, 0x01, 64, "VendorID", "ProductID",
 		"0.00", UF2_NUM_BLOCKS, read_block, write_block);
     debug_println("usb_setup done");  debug_flush();        
