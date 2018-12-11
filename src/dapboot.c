@@ -93,10 +93,14 @@ int main(void) {
             usb_set_serial_number(serial);
         }
 
+        debug_println("bootloader usb_setup");  debug_flush();
         usbd_device* usbd_dev = usb_setup();
+        debug_println("bootloader dfu_setup");  debug_flush();
         dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
+        debug_println("bootloader usb_msc_init");  debug_flush();
        	usb_msc_init(usbd_dev, 0x82, 64, 0x01, 64, "Example Ltd", "UF2 Bootloader",
 		    "42.00", UF2_NUM_BLOCKS, read_block, write_block);
+        debug_println("bootloader usb_msc_init done");  debug_flush();
         // Moved to usb_setup()...
         // winusb_setup(usbd_dev, 0);
 
@@ -123,6 +127,7 @@ int main(void) {
             usbd_poll(usbd_dev);
         }
     } else {
+        debug_println("jump_to_application");  debug_flush();
         jump_to_application();
     }
     
