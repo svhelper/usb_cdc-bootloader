@@ -19,10 +19,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <libopencm3/cm3/cortex.h>
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/dfu.h>
 #include <libopencm3/usb/msc.h>
-#include <libopencm3/cm3/nvic.h>
 #include <logger.h>
 #include "target.h"
 #include "dfu.h"
@@ -248,7 +249,7 @@ int ramdisk_init(void)
 
 int ramdisk_read(uint32_t lba, uint8_t *copy_to)
 {
-    debug_print("ramdisk_read lba "); debug_print_int(lba); debug_println(""); debug_flush(); ////
+    // debug_print("ramdisk_read lba "); debug_print_int(lba); debug_println(""); // debug_flush(); ////
 	memset(copy_to, 0, SECTOR_SIZE);
 	switch (lba) {
 		case 0: // sector 0 is the boot sector
@@ -275,7 +276,7 @@ int ramdisk_read(uint32_t lba, uint8_t *copy_to)
 
 int ramdisk_write(uint32_t lba, const uint8_t *copy_from)
 {
-    debug_println("ramdisk_write"); debug_flush(); ////
+    // debug_println("ramdisk_write"); // debug_flush(); ////
 	(void)lba;
 	(void)copy_from;
 	// ignore writes
@@ -285,34 +286,6 @@ int ramdisk_write(uint32_t lba, const uint8_t *copy_from)
 int ramdisk_blocks(void)
 {
 	return SECTOR_COUNT;
-}
-
-/*
- * USB Configuration:
- */
-static void
-set_config(
-  usbd_device *usbd_dev,
-  uint16_t wValue __attribute__((unused))
-) {
-
-	usbd_ep_setup(usbd_dev,
-		0x01,
-		USB_ENDPOINT_ATTR_BULK,
-		64,
-		NULL);
-	usbd_ep_setup(usbd_dev,
-		0x82,
-		USB_ENDPOINT_ATTR_BULK,
-		64,
-		NULL);
-        /*
-	usbd_register_control_callback(
-		usbd_dev,
-		USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
-		USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-		cdcacm_control_request);
-        */
 }
 
 usbd_device* usb_setup(void) {
@@ -329,8 +302,10 @@ usbd_device* usb_setup(void) {
         // UF2_NUM_BLOCKS, read_block, write_block);
 
     //  From https://github.com/thirdpin/pastilda/blob/master/emb/pastilda/usb/usb_device/usbd_composite.cpp
+	cm_disable_interrupts();
     nvic_set_priority(NVIC_OTG_FS_IRQ, 0x01<<7);
 	nvic_enable_irq(NVIC_OTG_FS_IRQ);
+    cm_enable_interrupts();
 
     // debug_print("usb_setup ramdisk_blocks "); debug_print_int(ramdisk_blocks()); debug_println(""); debug_flush();
     // debug_println("usb_setup done");  debug_flush();        
