@@ -29,6 +29,7 @@
 #include "winusb.h"
 #include "usb21_standard.h"
 #include "usb_conf.h"
+#include "uf2.h"
 
 static const char* origin_url = "lupyuen.github.io/pxt-maker";
 // static const char* origin_url = "trezor.io/start";
@@ -162,16 +163,24 @@ usbd_device* usb_setup(void) {
     usbd_device* usbd_dev = usbd_init(driver, &dev, &config, 
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
+    
+    debug_println("bootloader usb_msc_init");  debug_flush();
+    usb_msc_init(usbd_dev, 0x82, 64, 0x01, 64, "Example Ltd", "UF2 Bootloader",
+	    "42.00", UF2_NUM_BLOCKS, read_block, write_block);
+    debug_println("bootloader usb_msc_init done");  debug_flush();        
 
-	// usbd_register_set_config_callback(usbd_dev, set_config);
+    ////debug_println("bootloader dfu_setup");  debug_flush();
+    ////dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
 
-	usb21_setup(usbd_dev, &bos_descriptor);
-	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, 0);
+	////usb21_setup(usbd_dev, &bos_descriptor);
+	////webusb_setup(usbd_dev, origin_url);
+	////winusb_setup(usbd_dev, 0);
     return usbd_dev;
 }
 
 /* Previously:                                      
+usbd_register_set_config_callback(usbd_dev, set_config);
+
 static const struct usb_device_capability_descriptor* capabilities[] = {
     (const struct usb_device_capability_descriptor*)&webusb_platform,
 };

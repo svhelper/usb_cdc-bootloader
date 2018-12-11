@@ -103,16 +103,6 @@ int main(void) {
         debug_println("bootloader usb_setup");  debug_flush();
         usbd_device* usbd_dev = usb_setup();
 
-        debug_println("bootloader dfu_setup");  debug_flush();
-        dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
-
-        debug_println("bootloader usb_msc_init");  debug_flush();
-       	usb_msc_init(usbd_dev, 0x82, 64, 0x01, 64, "Example Ltd", "UF2 Bootloader",
-		    "42.00", UF2_NUM_BLOCKS, read_block, write_block);
-
-        debug_println("bootloader usb_msc_init done");  debug_flush();        
-        // winusb_setup(usbd_dev, 0);  // Moved to usb_setup()...
-
         uint32_t cycleCount = 0;        
         while (1) {
             cycleCount++;

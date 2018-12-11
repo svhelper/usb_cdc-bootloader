@@ -107,7 +107,6 @@ static void dfu_on_download_request(usbd_device* usbd_dev, struct usb_setup_data
            we would have to remember that we already programmed this block */
         dfu_set_state(STATE_DFU_DNLOAD_IDLE);
     } else {
-        //  TODO: Fails here.
         debug_println("DFU_STATUS_ERR_VERIFY"); debug_flush(); ////
         dfu_set_status(DFU_STATUS_ERR_VERIFY);
     }
