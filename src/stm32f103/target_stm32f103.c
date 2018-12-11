@@ -86,10 +86,11 @@ static void sleep_us(int us){
 }
 
 void target_gpio_setup(void) {
-    /* Enable GPIO clocks */
-    rcc_periph_clock_enable(RCC_GPIOA);
+    /* Enable GPIO and USB clocks */
+    rcc_periph_clock_enable(RCC_GPIOA);  //  USB on PA11, PA12.
     rcc_periph_clock_enable(RCC_GPIOB);
-    rcc_periph_clock_enable(RCC_GPIOC);
+    rcc_periph_clock_enable(RCC_GPIOC);  //  LED on PC13.
+    rcc_periph_clock_enable(RCC_USB);
 
     /* Setup LEDs */
 #if HAVE_LED
