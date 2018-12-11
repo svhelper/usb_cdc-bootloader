@@ -12,9 +12,9 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "c:/bluepill-bootloader/.pioenvs/bluepill_f103c8_firmware/firmware.elf",
-            "toolchainBinDir": "C:/Users/guppy/.platformio/packages/toolchain-gccarmnoneeabi/bin",
-            "svdPath": "C:/Users/guppy/.platformio/platforms/ststm32/misc/svd/STM32F103xx.svd",
+            "executable": "/Users/Luppy/bluepill-bootloader/.pioenvs/bluepill_f103c8_bootloader/firmware.elf",
+            "toolchainBinDir": "/Users/Luppy/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "svdPath": "/Users/Luppy/.platformio/platforms/ststm32/misc/svd/STM32F103xx.svd",
             "preLaunchTask": {
                 "type": "PlatformIO",
                 "task": "Pre-Debug"
@@ -25,9 +25,9 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "c:/bluepill-bootloader/.pioenvs/bluepill_f103c8_firmware/firmware.elf",
-            "toolchainBinDir": "C:/Users/guppy/.platformio/packages/toolchain-gccarmnoneeabi/bin",
-            "svdPath": "C:/Users/guppy/.platformio/platforms/ststm32/misc/svd/STM32F103xx.svd",
+            "executable": "/Users/Luppy/bluepill-bootloader/.pioenvs/bluepill_f103c8_bootloader/firmware.elf",
+            "toolchainBinDir": "/Users/Luppy/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "svdPath": "/Users/Luppy/.platformio/platforms/ststm32/misc/svd/STM32F103xx.svd",
             "internalConsoleOptions": "openOnSessionStart"
         }
     ]
