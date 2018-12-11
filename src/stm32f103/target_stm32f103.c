@@ -263,9 +263,15 @@ bool target_flash_program_array(uint16_t* dest, const uint16_t* data, size_t hal
     static uint16_t* erase_end;
 
     const uint16_t* flash_end = get_flash_end();
+    debug_print("target_flash_program_array dest "); debug_print_unsigned((size_t) dest); ////
+    debug_print(", data "); debug_print_unsigned((size_t) data); 
+    debug_print(", half_word_count "); debug_print_unsigned((size_t) half_word_count); 
+    debug_print(", flash_end "); debug_print_unsigned((size_t) flash_end); 
+    debug_println(""); debug_flush(); ////
     while (half_word_count > 0) {
         /* Avoid writing past the end of flash */
         if (dest >= flash_end) {
+            //  TODO: Fails here
             debug_println("dest >= flash_end"); debug_flush();
             verified = false;
             break;
