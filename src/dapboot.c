@@ -141,12 +141,14 @@ int main(void) {
 
 static void test_backup(void) {
     //  Test whether RTC backup registers are written correctly.
-    enum BackupRegister reg = BKP1;
+    uint32_t val = backup_read(BKP0);
+    debug_print("read bkp0 "); debug_print_unsigned((size_t) val); debug_println(""); debug_flush();
 
+    enum BackupRegister reg = BKP1;
     uint32_t cmd = backup_read(reg);
     debug_print("test_backup read "); debug_print_unsigned((size_t) cmd); debug_println(""); debug_flush();
     cmd++;
-    backup_write(reg, 0);
+    backup_write(reg, cmd);
     debug_print("test_backup write "); debug_print_unsigned((size_t) cmd); debug_println(""); debug_flush();
     cmd = backup_read(reg);
     debug_print("test_backup read again "); debug_print_unsigned((size_t) cmd); debug_println(""); debug_flush();
