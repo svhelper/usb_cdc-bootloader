@@ -22,6 +22,7 @@
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/dfu.h>
 #include <libopencm3/usb/msc.h>
+#include <libopencm3/cm3/nvic.h>
 #include <logger.h>
 #include "target.h"
 #include "dfu.h"
@@ -326,6 +327,11 @@ usbd_device* usb_setup(void) {
 	usb_msc_init(msc_dev, 0x82, 64, 0x01, 64, "VendorID", "ProductID", "0.00", 
         ramdisk_blocks(), ramdisk_read, ramdisk_write);
         // UF2_NUM_BLOCKS, read_block, write_block);
+
+    //  From https://github.com/thirdpin/pastilda/blob/master/emb/pastilda/usb/usb_device/usbd_composite.cpp
+    nvic_set_priority(NVIC_OTG_FS_IRQ, 0x01<<7);
+	nvic_enable_irq(NVIC_OTG_FS_IRQ);
+
     // debug_print("usb_setup ramdisk_blocks "); debug_print_int(ramdisk_blocks()); debug_println(""); debug_flush();
     // debug_println("usb_setup done");  debug_flush();        
     return msc_dev;
