@@ -40,6 +40,7 @@ int main(void) {
     target_gpio_setup();
 
         while (1) {
+            debug_println("firmware loop");  debug_flush();
             target_set_led(1);
             delay(1);
             target_set_led(0);
