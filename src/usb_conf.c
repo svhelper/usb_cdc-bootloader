@@ -199,6 +199,7 @@ int ramdisk_read(uint32_t lba, uint8_t *copy_to)
 int ramdisk_write(uint32_t lba, const uint8_t *copy_from)
 {
     debug_println("ramdisk_write"); // debug_flush(); ////
+    send_msc_packet("", 0);  //  Workaround.
 	(void)lba;
 	(void)copy_from;
 	// ignore writes
@@ -456,12 +457,13 @@ static const struct usb_bos_descriptor bos_descriptor = {
 /* Buffer to be used for control requests. */
 static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE] __attribute__ ((aligned (2)));
 //  TODO: static uint8_t usbd_control_buffer[256] __attribute__ ((aligned (2)));
+usbd_device* usbd_dev = NULL;
 
 usbd_device* usb_setup(void) {
     int num_strings = sizeof(usb_strings)/sizeof(const char*);
     debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); debug_flush(); ////
     const usbd_driver* driver = target_usb_init();
-    usbd_device* usbd_dev = usbd_init(driver, &dev, &config, 
+    usbd_dev = usbd_init(driver, &dev, &config, 
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
     
@@ -485,6 +487,12 @@ usbd_device* usb_setup(void) {
 
     return usbd_dev;
 }
+
+uint16_t send_msc_packet(const void *buf, int len) {
+    if (!usbd_dev) { return 0; }
+    return usbd_ep_write_packet(usbd_dev, MSC_OUT, buf, len);
+}
+
 #endif  //  NEW_USB
 
 /* Previously:                                      
