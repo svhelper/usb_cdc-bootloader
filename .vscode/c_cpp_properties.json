@@ -44,7 +44,6 @@
                 "LIBOPENCM3_RCC_LEGACY",
                 "TOOLCHAIN_GCC_ARM",
                 "TOOLCHAIN_GCC",
-                "FooBar",
                 "DEVICE_I2C_ASYNCH=1",
                 "DEVICE_I2CSLAVE=1",
                 "DEVICE_PORTOUT=1",
