@@ -225,6 +225,7 @@ static uint8_t ramdata[FILEDATA_SECTOR_COUNT * SECTOR_SIZE];
 
 int ramdisk_init(void)
 {
+    debug_println("ramdisk_init"); debug_flush(); ////
 	uint32_t i = 0;
 
 	// compute checksum in the directory entry
@@ -246,6 +247,7 @@ int ramdisk_init(void)
 
 int ramdisk_read(uint32_t lba, uint8_t *copy_to)
 {
+    debug_print("ramdisk_read lba "); debug_print_int(lba); debug_println(""); debug_flush(); ////
 	memset(copy_to, 0, SECTOR_SIZE);
 	switch (lba) {
 		case 0: // sector 0 is the boot sector
@@ -272,6 +274,7 @@ int ramdisk_read(uint32_t lba, uint8_t *copy_to)
 
 int ramdisk_write(uint32_t lba, const uint8_t *copy_from)
 {
+    debug_println("ramdisk_write"); debug_flush(); ////
 	(void)lba;
 	(void)copy_from;
 	// ignore writes
@@ -281,6 +284,34 @@ int ramdisk_write(uint32_t lba, const uint8_t *copy_from)
 int ramdisk_blocks(void)
 {
 	return SECTOR_COUNT;
+}
+
+/*
+ * USB Configuration:
+ */
+static void
+set_config(
+  usbd_device *usbd_dev,
+  uint16_t wValue __attribute__((unused))
+) {
+
+	usbd_ep_setup(usbd_dev,
+		0x01,
+		USB_ENDPOINT_ATTR_BULK,
+		64,
+		NULL);
+	usbd_ep_setup(usbd_dev,
+		0x82,
+		USB_ENDPOINT_ATTR_BULK,
+		64,
+		NULL);
+        /*
+	usbd_register_control_callback(
+		usbd_dev,
+		USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
+		USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+		cdcacm_control_request);
+        */
 }
 
 usbd_device* usb_setup(void) {
