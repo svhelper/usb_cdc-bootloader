@@ -19,8 +19,9 @@
 #ifndef CONFIG_H_INCLUDED
 #define CONFIG_H_INCLUDED
 
+//  Firmware starts here, after the bootloader.
 #define APP_BASE_ADDRESS 0x08004000
-#define FLASH_SIZE_OVERRIDE 0x20000
+//  Assume 64KB of ROM, don't override. Previously: #define FLASH_SIZE_OVERRIDE 0x20000
 #define FLASH_PAGE_SIZE  1024
 #define DFU_UPLOAD_AVAILABLE 1
 #define DFU_DOWNLOAD_AVAILABLE 1
