@@ -69,11 +69,14 @@ uint32_t msTimer;
 extern int msc_started;
 
 int main(void) {
-    bool appValid = validate_application();
+    bool appValid = false;
+#ifdef SKIP_BOOTLOADER
+    appValid = validate_application();
     if (appValid && target_get_force_app()) {
          jump_to_application();
          return 0;
     }
+#endif  //  SKIP_BOOTLOADER         
     
     enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
     //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
@@ -141,6 +144,9 @@ int main(void) {
 
 static void test_backup(void) {
     //  Test whether RTC backup registers are written correctly.
+    //  static const uint32_t CMD_BOOT = 0x544F4F42UL;
+    //  backup_write(BKP0, CMD_BOOT);  //  Uncomment to force booting to bootloader.
+
     uint32_t val = backup_read(BKP0);
     debug_print("read bkp0 "); debug_print_unsigned((size_t) val); debug_println(""); debug_flush();
 
