@@ -381,9 +381,7 @@ static const struct usb_interface_descriptor dfu_iface = {
     .bInterfaceSubClass = 1,
     .bInterfaceProtocol = 2,
     .iInterface = 4,
-
     .endpoint = NULL,
-
     .extra = &dfu_function,
     .extralen = sizeof(dfu_function),
 };
@@ -391,14 +389,14 @@ static const struct usb_interface_descriptor dfu_iface = {
 static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
-	.bEndpointAddress = 0x01,
+	.bEndpointAddress = MSC_OUT,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
 	.wMaxPacketSize = 64,
 	.bInterval = 0,
 }, {
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
-	.bEndpointAddress = 0x82,
+	.bEndpointAddress = MSC_IN,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
 	.wMaxPacketSize = 64,
 	.bInterval = 0,
@@ -467,14 +465,14 @@ usbd_device* usb_setup(void) {
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
     
-    usb_msc_init(usbd_dev, 0x82, 64, 0x01, 64, "Example Ltd", "UF2 Bootloader", "42.00", 
+    usb_msc_init(usbd_dev, MSC_IN, 64, MSC_OUT, 64, "Example Ltd", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write
 #else
         UF2_NUM_BLOCKS, read_block, write_block
 #endif  //  RAM_DISK        
     );
-    ////dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
+    dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
 	winusb_setup(usbd_dev, 0);
