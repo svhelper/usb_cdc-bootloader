@@ -24,7 +24,7 @@
 #include <libopencm3/stm32/flash.h>
 #include <libopencm3/stm32/desig.h>
 #include <libopencm3/cm3/scb.h>
-
+#include <logger.h>
 #include "target.h"
 #include "config.h"
 #include "backup.h"
@@ -266,6 +266,7 @@ bool target_flash_program_array(uint16_t* dest, const uint16_t* data, size_t hal
     while (half_word_count > 0) {
         /* Avoid writing past the end of flash */
         if (dest >= flash_end) {
+            debug_println("dest >= flash_end"); debug_flush();
             verified = false;
             break;
         }
@@ -278,6 +279,7 @@ bool target_flash_program_array(uint16_t* dest, const uint16_t* data, size_t hal
         flash_program_half_word((uint32_t)dest, *data);
         erase_start = dest + 1;
         if (*dest != *data) {
+            debug_println("*dest != *data"); debug_flush();
             verified = false;
             break;
         }
