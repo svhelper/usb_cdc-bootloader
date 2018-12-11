@@ -30,6 +30,9 @@
 #include "winusb.h"
 #include "config.h"
 #include "uf2.h"
+#include "backup.h"
+
+static void test_backup(void);
 
 static inline void __set_MSP(uint32_t topOfMainStack) {
     asm("msr msp, %0" : : "r" (topOfMainStack));
@@ -65,9 +68,8 @@ static void jump_to_application(void) {
 uint32_t msTimer;
 extern int msc_started;
 
-int main(void) {    
+int main(void) {
     bool appValid = validate_application();
-
     if (appValid && target_get_force_app()) {
          jump_to_application();
          return 0;
@@ -77,42 +79,42 @@ int main(void) {
     //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
     platform_setup();     //  STM32 platform setup.
     debug_println("----bootloader");  debug_flush();
-
-    //  Clock already setup in platform_setup()
-    //  target_clock_setup();
-
-    /* Initialize GPIO/LEDs if needed */
-    target_gpio_setup();
+    
+    //  target_clock_setup();  //  Clock already setup in platform_setup()
+    target_gpio_setup();       //  Initialize GPIO/LEDs if needed
+    test_backup();             //  Test backup.
 
     debug_println("bootloader target_get_force_bootloader");  debug_flush();
     if (target_get_force_bootloader() || !appValid) {
-        /* Setup USB */
+        //  Setup USB
         {
             char serial[USB_SERIAL_NUM_LENGTH+1];
             serial[0] = '\0';
             debug_println("bootloader target_get_serial_number");  debug_flush();
             target_get_serial_number(serial, USB_SERIAL_NUM_LENGTH);
+
             debug_println("bootloader usb_set_serial_number");  debug_flush();
             usb_set_serial_number(serial);
         }
 
         debug_println("bootloader usb_setup");  debug_flush();
         usbd_device* usbd_dev = usb_setup();
+
         debug_println("bootloader dfu_setup");  debug_flush();
         dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
+
         debug_println("bootloader usb_msc_init");  debug_flush();
        	usb_msc_init(usbd_dev, 0x82, 64, 0x01, 64, "Example Ltd", "UF2 Bootloader",
 		    "42.00", UF2_NUM_BLOCKS, read_block, write_block);
-        debug_println("bootloader usb_msc_init done");  debug_flush();
-        // Moved to usb_setup()...
-        // winusb_setup(usbd_dev, 0);
 
-        uint32_t cycleCount = 0;
-        
+        debug_println("bootloader usb_msc_init done");  debug_flush();        
+        // winusb_setup(usbd_dev, 0);  // Moved to usb_setup()...
+
+        uint32_t cycleCount = 0;        
         while (1) {
             cycleCount++;
             if (cycleCount >= 700) {
-                debug_println("bootloader loop");  debug_flush();
+                // debug_println("bootloader loop");  debug_flush();
                 msTimer++;
                 cycleCount = 0;
 
@@ -135,4 +137,17 @@ int main(void) {
     }
     
     return 0;
+}
+
+static void test_backup(void) {
+    //  Test whether RTC backup registers are written correctly.
+    enum BackupRegister reg = BKP1;
+
+    uint32_t cmd = backup_read(reg);
+    debug_print("test_backup read "); debug_print_unsigned((size_t) cmd); debug_println(""); debug_flush();
+    cmd++;
+    backup_write(reg, 0);
+    debug_print("test_backup write "); debug_print_unsigned((size_t) cmd); debug_println(""); debug_flush();
+    cmd = backup_read(reg);
+    debug_print("test_backup read again "); debug_print_unsigned((size_t) cmd); debug_println(""); debug_flush();
 }
