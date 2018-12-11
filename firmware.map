@@ -124,7 +124,7 @@ Discarded input sections
  .text.target_get_serial_number
                 0x00000000        0x6 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
  .text.target_get_max_firmware_size
-                0x00000000        0x6 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
+                0x00000000       0x24 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
  .text.target_relocate_vector_table
                 0x00000000       0x10 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
  .text.target_flash_unlock
@@ -132,7 +132,7 @@ Discarded input sections
  .text.target_flash_lock
                 0x00000000        0x4 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
  .text.target_flash_program_array
-                0x00000000       0xdc .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
+                0x00000000       0xe4 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
  .bss.erase_end.5422
                 0x00000000        0x4 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
  .bss.erase_start.5421
@@ -734,7 +734,7 @@ Discarded input sections
 Memory Configuration
 
 Name             Origin             Length             Attributes
-rom              0x08004000         0x00019000         xr
+rom              0x08004000         0x0000c000         xr
 ram              0x20000000         0x00005000         xrw
 *default*        0x00000000         0xffffffff
 

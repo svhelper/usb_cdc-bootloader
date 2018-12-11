@@ -11,20 +11,32 @@ print "Current build targets", map(str, BUILD_TARGETS)
 # Dump build environment (for debug purpose)
 # print env.Dump()
 
-# Convert the built ELF executable in .bin format into UF2 format for flashing via bootloader.
-# e.g. python uf2conv.py -c -b 0x08004000 -o firmware.uf2 firmware.bin
+# Convert the built executable in .bin format into UF2 format for flashing via bootloader.
+# e.g. python uf2conv.py --convert --base 0x08004000 --output firmware.uf2 firmware.bin
 env.AddPostAction(
     "$BUILD_DIR/${PROGNAME}.bin",
     env.VerboseAction(" ".join([
         "python", "src/blink/uf2conv.py", 
-            "-c", 
-            "-b", "0x08004000", 
-            "-o", "$PROJECT_DIR/${PROGNAME}.uf2", 
+            "--convert", 
+            "--base", "0x08004000", 
+            "--output", "$PROJECT_DIR/${PROGNAME}.uf2", 
             "$BUILD_DIR/${PROGNAME}.bin"
     ]), "Building $PROJECT_DIR/${PROGNAME}.uf2")
 )
 
-#
+# For verification, extract the executable in .bin format from the UF2 file.
+# e.g. python2 uf2conv.py --convert --output firmware.bin --base 0x08004000 firmware.uf2
+env.AddPostAction(
+    "$PROJECT_DIR/${PROGNAME}.uf2",
+    env.VerboseAction(" ".join([
+        "python", "src/blink/uf2conv.py", 
+            "--convert", 
+            "--base", "0x08004000", 
+            "--output", "$PROJECT_DIR/${PROGNAME}.bin",
+            "$PROJECT_DIR/${PROGNAME}.uf2"
+    ]), "Building $PROJECT_DIR/${PROGNAME}.bin")
+)
+
 # Change build flags in runtime
 #
 #env.ProcessUnFlags("-DVECT_TAB_ADDR")
