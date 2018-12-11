@@ -15,7 +15,11 @@ Launch Visual Studio Code.
 
 Open the workspace file in the above folder.
 
-Build the bootloader and firmware he bootloader
+Build the bootloader and firmware.
+
+Flash the bootloader to Blue Pill via ST-Link 2.
+
+Copy firmware.uf2 to the USB drive exposed by the bootloader.
 
 
 ## Licensing
