@@ -21,6 +21,7 @@ Flash the bootloader to Blue Pill via ST-Link 2.
 
 Copy firmware.uf2 to the USB drive exposed by the bootloader.
 
+More details: https://github.com/mmoskal/uf2-stm32f103/blob/master/README.md
 
 ## Licensing
 All contents of the project are licensed under terms that are compatible with the terms of the GNU Lesser General Public License version 3.
