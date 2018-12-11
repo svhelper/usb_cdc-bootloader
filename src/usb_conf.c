@@ -34,6 +34,118 @@
 static const char* origin_url = "lupyuen.github.io/pxt-maker";
 // static const char* origin_url = "trezor.io/start";
 
+static char serial_number[USB_SERIAL_NUM_LENGTH+1];
+
+void usb_set_serial_number(const char* serial) {
+    serial_number[0] = '\0';
+    if (serial) {
+        strncpy(serial_number, serial, USB_SERIAL_NUM_LENGTH);
+        serial_number[USB_SERIAL_NUM_LENGTH] = '\0';
+    }
+}
+
+#define NEW_USB
+#ifdef NEW_USB
+//  From https://github.com/libopencm3/libopencm3-examples/blob/master/examples/stm32/f4/stm32f4-discovery/usb_msc/msc.c
+
+static const struct usb_device_descriptor dev_descr = {
+	.bLength = USB_DT_DEVICE_SIZE,
+	.bDescriptorType = USB_DT_DEVICE,
+	.bcdUSB = 0x0110,
+	.bDeviceClass = 0,
+	.bDeviceSubClass = 0,
+	.bDeviceProtocol = 0,
+	.bMaxPacketSize0 = 64,
+	.idVendor = 0x0483,
+	.idProduct = 0x5741,
+	.bcdDevice = 0x0200,
+	.iManufacturer = 1,
+	.iProduct = 2,
+	.iSerialNumber = 3,
+	.bNumConfigurations = 1,
+};
+
+static const struct usb_endpoint_descriptor msc_endp[] = {{
+	.bLength = USB_DT_ENDPOINT_SIZE,
+	.bDescriptorType = USB_DT_ENDPOINT,
+	.bEndpointAddress = 0x01,
+	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
+	.wMaxPacketSize = 64,
+	.bInterval = 0,
+}, {
+	.bLength = USB_DT_ENDPOINT_SIZE,
+	.bDescriptorType = USB_DT_ENDPOINT,
+	.bEndpointAddress = 0x82,
+	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
+	.wMaxPacketSize = 64,
+	.bInterval = 0,
+}};
+
+static const struct usb_interface_descriptor msc_iface[] = {{
+	.bLength = USB_DT_INTERFACE_SIZE,
+	.bDescriptorType = USB_DT_INTERFACE,
+	.bInterfaceNumber = 0,
+	.bAlternateSetting = 0,
+	.bNumEndpoints = 2,
+	.bInterfaceClass = USB_CLASS_MSC,
+	.bInterfaceSubClass = USB_MSC_SUBCLASS_SCSI,
+	.bInterfaceProtocol = USB_MSC_PROTOCOL_BBB,
+	.iInterface = 0,
+	.endpoint = msc_endp,
+	.extra = NULL,
+	.extralen = 0
+}};
+
+static const struct usb_interface ifaces[] = {{
+	.num_altsetting = 1,
+	.altsetting = msc_iface,
+}};
+
+static const struct usb_config_descriptor config_descr = {
+	.bLength = USB_DT_CONFIGURATION_SIZE,
+	.bDescriptorType = USB_DT_CONFIGURATION,
+	.wTotalLength = 0,
+	.bNumInterfaces = 1,
+	.bConfigurationValue = 1,
+	.iConfiguration = 0,
+	.bmAttributes = 0x80,
+	.bMaxPower = 0x32,
+	.interface = ifaces,
+};
+
+static const char *usb_strings[] = {
+	"Black Sphere Technologies",
+	"MSC Demo",
+	"DEMO",
+};
+
+static usbd_device *msc_dev;
+/* Buffer to be used for control requests. */
+static uint8_t usbd_control_buffer[128];
+
+usbd_device* usb_setup(void) {
+    int num_strings = sizeof(usb_strings) / sizeof(const char*);
+    debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); debug_flush(); ////
+    const usbd_driver* driver = target_usb_init();
+	msc_dev = usbd_init(driver, &dev_descr, &config_descr,
+        usb_strings, 3,
+        usbd_control_buffer, sizeof(usbd_control_buffer));
+    
+    debug_println("usb_msc_init UF2_NUM_BLOCKS "); debug_print_int(UF2_NUM_BLOCKS); debug_println(""); debug_flush();
+	usb_msc_init(msc_dev, 0x82, 64, 0x01, 64, "VendorID", "ProductID",
+		"0.00", UF2_NUM_BLOCKS, read_block, write_block);
+    debug_println("usb_setup done");  debug_flush();        
+    return msc_dev;
+}
+
+#else
+static const char *usb_strings[] = {
+    "Devanarchy",
+    "DAPBoot DFU Bootloader",
+    serial_number,
+    "DAPBoot DFU"
+};
+
 static const struct usb_device_descriptor dev = {
     .bLength = USB_DT_DEVICE_SIZE,
     .bDescriptorType = USB_DT_DEVICE,
@@ -124,27 +236,6 @@ static const struct usb_config_descriptor config = {
     .interface = interfaces,
 };
 
-static char serial_number[USB_SERIAL_NUM_LENGTH+1];
-
-static const char *usb_strings[] = {
-    "Devanarchy",
-    "DAPBoot DFU Bootloader",
-    serial_number,
-    "DAPBoot DFU"
-};
-
-/* Buffer to be used for control requests. */
-static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE] __attribute__ ((aligned (2)));
-//  TODO: static uint8_t usbd_control_buffer[256] __attribute__ ((aligned (2)));
-
-void usb_set_serial_number(const char* serial) {
-    serial_number[0] = '\0';
-    if (serial) {
-        strncpy(serial_number, serial, USB_SERIAL_NUM_LENGTH);
-        serial_number[USB_SERIAL_NUM_LENGTH] = '\0';
-    }
-}
-
 static const struct usb_device_capability_descriptor* capabilities[] = {
 	(const struct usb_device_capability_descriptor*) &webusb_platform_capability_descriptor,
 };
@@ -156,9 +247,13 @@ static const struct usb_bos_descriptor bos_descriptor = {
 	.capabilities = capabilities
 };
 
+/* Buffer to be used for control requests. */
+static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE] __attribute__ ((aligned (2)));
+//  TODO: static uint8_t usbd_control_buffer[256] __attribute__ ((aligned (2)));
+
 usbd_device* usb_setup(void) {
-    debug_println("usb_setup"); debug_flush(); ////
     int num_strings = sizeof(usb_strings)/sizeof(const char*);
+    debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); debug_flush(); ////
     const usbd_driver* driver = target_usb_init();
     usbd_device* usbd_dev = usbd_init(driver, &dev, &config, 
         usb_strings, num_strings,
@@ -177,6 +272,7 @@ usbd_device* usb_setup(void) {
 	////winusb_setup(usbd_dev, 0);
     return usbd_dev;
 }
+#endif  //  NEW_USB
 
 /* Previously:                                      
 usbd_register_set_config_callback(usbd_dev, set_config);
