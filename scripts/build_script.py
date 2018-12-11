@@ -11,16 +11,16 @@ print "Current build targets", map(str, BUILD_TARGETS)
 # Dump build environment (for debug purpose)
 # print env.Dump()
 
-# Convert the built ELF executable into UF2 format for flashing via bootloader.
-# e.g. python uf2conv.py -c -b 0x08004000 -o "$@" "$<"
+# Convert the built ELF executable in .bin format into UF2 format for flashing via bootloader.
+# e.g. python uf2conv.py -c -b 0x08004000 -o firmware.uf2 firmware.bin
 env.AddPostAction(
-    "$BUILD_DIR/${PROGNAME}.elf",
+    "$BUILD_DIR/${PROGNAME}.bin",
     env.VerboseAction(" ".join([
         "python", "src/blink/uf2conv.py", 
             "-c", 
             "-b", "0x08004000", 
             "-o", "$PROJECT_DIR/${PROGNAME}.uf2", 
-            "$BUILD_DIR/${PROGNAME}.elf"
+            "$BUILD_DIR/${PROGNAME}.bin"
     ]), "Building $PROJECT_DIR/${PROGNAME}.uf2")
 )
 

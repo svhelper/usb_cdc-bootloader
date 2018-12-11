@@ -132,11 +132,13 @@ Discarded input sections
  .text.target_flash_lock
                 0x00000000        0x4 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
  .text.target_flash_program_array
-                0x00000000       0x70 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
- .bss.erase_end.5398
+                0x00000000       0xdc .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
+ .bss.erase_end.5422
                 0x00000000        0x4 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
- .bss.erase_start.5397
+ .bss.erase_start.5421
                 0x00000000        0x4 .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
+ .rodata.target_flash_program_array.str1.1
+                0x00000000       0x6b .pioenvs\bluepill_f103c8_firmware\src\stm32f103\target_stm32f103.o
  .text          0x00000000        0x0 .pioenvs\bluepill_f103c8_firmware\lib4c2\liblogger.a(logger.o)
  .data          0x00000000        0x0 .pioenvs\bluepill_f103c8_firmware\lib4c2\liblogger.a(logger.o)
  .bss           0x00000000        0x0 .pioenvs\bluepill_f103c8_firmware\lib4c2\liblogger.a(logger.o)

@@ -20,10 +20,10 @@
 /* Linker script for STM32F103x8, 64k flash, 20k RAM. */
 
 /* Define memory regions. */
-/* 8k for the bootloader */
+/* Reserve 16k for the bootloader, leaving 48k for firmware */
 MEMORY
 {
-	rom (rx) : ORIGIN = 0x08004000, LENGTH = 100K
+	rom (rx) : ORIGIN = 0x08004000, LENGTH = 48K
 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 20K
 }
 
