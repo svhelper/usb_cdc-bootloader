@@ -18,10 +18,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/dfu.h>
-
+#include <logger.h>
 #include "dfu.h"
 #include "usb_conf.h"
 #include "dfu_defs.h"
@@ -76,6 +75,7 @@ static inline void dfu_set_status(enum dfu_status status) {
             dfu_set_state(STATE_DFU_IDLE);
         }
     } else {
+        debug_println("STATE_DFU_ERROR"); debug_flush(); ////
         dfu_set_state(STATE_DFU_ERROR);
     }
     current_dfu_status = status;
@@ -107,6 +107,7 @@ static void dfu_on_download_request(usbd_device* usbd_dev, struct usb_setup_data
            we would have to remember that we already programmed this block */
         dfu_set_state(STATE_DFU_DNLOAD_IDLE);
     } else {
+        debug_println("DFU_STATUS_ERR_VERIFY"); debug_flush(); ////
         dfu_set_status(DFU_STATUS_ERR_VERIFY);
     }
 }
@@ -117,6 +118,7 @@ static void dfu_on_manifest_request(usbd_device* usbd_dev, struct usb_setup_data
     if (dfu_manifest_request_callback) {
         dfu_manifest_request_callback();
     } else {
+        debug_println("DFU_STATUS_ERR_UNKNOWN"); debug_flush(); ////
         dfu_set_status(DFU_STATUS_ERR_UNKNOWN);
     }
 }
@@ -155,6 +157,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
                         dfu_set_state(STATE_DFU_MANIFEST);
                         *complete = &dfu_on_manifest_request;
                     } else {
+                        debug_println("DFU_STATUS_ERR_FIRMWARE"); debug_flush(); ////
                         dfu_set_status(DFU_STATUS_ERR_FIRMWARE);
                     }
                     break;
@@ -187,6 +190,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
                         memcpy(dfu_download_buffer, *buf, dfu_download_size);
                         dfu_set_state(STATE_DFU_DNLOAD_SYNC);
                     } else {
+                        debug_println("DFU_STATUS_ERR_STALLEDPKT"); debug_flush(); ////
                         dfu_set_status(DFU_STATUS_ERR_STALLEDPKT);
                         usbd_ep_stall_set(usbd_dev, 0x00, 1);
                     }
@@ -256,6 +260,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
         case DFU_DETACH:
         default: {
             /* Stall the control pipe */
+            debug_println("DFU_STATUS_ERR_STALLEDPKT"); debug_flush(); ////
             dfu_set_status(DFU_STATUS_ERR_STALLEDPKT);
             usbd_ep_stall_set(usbd_dev, 0x00, 1);
             status = USBD_REQ_NOTSUPP;
