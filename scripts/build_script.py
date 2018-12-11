@@ -27,7 +27,7 @@ env.AddPostAction(
 # For verification, extract the executable in .bin format from the UF2 file.
 # e.g. python2 uf2conv.py --convert --output firmware.bin --base 0x08004000 firmware.uf2
 env.AddPostAction(
-    "$PROJECT_DIR/${PROGNAME}.uf2",
+    "$BUILD_DIR/${PROGNAME}.bin",
     env.VerboseAction(" ".join([
         "python", "src/blink/uf2conv.py", 
             "--convert", 
