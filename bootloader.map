@@ -1320,7 +1320,7 @@ END GROUP
 .igot.plt       0x000000002000019c        0x0 load address 0x0000000008002d0c
  .igot.plt      0x000000002000019c        0x0 .pioenvs/bluepill_f103c8_bootloader/src/dapboot.o
 
-.bss            0x000000002000019c     0x2c80 load address 0x0000000008002d0c
+.bss            0x000000002000019c     0x3000 load address 0x0000000008002d0c
  *(SORT_BY_ALIGNMENT(.bss*))
  .bss.flashBuf  0x000000002000019c      0x400 .pioenvs/bluepill_f103c8_bootloader/src/ghostfat.o
  .bss.lastFlush
@@ -1339,28 +1339,28 @@ END GROUP
  .bss.serial_number
                 0x0000000020002828       0x19 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .bss.usbd_control_buffer
-                0x0000000020002841       0x80 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000020002841      0x400 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .bss._ZL10logEnabled
-                0x00000000200028c1        0x1 .pioenvs/bluepill_f103c8_bootloader/libd29/liblogger.a(logger.o)
+                0x0000000020002c41        0x1 .pioenvs/bluepill_f103c8_bootloader/libd29/liblogger.a(logger.o)
  .bss._ZL11debugBuffer
-                0x00000000200028c2       0x51 .pioenvs/bluepill_f103c8_bootloader/libd29/liblogger.a(logger.o)
+                0x0000000020002c42       0x51 .pioenvs/bluepill_f103c8_bootloader/libd29/liblogger.a(logger.o)
  .bss._ZL12debugEnabled
-                0x0000000020002913        0x1 .pioenvs/bluepill_f103c8_bootloader/lib52f/libbluepill.a(bluepill.o)
+                0x0000000020002c93        0x1 .pioenvs/bluepill_f103c8_bootloader/lib52f/libbluepill.a(bluepill.o)
  *(SORT_BY_ALIGNMENT(COMMON))
- COMMON         0x0000000020002914        0x4 .pioenvs/bluepill_f103c8_bootloader/src/dapboot.o
-                0x0000000020002914                msTimer
- COMMON         0x0000000020002918      0x404 .pioenvs/bluepill_f103c8_bootloader/src/dmesg.o
-                0x0000000020002918                codalLogStore
- COMMON         0x0000000020002d1c      0x100 .pioenvs/bluepill_f103c8_bootloader/libFrameworkLibOpenCM3.a(st_usbfs_core.o)
-                0x0000000020002d1c                st_usbfs_dev
-                0x0000000020002e14                st_usbfs_force_nak
-                0x0000000020002e1c                . = ALIGN (0x4)
-                0x0000000020002e1c                _ebss = .
+ COMMON         0x0000000020002c94        0x4 .pioenvs/bluepill_f103c8_bootloader/src/dapboot.o
+                0x0000000020002c94                msTimer
+ COMMON         0x0000000020002c98      0x404 .pioenvs/bluepill_f103c8_bootloader/src/dmesg.o
+                0x0000000020002c98                codalLogStore
+ COMMON         0x000000002000309c      0x100 .pioenvs/bluepill_f103c8_bootloader/libFrameworkLibOpenCM3.a(st_usbfs_core.o)
+                0x000000002000309c                st_usbfs_dev
+                0x0000000020003194                st_usbfs_force_nak
+                0x000000002000319c                . = ALIGN (0x4)
+                0x000000002000319c                _ebss = .
 
 /DISCARD/
  *(SORT_BY_ALIGNMENT(.eh_frame))
-                0x0000000020002e1c                . = ALIGN (0x4)
-                0x0000000020002e1c                end = .
+                0x000000002000319c                . = ALIGN (0x4)
+                0x000000002000319c                end = .
                 0x0000000020005000                PROVIDE (_stack, (ORIGIN (ram) + LENGTH (ram)))
 OUTPUT(.pioenvs/bluepill_f103c8_bootloader/firmware.elf elf32-littlearm)
 

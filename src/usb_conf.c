@@ -121,7 +121,8 @@ static const char *usb_strings[] = {
 
 static usbd_device *msc_dev;
 /* Buffer to be used for control requests. */
-static uint8_t usbd_control_buffer[128];
+static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE];
+// static uint8_t usbd_control_buffer[128];
 
 #define WBVAL(x) ((x) & 0xFF), (((x) >> 8) & 0xFF)
 #define QBVAL(x) ((x) & 0xFF), (((x) >> 8) & 0xFF),\
