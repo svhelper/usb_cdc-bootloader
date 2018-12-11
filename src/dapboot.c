@@ -105,6 +105,7 @@ int main(void) {
         while (1) {
             cycleCount++;
             if (cycleCount >= 700) {
+                debug_println("bootloader loop");  debug_flush();
                 msTimer++;
                 cycleCount = 0;
 
@@ -114,6 +115,7 @@ int main(void) {
                 ghostfat_1ms();
 
                 if (appValid && !msc_started && msTimer > 1000) {
+                    debug_println("target_manifest_app");  debug_flush();
                     target_manifest_app();
                 }
             }
