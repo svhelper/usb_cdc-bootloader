@@ -84,12 +84,15 @@ int main(void) {
     /* Initialize GPIO/LEDs if needed */
     target_gpio_setup();
 
+    debug_println("bootloader target_get_force_bootloader");  debug_flush();
     if (target_get_force_bootloader() || !appValid) {
         /* Setup USB */
         {
             char serial[USB_SERIAL_NUM_LENGTH+1];
             serial[0] = '\0';
+            debug_println("bootloader target_get_serial_number");  debug_flush();
             target_get_serial_number(serial, USB_SERIAL_NUM_LENGTH);
+            debug_println("bootloader usb_set_serial_number");  debug_flush();
             usb_set_serial_number(serial);
         }
 
