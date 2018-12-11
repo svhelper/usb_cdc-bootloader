@@ -30,7 +30,7 @@
 #include "usb21_standard.h"
 #include "usb_conf.h"
 
-static const char* origin_url = "https://lupyuen.github.io/pxt-maker";
+static const char* origin_url = "lupyuen.github.io/pxt-maker";
 // static const char* origin_url = "trezor.io/start";
 
 static const struct usb_device_descriptor dev = {
