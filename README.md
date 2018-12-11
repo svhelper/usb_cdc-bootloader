@@ -13,6 +13,8 @@ WebUSB and WinUSB implementation from https://github.com/trezor/trezor-mcu
 
 Launch Visual Studio Code.
 
+Install the PlatformIO extension for Visual Studio Code.
+
 Open the workspace file in the above folder.
 
 Build the bootloader and firmware.
