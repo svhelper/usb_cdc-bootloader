@@ -44,9 +44,6 @@
         "**/GTAGS": true,
         "**/*.d": true,
         "**/*.o": true,
-        "**/*.bin": true,
-        "**/*.hex": true,
-        "**/*.elf": true,
         "**/*.axf": true,
         "src/local.mk": true
     },
