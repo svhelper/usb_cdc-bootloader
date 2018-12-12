@@ -24,6 +24,7 @@
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/msc.h>
+#include <logger.h>
 #include "custom_usb_private.h"
 
 /* Definitions of Mass Storage Class from:
@@ -520,6 +521,7 @@ static void scsi_command(usbd_mass_storage *ms,
 		scsi_write_10(ms, trans, event);
 		break;
 	default:
+        debug_println("SBC_SENSE_KEY_ILLEGAL_REQUEST"); debug_flush(); ////
 		set_sbc_status(ms, SBC_SENSE_KEY_ILLEGAL_REQUEST,
 					SBC_ASC_INVALID_COMMAND_OPERATION_CODE,
 					SBC_ASCQ_NA);
@@ -536,6 +538,7 @@ static void scsi_command(usbd_mass_storage *ms,
 /** @brief Handle the USB 'OUT' requests. */
 static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 {
+    debug_println("msc_data_rx_cb"); // debug_flush(); ////
 	usbd_mass_storage *ms;
 	struct usb_msc_trans *trans;
 	int len, max_len, left;
@@ -557,6 +560,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 			if (trans->byte_count < trans->bytes_to_read) {
 				/* We must wait until there is something to
 				 * read again. */
+                debug_println("msc_data_rx_cb wait"); debug_flush(); ////
 				return;
 			}
 		}
@@ -582,6 +586,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 				lba = trans->lba_start + trans->current_block;
 				if (0 != (*ms->write_block)(lba, trans->msd_buf)) {
 					/* Error */
+                    debug_println("msc_data_rx_cb write error"); debug_flush(); ////
 				}
 				trans->current_block++;
 			}
@@ -598,6 +603,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 				lba = trans->lba_start + trans->current_block;
 				if (0 != (*ms->read_block)(lba, trans->msd_buf)) {
 					/* Error */
+                    debug_println("msc_data_rx_cb read error"); debug_flush(); ////
 				}
 				trans->current_block++;
 			}
@@ -616,6 +622,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 				lba = trans->lba_start + trans->current_block;
 				if (0 != (*ms->write_block)(lba, trans->msd_buf)) {
 					/* Error */
+                    debug_println("msc_data_rx_cb write error 2"); debug_flush(); ////
 				}
 
 				trans->current_block = 0;
@@ -642,6 +649,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 /** @brief Handle the USB 'IN' requests. */
 static void msc_data_tx_cb(usbd_device *usbd_dev, uint8_t ep)
 {
+    debug_println("msc_data_tx_cb"); // debug_flush(); ////
 	usbd_mass_storage *ms;
 	struct usb_msc_trans *trans;
 	int len, max_len, left;
@@ -658,6 +666,7 @@ static void msc_data_tx_cb(usbd_device *usbd_dev, uint8_t ep)
 				lba = trans->lba_start + trans->current_block;
 				if (0 != (*ms->read_block)(lba, trans->msd_buf)) {
 					/* Error */
+                    debug_println("msc_data_tx_cb read error"); debug_flush(); ////
 				}
 				trans->current_block++;
 			}
@@ -710,6 +719,7 @@ static int msc_control_request(usbd_device *usbd_dev,
 				struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 				usbd_control_complete_callback *complete)
 {
+    debug_println("msc_control_request"); // debug_flush(); ////
 	(void)complete;
 	(void)usbd_dev;
 
@@ -723,13 +733,14 @@ static int msc_control_request(usbd_device *usbd_dev,
 		*len = 1;
 		return USBD_REQ_HANDLED;
 	}
-
+    debug_println("msc_control_request not supported"); debug_flush(); ////
 	return USBD_REQ_NOTSUPP;
 }
 
 /** @brief Setup the endpoints to be bulk & register the callbacks. */
 static void msc_set_config(usbd_device *usbd_dev, uint16_t wValue)
 {
+    debug_println("msc_set_config"); // debug_flush(); ////
 	usbd_mass_storage *ms = &_mass_storage;
 
 	(void)wValue;
@@ -780,6 +791,7 @@ usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
 				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
 				 int (*write_block)(uint32_t lba, const uint8_t *copy_from))
 {
+    debug_println("custom_usb_msc_init"); // debug_flush(); ////
 	_mass_storage.usbd_dev = usbd_dev;
 	_mass_storage.ep_in = ep_in;
 	_mass_storage.ep_in_size = ep_in_size;
