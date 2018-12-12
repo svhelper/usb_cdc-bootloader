@@ -34,6 +34,9 @@
 #include "usb_conf.h"
 #include "uf2.h"
 
+#define MAX_PACKET_SIZE 64
+//#define MAX_PACKET_SIZE 32
+
 static const char* origin_url = "visualbluepill.github.io";
 // static const char* origin_url = "lupyuen.github.io/pxt-maker";
 // static const char* origin_url = "trezor.io/start";
@@ -280,9 +283,6 @@ static const struct usb_device_descriptor dev_descr = {
 	.bNumConfigurations = 1,
 };
 
-//#define MAX_PACKET_SIZE 64
-#define MAX_PACKET_SIZE 32
-
 static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
@@ -457,14 +457,14 @@ static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.bDescriptorType = USB_DT_ENDPOINT,
 	.bEndpointAddress = MSC_OUT,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
-	.wMaxPacketSize = 64,
+	.wMaxPacketSize = MAX_PACKET_SIZE,
 	.bInterval = 0,
 }, {
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
 	.bEndpointAddress = MSC_IN,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
-	.wMaxPacketSize = 64,
+	.wMaxPacketSize = MAX_PACKET_SIZE,
 	.bInterval = 0,
 }};
 
@@ -570,7 +570,7 @@ void msc_setup(usbd_device* usbd_dev0) {
     ramdisk_init();
 #endif  //  RAM_DISK
     
-    custom_usb_msc_init(usbd_dev0, MSC_IN, 64, MSC_OUT, 64, "Example Ltd", "UF2 Bootloader", "42.00", 
+    custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_PACKET_SIZE, MSC_OUT, MAX_PACKET_SIZE, "Example Ltd", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write
 #else
