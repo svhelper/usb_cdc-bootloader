@@ -518,6 +518,29 @@ static void scsi_inquiry(usbd_mass_storage *ms,
 	}
 }
 
+/////////////////////ADDED THIS//////////////////////////////////////////////////////////////////////////////////
+//  From https://habr.com/company/thirdpin/blog/304924/
+
+static void scsi_read_format_capacities(usbd_mass_storage *ms, struct usb_msc_trans *trans, enum trans_event event)
+{
+	if (EVENT_CBW_VALID == event) {
+
+		trans->msd_buf[3] = 0x08;
+		trans->msd_buf[4] = ms->block_count >> 24;
+		trans->msd_buf[5] = 0xff & (ms->block_count >> 16);
+		trans->msd_buf[6] = 0xff & (ms->block_count >> 8);
+		trans->msd_buf[7] = 0xff & ms->block_count;
+
+		trans->msd_buf[8] =  0x02;
+		trans->msd_buf[9] = 0;
+		trans->msd_buf[10] = 0x02;
+		trans->msd_buf[11] = 0;
+		trans->bytes_to_write = 9;
+		set_sbc_status_good(ms);
+	}
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 static void scsi_command(usbd_mass_storage *ms,
 			 struct usb_msc_trans *trans,
 			 enum trans_event event)
@@ -568,9 +591,11 @@ static void scsi_command(usbd_mass_storage *ms,
 	case SCSI_WRITE_10:
 		scsi_write_10(ms, trans, event);
 		break;
+//////////////////ADDED THIS///////////////////////////////////////////////////////////////////////////////////////////////////
 	case SCSI_READ_FORMAT_CAPACITIES:
-		SCSI_Command_Read_Format_Compacities(ms, trans, event);
-		break;
+		scsi_read_format_capacities(ms, trans, event);
+	 	break;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	default:
         debug_print("SBC_SENSE_KEY_ILLEGAL_REQUEST "); debug_printhex(trans->cbw.cbw.CBWCB[0]); debug_println(""); debug_flush(); ////
 		set_sbc_status(ms, SBC_SENSE_KEY_ILLEGAL_REQUEST,
@@ -679,12 +704,30 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 				trans->current_block++;
 			}
 		}
+/////////////////////ADDED THIS//////////////////////////////////////////////////////////////////////////////////
+//  From https://habr.com/company/thirdpin/blog/304924/
 
+		if (false == trans->csw_valid) {
+			scsi_command(ms, trans, EVENT_NEED_STATUS);
+			trans->csw_valid = true;
+		}
+
+		left = sizeof(struct usb_msc_csw) - trans->csw_sent;
+		if (0 < left) {
+			max_len = MIN(ms->ep_out_size, left);
+			p = &trans->csw.buf[trans->csw_sent];
+			len = usbd_ep_write_packet(usbd_dev, ms->ep_in, p,
+					max_len);
+			trans->csw_sent += len;
+		}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#ifdef NOTUSED  //  Previously...
 		left = trans->bytes_to_write - trans->byte_count;
 		max_len = MIN(ms->ep_out_size, left);
 		p = &trans->msd_buf[0x1ff & trans->byte_count];
 		len = usbd_ep_write_packet(usbd_dev, ms->ep_in, p, max_len);
 		trans->byte_count += len;
+#endif  //  NOTUSED
 	} else {
 		if (0 < trans->block_count) {
 			if (trans->current_block == trans->block_count) {
