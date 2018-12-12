@@ -69,7 +69,7 @@ void usb_set_serial_number(const char* serial) {
 #define FILEDATA_START_SECTOR	(DATA_REGION_SECTOR + \
 			(FILEDATA_START_CLUSTER - 2) * SECTORS_PER_CLUSTER)
 
-#define FILEDATA_SECTOR_COUNT	8
+#define FILEDATA_SECTOR_COUNT	16
 // filesize is 64kB (128 * SECTOR_SIZE)
 // #define FILEDATA_SECTOR_COUNT	128
 
