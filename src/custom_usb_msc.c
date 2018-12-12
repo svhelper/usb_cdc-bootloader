@@ -687,23 +687,6 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 				trans->current_block++;
 			}
 		}
-	} else if (trans->byte_count < trans->bytes_to_write) {
-		if (0 < trans->block_count) {
-			if ((0 == trans->byte_count) && (NULL != ms->lock)) {
-				(*ms->lock)();
-			}
-
-			if (0 == (0x1ff & trans->byte_count)) {
-				uint32_t lba;
-
-				lba = trans->lba_start + trans->current_block;
-				if (0 != (*ms->read_block)(lba, trans->msd_buf)) {
-					/* Error */
-                    debug_println("msc_data_rx_cb read error"); debug_flush(); ////
-				}
-				trans->current_block++;
-			}
-		}
 /////////////////////ADDED THIS//////////////////////////////////////////////////////////////////////////////////
 //  From https://habr.com/company/thirdpin/blog/304924/
 
@@ -721,13 +704,29 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 			trans->csw_sent += len;
 		}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef NOTUSED  //  Previously...
+	} else if (trans->byte_count < trans->bytes_to_write) {
+		if (0 < trans->block_count) {
+			if ((0 == trans->byte_count) && (NULL != ms->lock)) {
+				(*ms->lock)();
+			}
+
+			if (0 == (0x1ff & trans->byte_count)) {
+				uint32_t lba;
+
+				lba = trans->lba_start + trans->current_block;
+				if (0 != (*ms->read_block)(lba, trans->msd_buf)) {
+					/* Error */
+                    debug_println("msc_data_rx_cb read error"); debug_flush(); ////
+				}
+				trans->current_block++;
+			}
+		}
+        
 		left = trans->bytes_to_write - trans->byte_count;
 		max_len = MIN(ms->ep_out_size, left);
 		p = &trans->msd_buf[0x1ff & trans->byte_count];
 		len = usbd_ep_write_packet(usbd_dev, ms->ep_in, p, max_len);
 		trans->byte_count += len;
-#endif  //  NOTUSED
 	} else {
 		if (0 < trans->block_count) {
 			if (trans->current_block == trans->block_count) {

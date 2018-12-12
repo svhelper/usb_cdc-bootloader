@@ -239,7 +239,7 @@ int ramdisk_read(uint32_t lba, uint8_t *copy_to) {
 			}
 			break;
 	}
-    sleep_us(40 * 1000); ////
+    //sleep_us(40 * 1000); ////
 	return 0;
 }
 
@@ -262,7 +262,7 @@ void sys_tick_handler(void) {
 
 #endif  //  RAM_DISK
 
-//#define NEW_USB
+#define NEW_USB
 #ifdef NEW_USB
 //  From https://github.com/libopencm3/libopencm3-examples/blob/master/examples/stm32/f4/stm32f4-discovery/usb_msc/msc.c
 
