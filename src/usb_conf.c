@@ -54,8 +54,14 @@ void usb_set_serial_number(const char* serial) {
 #define QBVAL(x) ((x) & 0xFF), (((x) >> 8) & 0xFF),\
 		 (((x) >> 16) & 0xFF), (((x) >> 24) & 0xFF)
 
-// filesystem size is 512kB (1024 * SECTOR_SIZE)
+// filesystem size is (1024kB * SECTOR_SIZE)
+#define SECTOR_COUNT		32
 // #define SECTOR_COUNT		1024
+
+#define FILEDATA_SECTOR_COUNT	16
+// filesize is (128kB * SECTOR_SIZE)
+// #define FILEDATA_SECTOR_COUNT	128
+
 #define SECTOR_SIZE		512
 #define BYTES_PER_SECTOR	512
 #define SECTORS_PER_CLUSTER	4
@@ -69,10 +75,6 @@ void usb_set_serial_number(const char* serial) {
 #define FILEDATA_START_SECTOR	(DATA_REGION_SECTOR + \
 			(FILEDATA_START_CLUSTER - 2) * SECTORS_PER_CLUSTER)
 
-#define FILEDATA_SECTOR_COUNT	16
-// filesize is 64kB (128 * SECTOR_SIZE)
-// #define FILEDATA_SECTOR_COUNT	128
-
 uint8_t BootSector[] = {
 	0xEB, 0x3C, 0x90,					// code to jump to the bootstrap code
 	'm', 'k', 'd', 'o', 's', 'f', 's', 0x00,		// OEM ID
@@ -81,8 +83,7 @@ uint8_t BootSector[] = {
 	WBVAL(RESERVED_SECTORS),				// # of reserved sectors (1 boot sector)
 	FAT_COPIES,						// FAT copies (2)
 	WBVAL(ROOT_ENTRIES),					// root entries (512)
-	WBVAL(FILEDATA_SECTOR_COUNT),					// total number of sectors
-	// WBVAL(SECTOR_COUNT),					// total number of sectors
+	WBVAL(SECTOR_COUNT),					// total number of sectors
 	0xF8,							// media descriptor (0xF8 = Fixed disk)
 	0x01, 0x00,						// sectors per FAT (1)
 	0x20, 0x00,						// sectors per track (32)
@@ -145,8 +146,14 @@ uint8_t DirSector[] = {
 	0xCE, 0x01,								// last write time
 	0x86, 0x41,								// last write date
 	WBVAL(FILEDATA_START_CLUSTER),						// start cluster
-	QBVAL(FILEDATA_SECTOR_COUNT * SECTOR_SIZE)				// file size in bytes
+	QBVAL(SECTOR_COUNT * SECTOR_SIZE)				// file size in bytes
 };
+
+static void sleep_us(int us){
+    for (int i = 0; i < us*10; i++) {
+        __asm__("nop");
+    }
+}
 
 /*
  * Set up timer to fire every x milliseconds
@@ -170,8 +177,7 @@ static void systick_setup(int xms) {
 static uint8_t ramdata[FILEDATA_SECTOR_COUNT * SECTOR_SIZE];
 
 int ramdisk_blocks(void) {
-	return FILEDATA_SECTOR_COUNT;
-	// return SECTOR_COUNT;
+	return SECTOR_COUNT;
 }
 
 int ramdisk_init(void) {
@@ -219,6 +225,7 @@ int ramdisk_read(uint32_t lba, uint8_t *copy_to) {
 			}
 			break;
 	}
+    sleep_us(40 * 1000); ////
 	return 0;
 }
 
