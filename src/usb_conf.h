@@ -27,8 +27,10 @@
 #define USB_SERIAL_NUM_LENGTH   24
 #define INTF_DFU                0
 #define INTF_MSC                1
-#define MSC_IN                  0x82
-#define MSC_OUT                 0x01
+#define MSC_IN                  0x83
+#define MSC_OUT                 0x02
+//#define MSC_IN                  0x82
+//#define MSC_OUT                 0x01
 
 extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);

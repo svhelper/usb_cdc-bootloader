@@ -272,14 +272,14 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
 }
 
 static void dfu_set_config(usbd_device* usbd_dev, uint16_t wValue) {
-    debug_println("dfu_set_config"); ////
+    debug_print("dfu_set_config "); debug_print_int(wValue); debug_println("");
     (void)wValue;
 
     usbd_register_control_callback(
         usbd_dev,
         USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
         USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-        dfu_control_class_request);
+        dfu_control_class_request);        
 }
 
 void dfu_setup(usbd_device* usbd_dev,

@@ -485,13 +485,30 @@ static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE] __attribute__ ((aligned
 //  TODO: static uint8_t usbd_control_buffer[256] __attribute__ ((aligned (2)));
 usbd_device* usbd_dev = NULL;
 
+static void msc_tx_callback(usbd_device *dev, uint8_t ep) {
+    debug_print("msc_tx_callback "); debug_print_int(ep); debug_println(""); debug_flush();
+}
+
+static void msc_rx_callback(usbd_device *dev, uint8_t ep) {
+    debug_print("msc_rx_callback "); debug_print_int(ep); debug_println(""); debug_flush();
+}
+
+static void msc_set_config(usbd_device *dev, uint16_t wValue) {
+    debug_print("msc_set_config "); debug_print_int(wValue); debug_println("");
+	(void)wValue;
+	usbd_ep_setup(dev, MSC_IN,  USB_ENDPOINT_ATTR_INTERRUPT, 64, msc_tx_callback);
+	usbd_ep_setup(dev, MSC_OUT, USB_ENDPOINT_ATTR_INTERRUPT, 64, msc_rx_callback);
+}
+
 usbd_device* usb_setup(void) {
     int num_strings = sizeof(usb_strings)/sizeof(const char*);
-    debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); debug_flush(); ////
+    debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); // debug_flush(); ////
     const usbd_driver* driver = target_usb_init();
     usbd_dev = usbd_init(driver, &dev, &config, 
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
+    // usbd_register_set_config_callback(usbd_dev, msc_set_config);
+
     dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
     msc_setup(usbd_dev);
 	usb21_setup(usbd_dev, &bos_descriptor);
