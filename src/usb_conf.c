@@ -239,7 +239,7 @@ void sys_tick_handler(void) {
 
 #endif  //  RAM_DISK
 
-// #define NEW_USB
+#define NEW_USB
 #ifdef NEW_USB
 //  From https://github.com/libopencm3/libopencm3-examples/blob/master/examples/stm32/f4/stm32f4-discovery/usb_msc/msc.c
 
@@ -263,14 +263,14 @@ static const struct usb_device_descriptor dev_descr = {
 static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
-	.bEndpointAddress = 0x01,
+	.bEndpointAddress = MSC_OUT,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
 	.wMaxPacketSize = 64,
 	.bInterval = 0,
 }, {
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
-	.bEndpointAddress = 0x82,
+	.bEndpointAddress = MSC_IN,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
 	.wMaxPacketSize = 64,
 	.bInterval = 0,
@@ -308,18 +308,6 @@ static const struct usb_config_descriptor config_descr = {
 	.interface = ifaces,
 };
 
-static const struct usb_config_descriptor config = {
-    .bLength = USB_DT_CONFIGURATION_SIZE,
-    .bDescriptorType = USB_DT_CONFIGURATION,
-    .wTotalLength = 0,
-    .bNumInterfaces = sizeof(ifaces) / sizeof(struct usb_interface),
-    .bConfigurationValue = 1,
-    .iConfiguration = 0,
-    .bmAttributes = 0xC0,
-    .bMaxPower = 0x32,
-    .interface = ifaces,
-};
-
 static const struct usb_device_capability_descriptor* capabilities[] = {
 	(const struct usb_device_capability_descriptor*) 
         &webusb_platform_capability_descriptor,
@@ -352,7 +340,7 @@ usbd_device* usb_setup(void) {
         usbd_control_buffer, sizeof(usbd_control_buffer));
     
 	ramdisk_init();
-	usb_msc_init(msc_dev, 0x82, 64, 0x01, 64, "VendorID", "ProductID", "0.00", 
+	usb_msc_init(msc_dev, MSC_IN, 64, MSC_OUT, 64, "VendorID", "ProductID", "0.00", 
         ramdisk_blocks(), ramdisk_read, ramdisk_write);
         // UF2_NUM_BLOCKS, read_block, write_block);
 
@@ -397,6 +385,18 @@ static const struct usb_device_descriptor dev = {
     .iProduct = 2,
     .iSerialNumber = 3,
     .bNumConfigurations = 1,
+};
+
+static const struct usb_config_descriptor config = {
+    .bLength = USB_DT_CONFIGURATION_SIZE,
+    .bDescriptorType = USB_DT_CONFIGURATION,
+    .wTotalLength = 0,
+    .bNumInterfaces = sizeof(ifaces) / sizeof(struct usb_interface),
+    .bConfigurationValue = 1,
+    .iConfiguration = 0,
+    .bmAttributes = 0xC0,
+    .bMaxPower = 0x32,
+    .interface = ifaces,
 };
 
 static const struct usb_interface_descriptor dfu_iface = {
@@ -541,13 +541,13 @@ void msc_setup(usbd_device* usbd_dev0) {
     );
 }
 
-uint16_t send_msc_packet(const void *buf, int len) {
-    if (!usbd_dev) { return 0; }
-    // return usbd_ep_write_packet(usbd_dev, MSC_IN, buf, len);
-    return usbd_ep_write_packet(usbd_dev, MSC_OUT, buf, len);
-}
-
 #endif  //  NEW_USB
+
+uint16_t send_msc_packet(const void *buf, int len) {
+    if (!msc_dev) { return 0; }
+    // return usbd_ep_write_packet(msc_dev, MSC_IN, buf, len);
+    return usbd_ep_write_packet(msc_dev, MSC_OUT, buf, len);
+}
 
 /* Previously:                                      
 usbd_register_set_config_callback(usbd_dev, set_config);
