@@ -560,7 +560,11 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 			if (trans->byte_count < trans->bytes_to_read) {
 				/* We must wait until there is something to
 				 * read again. */
-                debug_println("msc_data_rx_cb wait"); debug_flush(); ////
+                debug_print("msc_data_rx_cb wait byte_count "); 
+                debug_print_unsigned(trans->byte_count);
+                debug_print(", bytes_to_read "); 
+                debug_print_unsigned(trans->bytes_to_read);
+                debug_println(""); debug_flush(); ////
 				return;
 			}
 		}
@@ -649,7 +653,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 /** @brief Handle the USB 'IN' requests. */
 static void msc_data_tx_cb(usbd_device *usbd_dev, uint8_t ep)
 {
-    debug_println("msc_data_tx_cb"); // debug_flush(); ////
+    // debug_println("msc_data_tx_cb"); // debug_flush(); ////
 	usbd_mass_storage *ms;
 	struct usb_msc_trans *trans;
 	int len, max_len, left;
