@@ -38,6 +38,16 @@ static const char* origin_url = "visualbluepill.github.io";
 // static const char* origin_url = "lupyuen.github.io/pxt-maker";
 // static const char* origin_url = "trezor.io/start";
 
+extern usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
+				 uint8_t ep_in, uint8_t ep_in_size,
+				 uint8_t ep_out, uint8_t ep_out_size,
+				 const char *vendor_id,
+				 const char *product_id,
+				 const char *product_revision_level,
+				 const uint32_t block_count,
+				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
+				 int (*write_block)(uint32_t lba, const uint8_t *copy_from));
+
 static char serial_number[USB_SERIAL_NUM_LENGTH+1];
 
 void usb_set_serial_number(const char* serial) {
@@ -48,7 +58,7 @@ void usb_set_serial_number(const char* serial) {
     }
 }
 
-#define RAM_DISK
+//#define RAM_DISK
 #ifdef RAM_DISK
 #define WBVAL(x) ((x) & 0xFF), (((x) >> 8) & 0xFF)
 #define QBVAL(x) ((x) & 0xFF), (((x) >> 8) & 0xFF),\
@@ -249,7 +259,7 @@ void sys_tick_handler(void) {
 
 #endif  //  RAM_DISK
 
-#define NEW_USB
+//#define NEW_USB
 #ifdef NEW_USB
 //  From https://github.com/libopencm3/libopencm3-examples/blob/master/examples/stm32/f4/stm32f4-discovery/usb_msc/msc.c
 
@@ -344,16 +354,6 @@ static usbd_device *msc_dev;
 static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE];
 // static uint8_t usbd_control_buffer[128];
 
-extern usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
-				 uint8_t ep_in, uint8_t ep_in_size,
-				 uint8_t ep_out, uint8_t ep_out_size,
-				 const char *vendor_id,
-				 const char *product_id,
-				 const char *product_revision_level,
-				 const uint32_t block_count,
-				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
-				 int (*write_block)(uint32_t lba, const uint8_t *copy_from));
-
 usbd_device* usb_setup(void) {
     int num_strings = sizeof(usb_strings) / sizeof(const char*);
     debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); debug_flush(); ////
@@ -362,10 +362,16 @@ usbd_device* usb_setup(void) {
         usb_strings, 3,
         usbd_control_buffer, sizeof(usbd_control_buffer));
     
+#ifdef RAM_DISK	
 	ramdisk_init();
+#endif  //  RAM_DISK
+
 	custom_usb_msc_init(msc_dev, MSC_IN, MAX_PACKET_SIZE, MSC_OUT, MAX_PACKET_SIZE, "VendorID", "ProductID", "0.00", 
+#ifdef RAM_DISK	
         ramdisk_blocks(), ramdisk_read, ramdisk_write);
-        // UF2_NUM_BLOCKS, read_block, write_block);
+#else		
+        UF2_NUM_BLOCKS, read_block, write_block);
+#endif  //  RAM_DISK		
 
     ////dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
 
@@ -373,15 +379,23 @@ usbd_device* usb_setup(void) {
 	webusb_setup(msc_dev, origin_url);
 	winusb_setup(msc_dev, 0);
 
+#ifdef NOTUSED
     //  From https://github.com/thirdpin/pastilda/blob/master/emb/pastilda/usb/usb_device/usbd_composite.cpp
 	cm_disable_interrupts();
     nvic_set_priority(NVIC_OTG_FS_IRQ, 0x01<<7);
 	nvic_enable_irq(NVIC_OTG_FS_IRQ);
     cm_enable_interrupts();
+#endif  //  NOTUSED	
 
     // debug_print("usb_setup ramdisk_blocks "); debug_print_int(ramdisk_blocks()); debug_println(""); debug_flush();
     // debug_println("usb_setup done");  debug_flush();        
     return msc_dev;
+}
+
+uint16_t send_msc_packet(const void *buf, int len) {
+    if (!msc_dev) { return 0; }
+    // return usbd_ep_write_packet(msc_dev, MSC_IN, buf, len);
+    return usbd_ep_write_packet(msc_dev, MSC_OUT, buf, len);
 }
 
 #else
@@ -409,6 +423,7 @@ static const struct usb_device_descriptor dev = {
     .bNumConfigurations = 1,
 };
 
+#ifdef NOTUSED
 static const struct usb_config_descriptor config = {
     .bLength = USB_DT_CONFIGURATION_SIZE,
     .bDescriptorType = USB_DT_CONFIGURATION,
@@ -420,6 +435,7 @@ static const struct usb_config_descriptor config = {
     .bMaxPower = 0x32,
     .interface = ifaces,
 };
+#endif  //  NOTUSED
 
 static const struct usb_interface_descriptor dfu_iface = {
     .bLength = USB_DT_INTERFACE_SIZE,
@@ -554,7 +570,7 @@ void msc_setup(usbd_device* usbd_dev0) {
     ramdisk_init();
 #endif  //  RAM_DISK
     
-    usb_msc_init(usbd_dev0, MSC_IN, 64, MSC_OUT, 64, "Example Ltd", "UF2 Bootloader", "42.00", 
+    custom_usb_msc_init(usbd_dev0, MSC_IN, 64, MSC_OUT, 64, "Example Ltd", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write
 #else
@@ -564,12 +580,6 @@ void msc_setup(usbd_device* usbd_dev0) {
 }
 
 #endif  //  NEW_USB
-
-uint16_t send_msc_packet(const void *buf, int len) {
-    if (!msc_dev) { return 0; }
-    // return usbd_ep_write_packet(msc_dev, MSC_IN, buf, len);
-    return usbd_ep_write_packet(msc_dev, MSC_OUT, buf, len);
-}
 
 /* Previously:                                      
 usbd_register_set_config_callback(usbd_dev, set_config);

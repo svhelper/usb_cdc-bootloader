@@ -521,7 +521,7 @@ static void scsi_command(usbd_mass_storage *ms,
 		scsi_write_10(ms, trans, event);
 		break;
 	default:
-        debug_println("SBC_SENSE_KEY_ILLEGAL_REQUEST"); debug_flush(); ////
+        debug_print("SBC_SENSE_KEY_ILLEGAL_REQUEST "); debug_printhex(trans->cbw.cbw.CBWCB[0]); debug_println(""); debug_flush(); ////
 		set_sbc_status(ms, SBC_SENSE_KEY_ILLEGAL_REQUEST,
 					SBC_ASC_INVALID_COMMAND_OPERATION_CODE,
 					SBC_ASCQ_NA);
