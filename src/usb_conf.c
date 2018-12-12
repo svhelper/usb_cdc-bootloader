@@ -34,7 +34,8 @@
 #include "usb_conf.h"
 #include "uf2.h"
 
-static const char* origin_url = "lupyuen.github.io/pxt-maker";
+static const char* origin_url = "visualbluepill.github.io";
+// static const char* origin_url = "lupyuen.github.io/pxt-maker";
 // static const char* origin_url = "trezor.io/start";
 
 static char serial_number[USB_SERIAL_NUM_LENGTH+1];
