@@ -115,6 +115,7 @@ int main(void) {
                 target_set_led(v < 50);
 
                 ghostfat_1ms();
+                send_msc_packet("", 0);  //  Workaround for MSC hanging.
 
                 if (appValid && !msc_started && msTimer > 1000) {
                     debug_println("target_manifest_app");  debug_flush();

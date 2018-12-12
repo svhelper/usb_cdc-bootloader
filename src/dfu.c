@@ -272,6 +272,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
 }
 
 static void dfu_set_config(usbd_device* usbd_dev, uint16_t wValue) {
+    debug_println("dfu_set_config"); ////
     (void)wValue;
 
     usbd_register_control_callback(
@@ -285,6 +286,7 @@ void dfu_setup(usbd_device* usbd_dev,
                GenericCallback on_manifest_request,
                StateChangeCallback on_state_change,
                StatusChangeCallback on_status_change) {
+    debug_println("dfu_setup"); ////
     dfu_manifest_request_callback = on_manifest_request;
     dfu_state_change_callback = on_state_change;
     dfu_status_change_callback = on_status_change;

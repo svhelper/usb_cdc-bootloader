@@ -21,6 +21,7 @@
 #include <string.h>
 #include <libopencm3/cm3/cortex.h>
 #include <libopencm3/cm3/nvic.h>
+#include <libopencm3/cm3/systick.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/dfu.h>
 #include <libopencm3/usb/msc.h>
@@ -145,13 +146,36 @@ uint8_t DirSector[] = {
 	QBVAL(FILEDATA_SECTOR_COUNT * SECTOR_SIZE)				// file size in bytes
 };
 
+/*
+ * Set up timer to fire every x milliseconds
+ * This is a unusual usage of systick, be very careful with the 24bit range
+ * of the systick counter!  You can range from 1 to 2796ms with this.
+ */
+static void systick_setup(int xms) {
+	/* 72MHz / 8 => 9000000 counts per second */
+	systick_set_clocksource(STK_CSR_CLKSOURCE_AHB_DIV8);
+
+	/* 9000000/9000 = 1000 overflows per second - every 1ms one interrupt */
+	/* SysTick interrupt every N clock pulses: set reload to N-1 */
+	systick_set_reload(8999 * xms);
+
+	systick_interrupt_enable();
+
+	/* Start counting. */
+	systick_counter_enable();
+}
+
 static uint8_t ramdata[FILEDATA_SECTOR_COUNT * SECTOR_SIZE];
 
-int ramdisk_init(void)
-{
-    debug_println("ramdisk_init"); debug_flush(); ////
-	uint32_t i = 0;
+int ramdisk_blocks(void) {
+	return SECTOR_COUNT;
+}
 
+int ramdisk_init(void) {
+    debug_println("ramdisk_init"); debug_flush(); ////
+    // systick_setup(10 * 1000);  //  Workaround
+
+	uint32_t i = 0;
 	// compute checksum in the directory entry
 	uint8_t chk = 0;
 	for (i = 32; i < 43; i++) {
@@ -169,8 +193,7 @@ int ramdisk_init(void)
 	return 0;
 }
 
-int ramdisk_read(uint32_t lba, uint8_t *copy_to)
-{
+int ramdisk_read(uint32_t lba, uint8_t *copy_to) {
     debug_print("ramdisk_read lba "); debug_print_int(lba); debug_println(""); // debug_flush(); ////
 	memset(copy_to, 0, SECTOR_SIZE);
 	switch (lba) {
@@ -196,20 +219,23 @@ int ramdisk_read(uint32_t lba, uint8_t *copy_to)
 	return 0;
 }
 
-int ramdisk_write(uint32_t lba, const uint8_t *copy_from)
-{
-    debug_println("ramdisk_write"); // debug_flush(); ////
-    send_msc_packet("", 0);  //  Workaround.
+static bool ramdisk_written = false;
+
+int ramdisk_write(uint32_t lba, const uint8_t *copy_from) {
+    debug_println("ramdisk_write"); debug_flush(); ////
+    ramdisk_written = true;
 	(void)lba;
 	(void)copy_from;
 	// ignore writes
 	return 0;
 }
 
-int ramdisk_blocks(void)
-{
-	return SECTOR_COUNT;
+void sys_tick_handler(void) {
+    if (!ramdisk_written) { return; }
+    debug_println("tick"); debug_flush(); ////
+    send_msc_packet("", 0);  //  Workaround for MSC hanging.
 }
+
 #endif  //  RAM_DISK
 
 // #define NEW_USB
@@ -466,30 +492,40 @@ usbd_device* usb_setup(void) {
     usbd_dev = usbd_init(driver, &dev, &config, 
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
+    dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
+    msc_setup(usbd_dev);
+	usb21_setup(usbd_dev, &bos_descriptor);
+	webusb_setup(usbd_dev, origin_url);
+	winusb_setup(usbd_dev, 0);
+
+#ifdef NOTUSED
+    //  From https://github.com/thirdpin/pastilda/blob/master/emb/pastilda/usb/usb_device/usbd_composite.cpp
+	cm_disable_interrupts();
+    nvic_set_priority(NVIC_OTG_FS_IRQ, 0x01<<7);
+	nvic_enable_irq(NVIC_OTG_FS_IRQ);
+    cm_enable_interrupts();
+#endif  //  NOTUSED
+    return usbd_dev;
+}
+
+void msc_setup(usbd_device* usbd_dev0) {
+    debug_println("msc_setup"); ////
+#ifdef RAM_DISK
+    ramdisk_init();
+#endif  //  RAM_DISK
     
-    usb_msc_init(usbd_dev, MSC_IN, 64, MSC_OUT, 64, "Example Ltd", "UF2 Bootloader", "42.00", 
+    usb_msc_init(usbd_dev0, MSC_IN, 64, MSC_OUT, 64, "Example Ltd", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write
 #else
         UF2_NUM_BLOCKS, read_block, write_block
 #endif  //  RAM_DISK        
     );
-    dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
-	usb21_setup(usbd_dev, &bos_descriptor);
-	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, 0);
-
-    //  From https://github.com/thirdpin/pastilda/blob/master/emb/pastilda/usb/usb_device/usbd_composite.cpp
-	cm_disable_interrupts();
-    nvic_set_priority(NVIC_OTG_FS_IRQ, 0x01<<7);
-	nvic_enable_irq(NVIC_OTG_FS_IRQ);
-    cm_enable_interrupts();
-
-    return usbd_dev;
 }
 
 uint16_t send_msc_packet(const void *buf, int len) {
     if (!usbd_dev) { return 0; }
+    // return usbd_ep_write_packet(usbd_dev, MSC_IN, buf, len);
     return usbd_ep_write_packet(usbd_dev, MSC_OUT, buf, len);
 }
 

@@ -32,6 +32,7 @@
 
 extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);
-uint16_t send_msc_packet(const void *buf, int len);
+extern void msc_setup(usbd_device* usbd_dev0);
+extern uint16_t send_msc_packet(const void *buf, int len);
 
 #endif
