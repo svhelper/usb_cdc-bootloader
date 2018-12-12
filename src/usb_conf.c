@@ -55,7 +55,7 @@ void usb_set_serial_number(const char* serial) {
 		 (((x) >> 16) & 0xFF), (((x) >> 24) & 0xFF)
 
 // filesystem size is 512kB (1024 * SECTOR_SIZE)
-#define SECTOR_COUNT		1024
+// #define SECTOR_COUNT		1024
 #define SECTOR_SIZE		512
 #define BYTES_PER_SECTOR	512
 #define SECTORS_PER_CLUSTER	4
@@ -69,7 +69,7 @@ void usb_set_serial_number(const char* serial) {
 #define FILEDATA_START_SECTOR	(DATA_REGION_SECTOR + \
 			(FILEDATA_START_CLUSTER - 2) * SECTORS_PER_CLUSTER)
 
-#define FILEDATA_SECTOR_COUNT	16
+#define FILEDATA_SECTOR_COUNT	8
 // filesize is 64kB (128 * SECTOR_SIZE)
 // #define FILEDATA_SECTOR_COUNT	128
 
@@ -81,7 +81,8 @@ uint8_t BootSector[] = {
 	WBVAL(RESERVED_SECTORS),				// # of reserved sectors (1 boot sector)
 	FAT_COPIES,						// FAT copies (2)
 	WBVAL(ROOT_ENTRIES),					// root entries (512)
-	WBVAL(SECTOR_COUNT),					// total number of sectors
+	WBVAL(FILEDATA_SECTOR_COUNT),					// total number of sectors
+	// WBVAL(SECTOR_COUNT),					// total number of sectors
 	0xF8,							// media descriptor (0xF8 = Fixed disk)
 	0x01, 0x00,						// sectors per FAT (1)
 	0x20, 0x00,						// sectors per track (32)
@@ -169,7 +170,8 @@ static void systick_setup(int xms) {
 static uint8_t ramdata[FILEDATA_SECTOR_COUNT * SECTOR_SIZE];
 
 int ramdisk_blocks(void) {
-	return SECTOR_COUNT;
+	return FILEDATA_SECTOR_COUNT;
+	// return SECTOR_COUNT;
 }
 
 int ramdisk_init(void) {
