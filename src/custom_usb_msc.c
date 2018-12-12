@@ -384,7 +384,7 @@ static bool SCSI_Command_Read_Format_Compacities(
 		trans->msd_buf[7] = 0xff & ms->block_count;
 
 		/* Block size: 512 */
-		trans->msd_buf[8] = 0;
+		trans->msd_buf[8] = 2;  // Descriptor code is  0x02 which means Formatted Media
 		trans->msd_buf[9] = 0;
 		trans->msd_buf[10] = 2;
 		trans->msd_buf[11] = 0;
