@@ -538,7 +538,7 @@ static void scsi_command(usbd_mass_storage *ms,
 /** @brief Handle the USB 'OUT' requests. */
 static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 {
-    debug_println("msc_data_rx_cb"); // debug_flush(); ////
+    // debug_println("msc_data_rx_cb"); // debug_flush(); ////
 	usbd_mass_storage *ms;
 	struct usb_msc_trans *trans;
 	int len, max_len, left;
@@ -565,6 +565,8 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
                 debug_print(", bytes_to_read "); 
                 debug_print_unsigned(trans->bytes_to_read);
                 debug_println(""); debug_flush(); ////
+
+                usbd_ep_write_packet(usbd_dev, ms->ep_in, "", 0); //// Workaround
 				return;
 			}
 		}
@@ -646,6 +648,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 			p = &trans->csw.buf[trans->csw_sent];
 			len = usbd_ep_write_packet(usbd_dev, ms->ep_in, p, max_len);
 			trans->csw_sent += len;
+            usbd_ep_write_packet(usbd_dev, ms->ep_in, "", 0); //// Workaround
 		}
 	}
 }
