@@ -55,11 +55,11 @@ void usb_set_serial_number(const char* serial) {
 		 (((x) >> 16) & 0xFF), (((x) >> 24) & 0xFF)
 
 // filesystem size is (1024kB * SECTOR_SIZE)
-#define SECTOR_COUNT		32
-// #define SECTOR_COUNT		1024
+// #define SECTOR_COUNT		64
+#define SECTOR_COUNT		1024
 
-#define FILEDATA_SECTOR_COUNT	16
 // filesize is (128kB * SECTOR_SIZE)
+#define FILEDATA_SECTOR_COUNT	16
 // #define FILEDATA_SECTOR_COUNT	128
 
 #define SECTOR_SIZE		512
@@ -146,7 +146,7 @@ uint8_t DirSector[] = {
 	0xCE, 0x01,								// last write time
 	0x86, 0x41,								// last write date
 	WBVAL(FILEDATA_START_CLUSTER),						// start cluster
-	QBVAL(SECTOR_COUNT * SECTOR_SIZE)				// file size in bytes
+	QBVAL(FILEDATA_SECTOR_COUNT * SECTOR_SIZE)			// file size in bytes
 };
 
 static void sleep_us(int us){
@@ -269,19 +269,22 @@ static const struct usb_device_descriptor dev_descr = {
 	.bNumConfigurations = 1,
 };
 
+//#define MAX_PACKET_SIZE 64
+#define MAX_PACKET_SIZE 32
+
 static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
 	.bEndpointAddress = MSC_OUT,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
-	.wMaxPacketSize = 64,
+	.wMaxPacketSize = MAX_PACKET_SIZE,
 	.bInterval = 0,
 }, {
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
 	.bEndpointAddress = MSC_IN,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
-	.wMaxPacketSize = 64,
+	.wMaxPacketSize = MAX_PACKET_SIZE,
 	.bInterval = 0,
 }};
 
@@ -359,7 +362,7 @@ usbd_device* usb_setup(void) {
         usbd_control_buffer, sizeof(usbd_control_buffer));
     
 	ramdisk_init();
-	custom_usb_msc_init(msc_dev, MSC_IN, 64, MSC_OUT, 64, "VendorID", "ProductID", "0.00", 
+	custom_usb_msc_init(msc_dev, MSC_IN, MAX_PACKET_SIZE, MSC_OUT, MAX_PACKET_SIZE, "VendorID", "ProductID", "0.00", 
         ramdisk_blocks(), ramdisk_read, ramdisk_write);
         // UF2_NUM_BLOCKS, read_block, write_block);
 
