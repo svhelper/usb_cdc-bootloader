@@ -331,6 +331,16 @@ static usbd_device *msc_dev;
 static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE];
 // static uint8_t usbd_control_buffer[128];
 
+extern usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
+				 uint8_t ep_in, uint8_t ep_in_size,
+				 uint8_t ep_out, uint8_t ep_out_size,
+				 const char *vendor_id,
+				 const char *product_id,
+				 const char *product_revision_level,
+				 const uint32_t block_count,
+				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
+				 int (*write_block)(uint32_t lba, const uint8_t *copy_from));
+
 usbd_device* usb_setup(void) {
     int num_strings = sizeof(usb_strings) / sizeof(const char*);
     debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); debug_flush(); ////
@@ -340,11 +350,10 @@ usbd_device* usb_setup(void) {
         usbd_control_buffer, sizeof(usbd_control_buffer));
     
 	ramdisk_init();
-	usb_msc_init(msc_dev, MSC_IN, 64, MSC_OUT, 64, "VendorID", "ProductID", "0.00", 
+	custom_usb_msc_init(msc_dev, MSC_IN, 64, MSC_OUT, 64, "VendorID", "ProductID", "0.00", 
         ramdisk_blocks(), ramdisk_read, ramdisk_write);
         // UF2_NUM_BLOCKS, read_block, write_block);
 
-    ////debug_println("bootloader dfu_setup");  debug_flush();
     ////dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
 
 	usb21_setup(msc_dev, &bos_descriptor);
