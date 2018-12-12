@@ -59,7 +59,8 @@ void usb_set_serial_number(const char* serial) {
 #define SECTOR_COUNT		1024
 
 // filesize is (128kB * SECTOR_SIZE)
-#define FILEDATA_SECTOR_COUNT	16
+#define FILEDATA_SECTOR_COUNT	1
+// #define FILEDATA_SECTOR_COUNT	16
 // #define FILEDATA_SECTOR_COUNT	128
 
 #define SECTOR_SIZE		512
@@ -232,7 +233,7 @@ int ramdisk_read(uint32_t lba, uint8_t *copy_to) {
 static bool ramdisk_written = false;
 
 int ramdisk_write(uint32_t lba, const uint8_t *copy_from) {
-    debug_println("ramdisk_write"); debug_flush(); ////
+    debug_print("ramdisk_write lba "); debug_print_int(lba); debug_println(""); // debug_flush(); ////
     ramdisk_written = true;
 	(void)lba;
 	(void)copy_from;
