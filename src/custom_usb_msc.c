@@ -555,8 +555,21 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 		len = usbd_ep_read_packet(usbd_dev, ep, p, max_len);
 		trans->cbw_cnt += len;
 
+        debug_print("msc_data_rx_cb len "); 
+        debug_print_unsigned(len);
+        debug_println(""); debug_flush(); ////
+
 		if (sizeof(struct usb_msc_cbw) == trans->cbw_cnt) {
 			scsi_command(ms, trans, EVENT_CBW_VALID);
+
+            debug_print("msc_data_rx_cb byte_count "); 
+            debug_print_unsigned(trans->byte_count);
+            debug_print(", bytes_to_read "); 
+            debug_print_unsigned(trans->bytes_to_read);
+            debug_print(", CBWCB "); 
+            debug_printhex(trans->cbw.cbw.CBWCB[0]);
+            debug_println(""); debug_flush(); ////
+
 			if (trans->byte_count < trans->bytes_to_read) {
 				/* We must wait until there is something to
 				 * read again. */
