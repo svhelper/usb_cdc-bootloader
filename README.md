@@ -5,6 +5,8 @@ See https://medium.com/@ly.lee/work-in-progress-stm32-blue-pill-visual-programmi
 
 WebUSB and WinUSB implementation from https://github.com/trezor/trezor-mcu
 
+USB MSC patch from https://habr.com/company/thirdpin/blog/304924/
+
 ## Build instructions
 
 
