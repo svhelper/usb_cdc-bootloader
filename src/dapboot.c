@@ -78,8 +78,8 @@ int main(void) {
     }
 #endif  //  SKIP_BOOTLOADER         
     
-    enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
-    //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
+    // enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
+    disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
     platform_setup();     //  STM32 platform setup.
     debug_println("----bootloader");  debug_flush();
     
@@ -115,7 +115,7 @@ int main(void) {
                 target_set_led(v < 50);
 
                 ghostfat_1ms();
-                send_msc_packet("", 0);  //  Workaround for MSC hanging.
+                //send_msc_packet("", 0);  //  Workaround for MSC hanging.
 
                 if (appValid && !msc_started && msTimer > 1000) {
                     debug_println("target_manifest_app");  debug_flush();
