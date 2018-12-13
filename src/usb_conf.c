@@ -30,26 +30,25 @@
 #include <logger.h>
 #include "target.h"
 #include "dfu.h"
+#include "cdc.h"
 #include "webusb.h"
 #include "winusb.h"
 #include "usb21_standard.h"
 #include "usb_conf.h"
 #include "uf2.h"
 
-#define MAX_PACKET_SIZE 64
-
 static const char* origin_url = "visualbluepill.github.io";
 
 static char serial_number[USB_SERIAL_NUM_LENGTH+1];
 
 static const char *usb_strings[] = {
-    "Devanarchy",              //  Manufacturer
-    "DAPBoot DFU Bootloader",  //  Product
+    "Devanarchy",              //  USB Manufacturer
+    "DAPBoot DFU Bootloader",  //  USB Product
     serial_number,             //  Serial number
-    "DAPBoot DFU"              //  DFU
+    "Blue Pill DFU"            //  DFU
 };
 
-enum usb_strings_index {  //  Must sync with above, starts from 1.
+enum usb_strings_index {  //  Index of USB strings.  Must sync with above, starts from 1.
     USB_STRINGS_MANUFACTURER = 1,
     USB_STRINGS_PRODUCT,
     USB_STRINGS_SERIAL_NUMBER,
@@ -74,10 +73,10 @@ static const struct usb_device_descriptor dev = {
     .bDeviceClass = 0,
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
-    .bMaxPacketSize0 = MAX_PACKET_SIZE,
+    .bMaxPacketSize0 = MAX_USB_PACKET_SIZE,
     .idVendor = USB_VID,
     .idProduct = USB_PID,
-    .bcdDevice = 0x0120,  //  Release number 1.2
+    .bcdDevice = 0x0210,  //  Release number 2.1
     .iManufacturer = USB_STRINGS_MANUFACTURER,
     .iProduct = USB_STRINGS_PRODUCT,
     .iSerialNumber = USB_STRINGS_SERIAL_NUMBER,
@@ -90,14 +89,14 @@ static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.bDescriptorType = USB_DT_ENDPOINT,
 	.bEndpointAddress = MSC_OUT,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
-	.wMaxPacketSize = MAX_PACKET_SIZE,
+	.wMaxPacketSize = MAX_USB_PACKET_SIZE,
 	.bInterval = 0,
 }, {
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
 	.bEndpointAddress = MSC_IN,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
-	.wMaxPacketSize = MAX_PACKET_SIZE,
+	.wMaxPacketSize = MAX_USB_PACKET_SIZE,
 	.bInterval = 0,
 }};
 
@@ -125,14 +124,14 @@ static const struct usb_endpoint_descriptor data_endp[] = {
 		.bDescriptorType = USB_DT_ENDPOINT,
 		.bEndpointAddress = DATA_OUT,
 		.bmAttributes = USB_ENDPOINT_ATTR_BULK,
-		.wMaxPacketSize = MAX_PACKET_SIZE,
+		.wMaxPacketSize = MAX_USB_PACKET_SIZE,
 		.bInterval = 1,
 	}, {
 		.bLength = USB_DT_ENDPOINT_SIZE,
 		.bDescriptorType = USB_DT_ENDPOINT,
 		.bEndpointAddress = DATA_IN,
 		.bmAttributes = USB_ENDPOINT_ATTR_BULK,
-		.wMaxPacketSize = MAX_PACKET_SIZE,
+		.wMaxPacketSize = MAX_USB_PACKET_SIZE,
 		.bInterval = 1,
 	}
 };
@@ -236,16 +235,16 @@ static const struct usb_interface_descriptor data_iface = {
 //  All USB Interfaces
 static const struct usb_interface interfaces[] = {{
     .num_altsetting = 1,
-    .altsetting = &dfu_iface,
+    .altsetting = &dfu_iface,  //  Index must sync with INTF_DFU.
 }, {
     .num_altsetting = 1,
-    .altsetting = &msc_iface,
+    .altsetting = &msc_iface,  //  Index must sync with INTF_MSC.
 }, 	{
     .num_altsetting = 1,
-    .altsetting = &comm_iface,
+    .altsetting = &comm_iface,  //  Index must sync with INTF_COMM.
 }, {
     .num_altsetting = 1,
-    .altsetting = &data_iface,
+    .altsetting = &data_iface,  //  Index must sync with INTF_DATA.
 }};
 
 //  USB Config
@@ -289,9 +288,10 @@ usbd_device* usb_setup(void) {
 
     dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
     msc_setup(usbd_dev);
+    cdc_setup(usbd_dev);
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, 0);
+	winusb_setup(usbd_dev, INTF_DFU);
     return usbd_dev;
 }
 
@@ -301,7 +301,7 @@ void msc_setup(usbd_device* usbd_dev0) {
     ramdisk_init();
 #endif  //  RAM_DISK
     
-    custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_PACKET_SIZE, MSC_OUT, MAX_PACKET_SIZE, 
+    custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_USB_PACKET_SIZE, MSC_OUT, MAX_USB_PACKET_SIZE, 
         "Blue Pill", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write

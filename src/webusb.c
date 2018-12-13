@@ -64,6 +64,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 			struct webusb_url_descriptor* url = (struct webusb_url_descriptor*)(*buf);
 			uint16_t index = req->wValue;
 			if (index == 0) {
+    			debug_print("USBD_REQ_NOTSUPP index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
 				return USBD_REQ_NOTSUPP;
 			}
 
@@ -77,11 +78,13 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 				status = USBD_REQ_HANDLED;
 			} else {
 				// TODO: stall instead?
+    			debug_print("USBD_REQ_NOTSUPP index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
 				status = USBD_REQ_NOTSUPP;
 			}
 			break;
 		}
 		default: {
+    		debug_print("USBD_REQ_NOTSUPP wIndex "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
 			status = USBD_REQ_NOTSUPP;
 			break;
 		}
@@ -91,6 +94,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 }
 
 static void webusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
+    debug_println("webusb_set_config"); // debug_flush(); ////
 	(void)wValue;
 	usbd_register_control_callback(
 		usbd_dev,
@@ -100,7 +104,7 @@ static void webusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void webusb_setup(usbd_device* usbd_dev, const char* https_url) {
-    debug_println("webusb_setup"); debug_flush(); ////
+    debug_println("webusb_setup"); // debug_flush(); ////
 	webusb_https_url = https_url;
 	usbd_register_set_config_callback(usbd_dev, webusb_set_config);
 }

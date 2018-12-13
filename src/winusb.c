@@ -125,6 +125,11 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		status = USBD_REQ_HANDLED;
 
 	} else {
+		if ((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) {
+    		debug_print("winusb NOTSUPP device "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
+		} else {
+    		debug_print("winusb NOTSUPP iface "); debug_print_unsigned(usb_descriptor_index(req->wValue)); debug_println(""); debug_flush(); ////
+		}
 		status = USBD_REQ_NOTSUPP;
 	}
 
@@ -141,9 +146,10 @@ static void winusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
-	debug_println("winusb_setup"); debug_flush(); ////
+	debug_println("winusb_setup"); // debug_flush(); ////
 	winusb_wcid.functions[0].bInterfaceNumber = interface;
 
+    // usbd_register_extra_string(usbd_dev, 0xEE, "MSFT100!");  //  TOOD: Is this needed?
 	usbd_register_set_config_callback(usbd_dev, winusb_set_config);
 
 	/* Windows probes the compatible ID before setting the configuration,
