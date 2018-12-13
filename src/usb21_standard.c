@@ -64,24 +64,21 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 											usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-    if (req->wIndex != INTF_DFU) {
-		//  Not for my interface.  Hand off to next interface.
+	int descr_type = req->wValue >> 8;
+    if (req->wIndex != INTF_DFU || descr_type != USB_DT_BOS) {
+		//  Not for my interface or not BOS.  Hand off to next interface.
         return USBD_REQ_NEXT_CALLBACK;
     }
+	if (!usb21_bos) {
+		debug_println("*** usb21_descriptor no bos "); debug_flush(); ////
+		return USBD_REQ_NOTSUPP;
+	}
     debug_print("usb21_descriptor "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
-		int descr_type = req->wValue >> 8;
-		if (descr_type == USB_DT_BOS) {
-			if (!usb21_bos) {
-    			debug_println("*** usb21_descriptor no bos "); debug_flush(); ////
-				return USBD_REQ_NOTSUPP;
-			}
-			*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));
-			return USBD_REQ_HANDLED;
-		}
+		*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));
+		return USBD_REQ_HANDLED;
 	}
-
-    debug_print("usb21_descriptor notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
+    debug_print("usb21_descriptor next "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
@@ -96,7 +93,7 @@ static void usb21_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_object_store) {
-    debug_println("usb21_setup"); // debug_flush(); ////
+    // debug_println("usb21_setup"); // debug_flush(); ////
 	usb21_bos = binary_object_store;
 
 	/* Register the control request handler _before_ the config is set */

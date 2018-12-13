@@ -100,7 +100,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 			return USBD_REQ_HANDLED;
 		}
 	}
-    debug_print("winusb_descriptor notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
+    debug_print("winusb_descriptor next "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
