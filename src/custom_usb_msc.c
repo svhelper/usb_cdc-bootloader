@@ -28,6 +28,7 @@
 #include <libopencm3/usb/msc.h>
 #include <logger.h>
 #include "custom_usb_private.h"
+#include "usb_conf.h"
 
 /* Definitions of Mass Storage Class from:
  *
@@ -825,7 +826,7 @@ static void msc_set_config(usbd_device *usbd_dev, uint16_t wValue)
 	usbd_ep_setup(usbd_dev, ms->ep_out, USB_ENDPOINT_ATTR_BULK,
 		      ms->ep_out_size, msc_data_rx_cb);
 
-	int status = usbd_register_control_callback(
+	int status = aggregate_register_callback(
 				usbd_dev,
 				USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
 				USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
