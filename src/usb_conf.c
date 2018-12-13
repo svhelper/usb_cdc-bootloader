@@ -1,3 +1,4 @@
+//  CDC code from https://github.com/Apress/Beg-STM32-Devel-FreeRTOS-libopencm3-GCC/blob/master/rtos/usbcdcdemo/usbcdc.c
 /*
  * Copyright (c) 2016, Devan Lai
  *
@@ -44,8 +45,15 @@ static char serial_number[USB_SERIAL_NUM_LENGTH+1];
 static const char *usb_strings[] = {
     "Devanarchy",              //  Manufacturer
     "DAPBoot DFU Bootloader",  //  Product
-    serial_number,
-    "DAPBoot DFU"
+    serial_number,             //  Serial number
+    "DAPBoot DFU"              //  DFU
+};
+
+enum usb_strings_index {  //  Must sync with above, starts from 1.
+    USB_STRINGS_MANUFACTURER = 1,
+    USB_STRINGS_PRODUCT,
+    USB_STRINGS_SERIAL_NUMBER,
+    USB_STRINGS_DFU,
 };
 
 extern usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
@@ -66,13 +74,13 @@ static const struct usb_device_descriptor dev = {
     .bDeviceClass = 0,
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
-    .bMaxPacketSize0 = 64,
+    .bMaxPacketSize0 = MAX_PACKET_SIZE,
     .idVendor = USB_VID,
     .idProduct = USB_PID,
-    .bcdDevice = 0x0110,
-    .iManufacturer = 1,
-    .iProduct = 2,
-    .iSerialNumber = 3,
+    .bcdDevice = 0x0120,  //  Release number 1.2
+    .iManufacturer = USB_STRINGS_MANUFACTURER,
+    .iProduct = USB_STRINGS_PRODUCT,
+    .iSerialNumber = USB_STRINGS_SERIAL_NUMBER,
     .bNumConfigurations = 1,
 };
 
@@ -174,7 +182,7 @@ static const struct usb_interface_descriptor dfu_iface = {
     .bInterfaceClass = 0xFE,
     .bInterfaceSubClass = 1,
     .bInterfaceProtocol = 2,
-    .iInterface = 4,
+    .iInterface = USB_STRINGS_DFU,  //  Name of DFU
     .endpoint = NULL,
     .extra = &dfu_function,
     .extralen = sizeof(dfu_function),
@@ -248,7 +256,7 @@ static const struct usb_config_descriptor config = {
     .bNumInterfaces = sizeof(interfaces) / sizeof(struct usb_interface),
     .bConfigurationValue = 1,
     .iConfiguration = 0,
-    .bmAttributes = 0xC0,
+    .bmAttributes = 0x80,  ////  TODO: Should be 0x80 not 0xC0.  Self-powered, i.e. it draws power from USB bus.
     .bMaxPower = 0x32,
     .interface = interfaces,
 };
@@ -293,7 +301,8 @@ void msc_setup(usbd_device* usbd_dev0) {
     ramdisk_init();
 #endif  //  RAM_DISK
     
-    custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_PACKET_SIZE, MSC_OUT, MAX_PACKET_SIZE, "Example Ltd", "UF2 Bootloader", "42.00", 
+    custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_PACKET_SIZE, MSC_OUT, MAX_PACKET_SIZE, 
+        "Blue Pill", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write
 #else
