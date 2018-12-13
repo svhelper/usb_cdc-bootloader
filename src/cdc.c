@@ -147,7 +147,7 @@ cdcacm_set_config(
 		NULL);
 #endif  //  NOTUSED
 
-	int status = aggregate_register_callback(
+	int status = usbd_register_control_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,
 		CONTROL_CALLBACK_MASK,
