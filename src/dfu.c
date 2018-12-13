@@ -129,7 +129,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
                                      usbd_control_complete_callback* complete) {
 	dump_usb_request("dfu_control", req); ////
     if (req->wIndex != INTF_DFU) {
-        return USBD_REQ_NEXT_CALLBACK;
+        ////return USBD_REQ_NEXT_CALLBACK;
     }
     debug_print("dfu_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
     int status = USBD_REQ_HANDLED;

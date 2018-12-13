@@ -69,7 +69,7 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 	(void)usbd_dev;
 	dump_usb_request("usb21_descriptor", req); ////
 	if ((req->bmRequestType & DESCRIPTOR_CALLBACK_MASK) != DESCRIPTOR_CALLBACK_TYPE) {
-		return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
+		////return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
 	}
 	int descr_type = req->wValue >> 8;
     if (descr_type != USB_DT_BOS) {

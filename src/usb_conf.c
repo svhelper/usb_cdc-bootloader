@@ -313,6 +313,52 @@ void msc_setup(usbd_device* usbd_dev0) {
     );
 }
 
+struct control_callback_struct {
+    uint8_t type;
+    uint8_t type_mask;
+    usbd_control_callback cb;
+};
+
+#define MAX_CONTROL_CALLBACK 10
+static struct control_callback_struct control_callback[MAX_CONTROL_CALLBACK];
+
+/* Register application callback function for handling USB control requests.  We aggregate here so we can handle more than 4 callbacks.  */
+int aggregate_register_control_callback(
+    usbd_device *usbd_dev, 
+    uint8_t type,
+    uint8_t type_mask,
+    usbd_control_callback callback)
+{
+	int i;
+	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
+		if (control_callback[i].cb) { continue; }
+		control_callback[i].type = type;
+		control_callback[i].type_mask = type_mask;
+		control_callback[i].cb = callback;
+		return 0;
+	}
+    debug_println("*** ERROR: Too many control callbacks"); debug_flush();
+	return -1;
+}
+
+#ifdef NOTUSED
+static void set_aggregate_callback(
+  usbd_device *usbd_dev,
+  uint16_t wValue __attribute__((unused))
+) {
+    debug_println("set_aggregate_callback"); ////
+    //  Find all unique combinations of type and type_mask and register them.
+	int status = usbd_register_control_callback(
+		usbd_dev,
+		type,
+		type_mask,
+		aggregate_callback);
+	if (status < 0) {
+    	debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush();
+	}
+}
+#endif  //  NOTUSED
+
 void usb_set_serial_number(const char* serial) {
     serial_number[0] = '\0';
     if (serial) {
@@ -329,3 +375,141 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
     debug_print(", idx "); debug_print_unsigned(req->wIndex);
     debug_println("");
 }
+
+/*
+> Executing task in folder bluepill-bootloader: c:\openocd\bin\openocd -f interface/stlink-v2.cfg -f target/stm32f1x.cfg -f scripts/connect.ocd <
+
+GNU MCU Eclipse 64-bits Open On-Chip Debugger 0.10.0+dev-00487-gaf359c18 (2018-05-12-19:30)
+Licensed under GNU GPL v2
+For bug reports, read
+                                                                                                              http://openocd.org/doc/doxygen/bugs.html
+WARNING: interface/stlink-v2.cfg is deprecated, please switch to interface/stlink.cfg
+Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
+Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
+adapter speed: 1000 kHz
+adapter_nsrst_delay: 100
+none separate
+debug_level: 0
+semihosting is enabled
+NOTE: Trash this window before uploading a program to the Blue Pill
+Restarting the Blue Pill...
+----platform_setup
+----bootloader
+bootloader target_get_force_bootloader
+bootloader target_get_serial_number
+bootloader usb_set_serial_number
+bootloader usb_setup
+usb_setup num_strings 4
+*** cdc_setup
+usb21_set_config
+bootloader loop
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+winusb_descriptor type 0x80, req 0x06, val 256, idx 0
+winusb_descriptor 0
+winusb_descriptor next 6
+winusb_descriptor type 0x00, req 0x05, val 5, idx 0
+winusb_descriptor 0
+winusb_descriptor next 5
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+winusb_descriptor type 0x80, req 0x06, val 256, idx 0
+winusb_descriptor 0
+winusb_descriptor next 6
+usb21_descriptor type 0x80, req 0x06, val 512, idx 0
+winusb_descriptor type 0x80, req 0x06, val 512, idx 0
+winusb_descriptor 0
+winusb_descriptor next 6
+usb21_descriptor type 0x80, req 0x06, val 3840, idx 0
+usb21_descriptor 0
+usb21_descriptor type 0x80, req 0x06, val 3840, idx 0
+usb21_descriptor 0
+usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
+winusb_descriptor type 0x80, req 0x06, val 771, idx 1033
+winusb_descriptor 1033
+winusb_descriptor next 6
+usb21_descriptor type 0x80, req 0x06, val 768, idx 0
+winusb_descriptor type 0x80, req 0x06, val 768, idx 0
+winusb_descriptor 0
+winusb_descriptor next 6
+usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor 1033
+winusb_descriptor next 6
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+winusb_descriptor type 0x80, req 0x06, val 256, idx 0
+winusb_descriptor 0
+winusb_descriptor next 6
+usb21_descriptor type 0x80, req 0x06, val 512, idx 0
+winusb_descriptor type 0x80, req 0x06, val 512, idx 0
+winusb_descriptor 0
+winusb_descriptor next 6
+usb21_descriptor type 0x80, req 0x06, val 512, idx 0
+winusb_descriptor type 0x80, req 0x06, val 512, idx 0
+winusb_descriptor 0
+winusb_descriptor next 6
+winusb_descriptor type 0x00, req 0x09, val 1, idx 0
+winusb_descriptor 0
+winusb_descriptor next 9
+*** cdcacm_set_config
+usb21_set_config
+webusb_set_config
+winusb_set_config
+webusb_control type 0xc0, req 0x21, val 0, idx 4
+winusb_control type 0xc0, req 0x21, val 0, idx 4
+usb21_descriptor type 0x80, req 0x06, val 772, idx 1033
+usb21_descriptor type 0x80, req 0x06, val 772, idx 1033
+winusb_control type 0xc1, req 0x21, val 0, idx 5
+usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
+usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_control type 0xc1, req 0x21, val 1, idx 5
+usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
+usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_control type 0xc1, req 0x21, val 2, idx 5
+usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
+usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_control type 0xc1, req 0x21, val 3, idx 5
+usb21_descriptor type 0x80, req 0x06, val 768, idx 0
+usb21_descriptor type 0x80, req 0x06, val 768, idx 0
+usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
+usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
+*** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
+*** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
+*** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+*** cdcacm_set_config
+usb21_set_config
+webusb_set_config
+winusb_set_config
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+*** cdcacm_set_config
+usb21_set_config
+webusb_set_config
+winusb_set_config
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+*** cdcacm_set_config
+usb21_set_config
+webusb_set_config
+winusb_set_config
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+*** cdcacm_set_config
+usb21_set_config
+webusb_set_config
+winusb_set_config
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+*** cdcacm_set_config
+usb21_set_config
+webusb_set_config
+winusb_set_config
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+usb21_descriptor type 0x80, req 0x06, val 256, idx 0
+*** cdcacm_set_config
+usb21_set_config
+webusb_set_config
+winusb_set_config
+usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
+usb21_descriptor
+*/

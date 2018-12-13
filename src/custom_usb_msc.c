@@ -792,7 +792,7 @@ static int msc_control_request(usbd_device *usbd_dev,
 	dump_usb_request("msc_control", req); ////
     if (req->wIndex != msc_interface_index) {
 		//  Not for my interface.  Hand off to next interface.
-        return USBD_REQ_NEXT_CALLBACK;
+        ////return USBD_REQ_NEXT_CALLBACK;
     }
     debug_print("msc_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
 	(void)complete;

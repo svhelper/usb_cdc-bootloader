@@ -59,7 +59,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 	(void)usbd_dev;
 	dump_usb_request("webusb_control", req); ////
 	if ((req->bmRequestType & CONTROL_CALLBACK_MASK) != CONTROL_CALLBACK_TYPE) {
-		return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
+		////return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
 	}
 	if (req->bRequest != WEBUSB_VENDOR_CODE) {
 		return USBD_REQ_NEXT_CALLBACK;

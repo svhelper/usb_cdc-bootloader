@@ -24,11 +24,11 @@ cdcacm_control_request(
 ) {
 	dump_usb_request("*** cdcacm_control", req); ////
 	if ((req->bmRequestType & CONTROL_CALLBACK_MASK) != CONTROL_CALLBACK_TYPE) {
-		return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
+		////return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
 	}
     if (req->wIndex != INTF_COMM && req->wIndex != INTF_DATA) {
 		//  Not for my interface.  Hand off to next interface.
-        return USBD_REQ_NEXT_CALLBACK;
+        ////return USBD_REQ_NEXT_CALLBACK;
     }
     debug_print("*** cdcacm_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
 	switch (req->bRequest) {
