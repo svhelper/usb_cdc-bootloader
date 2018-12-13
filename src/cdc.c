@@ -105,6 +105,21 @@ cdcacm_data_rx_cb(
 */
 }
 
+static enum usbd_request_return_codes
+dump_control_request(
+  usbd_device *usbd_dev __attribute__((unused)),
+  struct usb_setup_data *req,
+  uint8_t **buf __attribute__((unused)),
+  uint16_t *len,
+  void (**complete)(
+    usbd_device *usbd_dev,
+    struct usb_setup_data *req
+  ) __attribute__((unused))
+) {
+	dump_usb_request(">> ", req); ////
+	return USBD_REQ_NEXT_CALLBACK;
+}
+
 /*
  * USB Configuration:
  */
@@ -140,6 +155,16 @@ cdcacm_set_config(
 		cdcacm_control_request);
 	if (status < 0) {
     	debug_println("*** cdcacm_set_config failed"); debug_flush(); ////
+	}
+
+	//  Debug all requests
+	status = usbd_register_control_callback(
+		usbd_dev,
+		0,
+		0,
+		dump_control_request);
+	if (status < 0) {
+    	debug_println("*** dump_control_request failed"); debug_flush(); ////
 	}
 }
 
