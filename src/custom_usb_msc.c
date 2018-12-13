@@ -809,7 +809,7 @@ static int msc_control_request(usbd_device *usbd_dev,
 		*len = 1;
 		return USBD_REQ_HANDLED;
 	}
-    debug_print("msc_control notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
+    debug_print("*** msc_control notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NOTSUPP;
 }
 
