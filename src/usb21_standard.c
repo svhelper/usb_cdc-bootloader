@@ -19,6 +19,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <logger.h>
+#include "usb_conf.h"
 #include "usb21_standard.h"
 
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
@@ -63,12 +64,16 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 											usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-
+    if (req->wIndex != INTF_DFU) {
+		//  Not for my interface.  Hand off to next interface.
+        return USBD_REQ_NEXT_CALLBACK;
+    }
     debug_print("usb21_descriptor "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
 		int descr_type = req->wValue >> 8;
 		if (descr_type == USB_DT_BOS) {
 			if (!usb21_bos) {
+    			debug_println("*** usb21_descriptor no bos "); debug_flush(); ////
 				return USBD_REQ_NOTSUPP;
 			}
 			*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));

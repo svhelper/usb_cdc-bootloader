@@ -60,7 +60,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 	}
     if (req->wIndex != INTF_DFU) {
 		//  Not for my interface.  Hand off to next interface.
-        ////return USBD_REQ_NEXT_CALLBACK;
+        return USBD_REQ_NEXT_CALLBACK;
     }
     debug_print("webusb_control "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	int status = USBD_REQ_NOTSUPP;
@@ -109,7 +109,7 @@ static void webusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void webusb_setup(usbd_device* usbd_dev, const char* https_url) {
-    debug_println("webusb_setup"); // debug_flush(); ////
+    // debug_println("webusb_setup"); // debug_flush(); ////
 	webusb_https_url = https_url;
 	usbd_register_set_config_callback(usbd_dev, webusb_set_config);
 }

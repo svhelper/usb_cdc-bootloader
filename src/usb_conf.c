@@ -250,13 +250,13 @@ static const struct usb_config_descriptor config = {
     .interface = interfaces,
 };
 
-//  BOS Capabilities
+//  BOS Capabilities for WebUSB
 static const struct usb_device_capability_descriptor* capabilities[] = {
 	(const struct usb_device_capability_descriptor*) 
         &webusb_platform_capability_descriptor,
 };
 
-//  BOS Descriptor
+//  BOS Descriptor for WebUSB
 static const struct usb_bos_descriptor bos_descriptor = {
 	.bLength = USB_DT_BOS_SIZE,
 	.bDescriptorType = USB_DT_BOS,
