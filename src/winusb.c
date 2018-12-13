@@ -152,7 +152,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 static void winusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 	debug_println("winusb_set_config"); // debug_flush(); ////
 	(void)wValue;
-	int status = usbd_register_control_callback(
+	int status = aggregate_register_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,
 		CONTROL_CALLBACK_MASK,
@@ -171,13 +171,13 @@ void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
 	/* Windows probes the compatible ID before setting the configuration,
 	   so also register the callback now */
 
-	int status1 = usbd_register_control_callback(
+	int status1 = aggregate_register_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,
 		CONTROL_CALLBACK_MASK,
 		winusb_control_vendor_request);
 
-	int status2 = usbd_register_control_callback(
+	int status2 = aggregate_register_callback(
 		usbd_dev,
 		DESCRIPTOR_CALLBACK_TYPE,
 		DESCRIPTOR_CALLBACK_MASK,

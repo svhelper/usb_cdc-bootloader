@@ -148,7 +148,7 @@ cdcacm_set_config(
 #endif  //  NOTUSED
 
 	//  TODO: Only 4 callbacks allowed. Aggregate them.
-	int status = usbd_register_control_callback(
+	int status = aggregate_register_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,
 		CONTROL_CALLBACK_MASK,
@@ -156,7 +156,7 @@ cdcacm_set_config(
 	if (status < 0) {
     	debug_println("*** cdcacm_set_config failed"); debug_flush(); ////
 	}
-
+#ifdef NOTUSED
 	//  Debug all requests
 	status = usbd_register_control_callback(
 		usbd_dev,
@@ -166,6 +166,7 @@ cdcacm_set_config(
 	if (status < 0) {
     	debug_println("*** dump_control_request failed"); debug_flush(); ////
 	}
+#endif  //  NOTUSED	
 }
 
 void cdc_setup(usbd_device* usbd_dev) {

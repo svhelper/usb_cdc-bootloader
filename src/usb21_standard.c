@@ -92,7 +92,7 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 static void usb21_set_config(usbd_device* usbd_dev, uint16_t wValue) {
     debug_println("usb21_set_config"); // debug_flush(); ////
 	(void)wValue;
-	int status = usbd_register_control_callback(
+	int status = aggregate_register_callback(
 		usbd_dev,
 		DESCRIPTOR_CALLBACK_TYPE,
 		DESCRIPTOR_CALLBACK_MASK,

@@ -45,6 +45,11 @@ extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);
 extern void msc_setup(usbd_device* usbd_dev0);
 extern uint16_t send_msc_packet(const void *buf, int len);
-void dump_usb_request(const char *msg, struct usb_setup_data *req);
+extern void dump_usb_request(const char *msg, struct usb_setup_data *req);
+extern int aggregate_register_callback(
+    usbd_device *usbd_dev, 
+    uint8_t type,
+    uint8_t type_mask,
+    usbd_control_callback callback);
 
 #endif

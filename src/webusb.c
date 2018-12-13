@@ -107,7 +107,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 static void webusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
     debug_println("webusb_set_config"); // debug_flush(); ////
 	(void)wValue;
-	int status = usbd_register_control_callback(
+	int status = aggregate_register_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,
 		CONTROL_CALLBACK_MASK,

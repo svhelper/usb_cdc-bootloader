@@ -37,6 +37,11 @@
 #include "usb_conf.h"
 #include "uf2.h"
 
+static void set_aggregate_callback(
+  usbd_device *usbd_dev,
+  uint16_t wValue
+);
+
 static const char* origin_url = "visualbluepill.github.io";
 
 static char serial_number[USB_SERIAL_NUM_LENGTH+1];
@@ -276,6 +281,11 @@ usbd_device* usb_setup(void) {
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
 
+    //  Set the aggregate callback.    
+	usbd_register_set_config_callback(usbd_dev, set_aggregate_callback);
+    //  For WinUSB: Windows probes the compatible ID before setting the configuration, so also register the callback now.
+    set_aggregate_callback(usbd_dev, 0);
+
     //dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
     cdc_setup(usbd_dev);
     //msc_setup(usbd_dev);
@@ -323,15 +333,25 @@ struct control_callback_struct {
 static struct control_callback_struct control_callback[MAX_CONTROL_CALLBACK];
 
 /* Register application callback function for handling USB control requests.  We aggregate here so we can handle more than 4 callbacks.  */
-int aggregate_register_control_callback(
+int aggregate_register_callback(
     usbd_device *usbd_dev, 
     uint8_t type,
     uint8_t type_mask,
     usbd_control_callback callback)
 {
+    debug_println("aggregate_register_callback"); ////
 	int i;
 	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
-		if (control_callback[i].cb) { continue; }
+		if (control_callback[i].cb) { 
+            //  If already exists, skip.
+            if (control_callback[i].type == type &&
+                control_callback[i].type_mask == type_mask &&
+                control_callback[i].cb == callback) { 
+                    debug_println("callback exists"); ////
+                    return 0;
+                }
+            continue;  //  Continue checking.
+        }
 		control_callback[i].type = type;
 		control_callback[i].type_mask = type_mask;
 		control_callback[i].cb = callback;
@@ -341,23 +361,48 @@ int aggregate_register_control_callback(
 	return -1;
 }
 
-#ifdef NOTUSED
+static int aggregate_callback(
+    usbd_device *usbd_dev,
+	struct usb_setup_data *req, 
+    uint8_t **buf, 
+    uint16_t *len,
+	usbd_control_complete_callback *complete) {
+	int i, result = 0;
+	dump_usb_request(">>", req); ////
+	/* Call user command hook function. */
+	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
+		if (control_callback[i].cb == NULL) { break; }
+		if ((req->bmRequestType & control_callback[i].type_mask) == control_callback[i].type) {
+			result = control_callback[i].cb(
+                usbd_dev, 
+                req,
+                buf,
+                len,
+                complete);
+			if (result == USBD_REQ_HANDLED ||
+			    result == USBD_REQ_NOTSUPP) {
+				return result;
+			}
+		}
+	}
+	dump_usb_request(">> next", req); ////
+	return USBD_REQ_NEXT_CALLBACK;
+}
+
 static void set_aggregate_callback(
   usbd_device *usbd_dev,
-  uint16_t wValue __attribute__((unused))
+  uint16_t wValue
 ) {
     debug_println("set_aggregate_callback"); ////
-    //  Find all unique combinations of type and type_mask and register them.
 	int status = usbd_register_control_callback(
 		usbd_dev,
-		type,
-		type_mask,
+		0,  //  All types
+		0,  //  All mask
 		aggregate_callback);
 	if (status < 0) {
     	debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush();
 	}
 }
-#endif  //  NOTUSED
 
 void usb_set_serial_number(const char* serial) {
     serial_number[0] = '\0';
