@@ -87,7 +87,7 @@ int main(void) {
     
     //  target_clock_setup();  //  Clock already setup in platform_setup()
     target_gpio_setup();       //  Initialize GPIO/LEDs if needed
-    test_backup();             //  Test backup.
+    // test_backup();          //  Test backup.
 
     debug_println("bootloader target_get_force_bootloader");  debug_flush();
     if (target_get_force_bootloader() || !appValid) {

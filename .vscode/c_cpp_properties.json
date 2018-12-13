@@ -32,7 +32,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=30602",
+                "PLATFORMIO=30603",
                 "STM32F1",
                 "STM32F103xB",
                 "UF2_FAMILY=0x5ee21072",
@@ -88,7 +88,7 @@
             ],
             "intelliSenseMode": "clang-x64",
             "cppStandard": "c++11",
-            "compilerPath": "C:/Users/guppy/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc.exe -fwrapv -fno-rtti -fno-threadsafe-statics -fno-exceptions -fno-unwind-tables -Wno-array-bounds -mcpu=cortex-m3 -mthumb -Os -ffunction-sections -fdata-sections -Wall -mthumb -nostdlib -mcpu=cortex-m3",
+            "compilerPath": "C:/Users/guppy/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -mthumb -mcpu=cortex-m3",
             "cStandard": "c11"
         }
     ],
