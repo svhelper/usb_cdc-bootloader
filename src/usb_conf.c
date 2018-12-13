@@ -287,8 +287,8 @@ usbd_device* usb_setup(void) {
     set_aggregate_callback(usbd_dev, 0);
 
     dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
-    msc_setup(usbd_dev);
-    cdc_setup(usbd_dev);
+    ////msc_setup(usbd_dev);
+    ////cdc_setup(usbd_dev);
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
 	winusb_setup(usbd_dev, INTF_DFU);
@@ -394,14 +394,40 @@ static void set_aggregate_callback(
   uint16_t wValue
 ) {
     debug_println("set_aggregate_callback"); ////
-	int status = usbd_register_control_callback(
+    int status = usbd_register_control_callback(
 		usbd_dev,
-		0,  //  All types
-		0,  //  All mask
+        0,  //  All types
+        0,  //  All masks
 		aggregate_callback);
 	if (status < 0) {
     	debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush();
+	}    
+#ifdef NOTUSED
+	int status = usbd_register_control_callback(
+		usbd_dev,
+        USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_DEVICE,
+        USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+		aggregate_callback);
+	if (status < 0) {
+    	debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush();
+	}    
+    status = usbd_register_control_callback(
+        usbd_dev,
+        USB_REQ_TYPE_IN | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+        USB_REQ_TYPE_DIRECTION | USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+        aggregate_callback);        
+	if (status < 0) {
+    	debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush();
 	}
+    status = usbd_register_control_callback(
+        usbd_dev,
+        USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
+        USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+        aggregate_callback);        
+	if (status < 0) {
+    	debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush();
+	}
+#endif  //  NOTUSED    
 }
 
 void usb_set_serial_number(const char* serial) {
