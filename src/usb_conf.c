@@ -103,7 +103,7 @@ static const struct usb_endpoint_descriptor comm_endp[] = {
 		.bDescriptorType = USB_DT_ENDPOINT,
 		.bEndpointAddress = COMM_IN,
 		.bmAttributes = USB_ENDPOINT_ATTR_INTERRUPT,
-		.wMaxPacketSize = 16,  //  Smaller than others
+		.wMaxPacketSize = COMM_PACKET_SIZE,  //  Smaller than others
 		.bInterval = 255,
 	}
 };

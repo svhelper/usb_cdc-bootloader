@@ -33,12 +33,25 @@ cdcacm_control_request(
     debug_print("*** cdcacm_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
 	switch (req->bRequest) {
 	case USB_CDC_REQ_SET_CONTROL_LINE_STATE:
-		/*
-		 * The Linux cdc_acm driver requires this to be implemented
+		/* From https://github.com/libopencm3/libopencm3-examples/blob/master/examples/stm32/f3/stm32f3-discovery/usb_cdcacm/cdcacm.c
+		 * This Linux cdc_acm driver requires this to be implemented
 		 * even though it's optional in the CDC spec, and we don't
 		 * advertise it in the ACM functional descriptor.
 		 */
+		char local_buf[10];
+		struct usb_cdc_notification *notif = (void *)local_buf;
+
+		/* We echo signals back to host as notification. */
+		notif->bmRequestType = 0xA1;
+		notif->bNotification = USB_CDC_NOTIFY_SERIAL_STATE;
+		notif->wValue = 0;
+		notif->wIndex = 0;
+		notif->wLength = 2;
+		local_buf[8] = req->wValue & 3;
+		local_buf[9] = 0;
+		// usbd_ep_write_packet(0x83, buf, 10);
 		return USBD_REQ_HANDLED;
+	}
 
 	case USB_CDC_REQ_SET_LINE_CODING:
 		if ( *len < sizeof(struct usb_cdc_line_coding) ) {
@@ -101,7 +114,13 @@ cdcacm_set_config(
   usbd_device *usbd_dev,
   uint16_t wValue __attribute__((unused))
 ) {
+	//  From https://github.com/libopencm3/libopencm3-examples/blob/master/examples/stm32/f3/stm32f3-discovery/usb_cdcacm/cdcacm.c
     debug_println("*** cdcacm_set_config"); ////
+	usbd_ep_setup(usbd_dev, DATA_OUT, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, cdcacm_data_rx_cb);
+	usbd_ep_setup(usbd_dev, DATA_IN, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, NULL);
+	usbd_ep_setup(usbd_dev, COMM_IN, USB_ENDPOINT_ATTR_INTERRUPT, COMM_PACKET_SIZE, NULL);
+
+#ifdef NOTUSED
 	usbd_ep_setup(usbd_dev,
 		DATA_OUT,
 		USB_ENDPOINT_ATTR_BULK,
@@ -112,6 +131,8 @@ cdcacm_set_config(
 		USB_ENDPOINT_ATTR_BULK,
 		MAX_USB_PACKET_SIZE,
 		NULL);
+#endif  //  NOTUSED
+
 	//  TODO: Only 4 callbacks allowed. Aggregate them.
 	int status = usbd_register_control_callback(
 		usbd_dev,
