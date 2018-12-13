@@ -23,7 +23,7 @@ cdcacm_control_request(
 		//  Not for my interface.  Hand off to next interface.
         return USBD_REQ_NEXT_CALLBACK;
     }
-    debug_print("cdcacm_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
+    debug_print("*** cdcacm_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
 	switch (req->bRequest) {
 	case USB_CDC_REQ_SET_CONTROL_LINE_STATE:
 		/*
@@ -90,7 +90,7 @@ cdcacm_set_config(
   usbd_device *usbd_dev,
   uint16_t wValue __attribute__((unused))
 ) {
-    debug_println("cdcacm_set_config"); ////
+    debug_println("*** cdcacm_set_config"); ////
 	usbd_ep_setup(usbd_dev,
 		DATA_OUT,
 		USB_ENDPOINT_ATTR_BULK,
@@ -109,6 +109,6 @@ cdcacm_set_config(
 }
 
 void cdc_setup(usbd_device* usbd_dev) {
-    debug_println("cdc_setup"); ////
+    debug_println("*** cdc_setup"); ////
 	usbd_register_set_config_callback(usbd_dev, cdcacm_set_config);
 }

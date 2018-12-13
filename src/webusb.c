@@ -18,6 +18,7 @@
 
 #include <string.h>
 #include <logger.h>
+#include "usb_conf.h"
 #include "webusb.h"
 #include "usb21_standard.h"
 
@@ -57,14 +58,18 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 	if (req->bRequest != WEBUSB_VENDOR_CODE) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
-
+    if (req->wIndex != INTF_DFU) {
+		//  Not for my interface.  Hand off to next interface.
+        return USBD_REQ_NEXT_CALLBACK;
+    }
+    debug_print("webusb_control "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	int status = USBD_REQ_NOTSUPP;
 	switch (req->wIndex) {
 		case WEBUSB_REQ_GET_URL: {
 			struct webusb_url_descriptor* url = (struct webusb_url_descriptor*)(*buf);
 			uint16_t index = req->wValue;
 			if (index == 0) {
-    			debug_print("USBD_REQ_NOTSUPP index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
+    			debug_print("webusb notsupp index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
 				return USBD_REQ_NOTSUPP;
 			}
 
@@ -78,13 +83,13 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 				status = USBD_REQ_HANDLED;
 			} else {
 				// TODO: stall instead?
-    			debug_print("USBD_REQ_NOTSUPP index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
+    			debug_print("webusb notsupp index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
 				status = USBD_REQ_NOTSUPP;
 			}
 			break;
 		}
 		default: {
-    		debug_print("USBD_REQ_NOTSUPP wIndex "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
+    		debug_print("webusb notsupp wIndex "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
 			status = USBD_REQ_NOTSUPP;
 			break;
 		}
