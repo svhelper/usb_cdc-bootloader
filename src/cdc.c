@@ -32,7 +32,7 @@ cdcacm_control_request(
     }
     debug_print("*** cdcacm_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
 	switch (req->bRequest) {
-	case USB_CDC_REQ_SET_CONTROL_LINE_STATE:
+	case USB_CDC_REQ_SET_CONTROL_LINE_STATE: {
 		/* From https://github.com/libopencm3/libopencm3-examples/blob/master/examples/stm32/f3/stm32f3-discovery/usb_cdcacm/cdcacm.c
 		 * This Linux cdc_acm driver requires this to be implemented
 		 * even though it's optional in the CDC spec, and we don't
@@ -52,8 +52,7 @@ cdcacm_control_request(
 		// usbd_ep_write_packet(0x83, buf, 10);
 		return USBD_REQ_HANDLED;
 	}
-
-	case USB_CDC_REQ_SET_LINE_CODING:
+	case USB_CDC_REQ_SET_LINE_CODING: {
 		if ( *len < sizeof(struct usb_cdc_line_coding) ) {
 			debug_print("*** cdcacm_control notsupp line_coding "); debug_print_unsigned(sizeof(struct usb_cdc_line_coding)); 
 			debug_print(", len "); debug_print_unsigned(*len);
@@ -61,7 +60,7 @@ cdcacm_control_request(
 			return USBD_REQ_NOTSUPP;
 		}
 		return USBD_REQ_HANDLED;
-	}
+	}}
     debug_print("*** cdcacm_control next "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
 }
