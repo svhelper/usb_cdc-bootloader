@@ -1,3 +1,5 @@
+//  This is required for patching the libopencm3 USB MSC file http://libopencm3.org/docs/latest/stm32f1/html/usb__msc_8c_source.html
+//  See https://habr.com/company/thirdpin/blog/304924/
 /** @defgroup usb_private_defines USB Private Structures
 
 @brief <b>Defined Constants and Types for the USB Private Structures</b>

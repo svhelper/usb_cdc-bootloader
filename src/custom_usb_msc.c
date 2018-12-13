@@ -1,3 +1,5 @@
+//  This is a patched version of the libopencm3 USB MSC file http://libopencm3.org/docs/latest/stm32f1/html/usb__msc_8c_source.html
+//  See https://habr.com/company/thirdpin/blog/304924/
 /*
  * This file is part of the libopencm3 project.
  *
@@ -356,54 +358,6 @@ static void scsi_read_capacity(usbd_mass_storage *ms,
 		trans->bytes_to_write = 8;
 		set_sbc_status_good(ms);
 	}
-}
-
-//  From https://github.com/MarkDing/sim3sdk/blob/mass-storage/src/MassStorage/Lib/SCSI.c
-
-/** Command processing for an issued SCSI READ CAPACITIES command. This command returns information about the device's capacity
- *  on the selected Logical Unit (drive), as a number of OS-sized blocks.
- *
- *  \return Boolean \c true if the command completed successfully, \c false otherwise.
- */
-static bool SCSI_Command_Read_Format_Compacities(
-	usbd_mass_storage *ms,
-	struct usb_msc_trans *trans,
-	enum trans_event event)
-{
-	if (EVENT_CBW_VALID == event) {
-		// Capacities Length 8
-		trans->msd_buf[0] = 0;
-		trans->msd_buf[1] = 0;
-		trans->msd_buf[2] = 0;
-		trans->msd_buf[3] = 8;
-
-		// Block count
-		trans->msd_buf[4] = ms->block_count >> 24;
-		trans->msd_buf[5] = 0xff & (ms->block_count >> 16);
-		trans->msd_buf[6] = 0xff & (ms->block_count >> 8);
-		trans->msd_buf[7] = 0xff & ms->block_count;
-
-		/* Block size: 512 */
-		trans->msd_buf[8] = 2;  // Descriptor code is  0x02 which means Formatted Media
-		trans->msd_buf[9] = 0;
-		trans->msd_buf[10] = 2;
-		trans->msd_buf[11] = 0;
-		trans->bytes_to_write = 12;
-		set_sbc_status_good(ms);
-	}
-#ifdef NOTUSED
-    uint8_t BytesTransferred = 12;
-    Endpoint_Write_32_LE(0x00000008); // Capacities Length 8
-    Endpoint_Write_32_BE(sector_count);
-    Endpoint_Write_32_BE(sector_size | 0x02 << 24);  // Descriptor code is  0x02 which means Formatted Media
-
-    /* Send the endpoint data packet to the host */
-    Endpoint_ClearIN();
-    /* Succeed the command and update the bytes transferred counter */
-    CommandBlock.DataTransferLength -= BytesTransferred;
-
-    return true;
-#endif  //  NOTUSED	
 }
 
 static void scsi_format_unit(usbd_mass_storage *ms,
