@@ -394,6 +394,7 @@ static void set_aggregate_callback(
   uint16_t wValue
 ) {
     debug_println("set_aggregate_callback"); ////
+#ifdef NOTUSED
     int status = usbd_register_control_callback(
 		usbd_dev,
         0,  //  All types
@@ -402,7 +403,7 @@ static void set_aggregate_callback(
 	if (status < 0) {
     	debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush();
 	}    
-#ifdef NOTUSED
+#else
 	int status = usbd_register_control_callback(
 		usbd_dev,
         USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_DEVICE,
