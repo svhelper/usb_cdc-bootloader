@@ -21,6 +21,11 @@
 #include "usb_conf.h"
 #include "winusb.h"
 
+#define CONTROL_CALLBACK_TYPE USB_REQ_TYPE_VENDOR
+#define CONTROL_CALLBACK_MASK USB_REQ_TYPE_TYPE
+#define DESCRIPTOR_CALLBACK_TYPE USB_REQ_TYPE_DEVICE
+#define DESCRIPTOR_CALLBACK_MASK USB_REQ_TYPE_RECIPIENT
+
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 static int usb_descriptor_type(uint16_t wValue) {
@@ -84,14 +89,13 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 					usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-
+	dump_usb_request("winusb_descriptor", req); ////
+	if ((req->bmRequestType & DESCRIPTOR_CALLBACK_MASK) != DESCRIPTOR_CALLBACK_TYPE) {
+		return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
+	}
 	if ((req->bmRequestType & USB_REQ_TYPE_TYPE) != USB_REQ_TYPE_STANDARD) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
-    if (req->wIndex != INTF_DFU) {
-		//  Not for my interface.  Hand off to next interface.
-        return USBD_REQ_NEXT_CALLBACK;
-    }
     debug_print("winusb_descriptor "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR && usb_descriptor_type(req->wValue) == USB_DT_STRING) {
 		if (usb_descriptor_index(req->wValue) == WINUSB_EXTRA_STRING_INDEX) {
@@ -110,7 +114,10 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 					usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-
+	dump_usb_request("winusb_control", req); ////
+	if ((req->bmRequestType & CONTROL_CALLBACK_MASK) != CONTROL_CALLBACK_TYPE) {
+		return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
+	}
 	if (req->bRequest != WINUSB_MS_VENDOR_CODE) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
@@ -149,11 +156,14 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 static void winusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 	debug_println("winusb_set_config"); // debug_flush(); ////
 	(void)wValue;
-	usbd_register_control_callback(
+	int status = usbd_register_control_callback(
 		usbd_dev,
-		USB_REQ_TYPE_VENDOR,
-		USB_REQ_TYPE_TYPE,
+		CONTROL_CALLBACK_TYPE,
+		CONTROL_CALLBACK_MASK,
 		winusb_control_vendor_request);
+	if (status < 0) {
+    	debug_println("*** winusb_set_config failed"); debug_flush(); ////
+	}
 }
 
 void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
@@ -165,16 +175,20 @@ void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
 	/* Windows probes the compatible ID before setting the configuration,
 	   so also register the callback now */
 
-	usbd_register_control_callback(
+	int status1 = usbd_register_control_callback(
 		usbd_dev,
-		USB_REQ_TYPE_VENDOR,
-		USB_REQ_TYPE_TYPE,
+		CONTROL_CALLBACK_TYPE,
+		CONTROL_CALLBACK_MASK,
 		winusb_control_vendor_request);
 
-	usbd_register_control_callback(
+	int status2 = usbd_register_control_callback(
 		usbd_dev,
-		USB_REQ_TYPE_DEVICE,
-		USB_REQ_TYPE_RECIPIENT,
+		DESCRIPTOR_CALLBACK_TYPE,
+		DESCRIPTOR_CALLBACK_MASK,
 		winusb_descriptor_request);
+
+	if (status1 < 0 || status2 < 0) {
+    	debug_println("*** winusb_setup failed"); debug_flush(); ////
+	}
 }
 

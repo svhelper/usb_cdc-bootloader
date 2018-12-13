@@ -320,3 +320,12 @@ void usb_set_serial_number(const char* serial) {
         serial_number[USB_SERIAL_NUM_LENGTH] = '\0';
     }
 }
+
+void dump_usb_request(const char *msg, struct usb_setup_data *req) {
+    debug_print(msg);
+    debug_print(" type 0x"); debug_printhex(req->bmRequestType);
+    debug_print(", req 0x"); debug_printhex(req->bRequest);
+    debug_print(", val "); debug_print_unsigned(req->wValue);
+    debug_print(", idx "); debug_print_unsigned(req->wIndex);
+    debug_println("");
+}

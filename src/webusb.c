@@ -22,6 +22,9 @@
 #include "webusb.h"
 #include "usb21_standard.h"
 
+#define CONTROL_CALLBACK_TYPE (USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_DEVICE)
+#define CONTROL_CALLBACK_MASK (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
+
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 const struct webusb_platform_descriptor webusb_platform_capability_descriptor = {
@@ -54,13 +57,16 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 									 usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-
+	dump_usb_request("webusb_control", req); ////
+	if ((req->bmRequestType & CONTROL_CALLBACK_MASK) != CONTROL_CALLBACK_TYPE) {
+		return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
+	}
 	if (req->bRequest != WEBUSB_VENDOR_CODE) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
     if (req->wIndex != INTF_DFU) {
 		//  Not for my interface.  Hand off to next interface.
-        return USBD_REQ_NEXT_CALLBACK;
+        // return USBD_REQ_NEXT_CALLBACK;
     }
     debug_print("webusb_control "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	int status = USBD_REQ_NOTSUPP;
@@ -69,7 +75,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 			struct webusb_url_descriptor* url = (struct webusb_url_descriptor*)(*buf);
 			uint16_t index = req->wValue;
 			if (index == 0) {
-    			debug_print("webusb notsupp index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
+    			debug_print("*** webusb notsupp index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
 				return USBD_REQ_NOTSUPP;
 			}
 
@@ -83,13 +89,13 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 				status = USBD_REQ_HANDLED;
 			} else {
 				// TODO: stall instead?
-    			debug_print("webusb notsupp index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
+    			debug_print("*** webusb notsupp index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
 				status = USBD_REQ_NOTSUPP;
 			}
 			break;
 		}
 		default: {
-    		debug_print("webusb notsupp wIndex "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
+    		debug_print("*** webusb notsupp wIndex "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
 			status = USBD_REQ_NOTSUPP;
 			break;
 		}
@@ -101,11 +107,14 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 static void webusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
     debug_println("webusb_set_config"); // debug_flush(); ////
 	(void)wValue;
-	usbd_register_control_callback(
+	int status = usbd_register_control_callback(
 		usbd_dev,
-		USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_DEVICE,
-		USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+		CONTROL_CALLBACK_TYPE,
+		CONTROL_CALLBACK_MASK,
 		webusb_control_vendor_request);
+	if (status < 0) {
+    	debug_println("*** webusb_set_config failed"); debug_flush(); ////
+	}
 }
 
 void webusb_setup(usbd_device* usbd_dev, const char* https_url) {

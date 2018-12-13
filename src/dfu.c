@@ -127,10 +127,10 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
                                      struct usb_setup_data *req,
                                      uint8_t **buf, uint16_t *len,
                                      usbd_control_complete_callback* complete) {
+	dump_usb_request("dfu_control", req); ////
     if (req->wIndex != INTF_DFU) {
         return USBD_REQ_NEXT_CALLBACK;
     }
-
     debug_print("dfu_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
     int status = USBD_REQ_HANDLED;
     switch (req->bRequest) {
@@ -273,21 +273,23 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
 }
 
 static void dfu_set_config(usbd_device* usbd_dev, uint16_t wValue) {
-    debug_print("dfu_set_config "); debug_print_int(wValue); debug_println("");
+    debug_println("dfu_set_config "); ////
     (void)wValue;
-
-    usbd_register_control_callback(
+    int status = usbd_register_control_callback(
         usbd_dev,
         USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
         USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
         dfu_control_class_request);        
+	if (status < 0) {
+    	debug_println("*** dfu_set_config failed"); debug_flush(); ////
+	}
 }
 
 void dfu_setup(usbd_device* usbd_dev,
                GenericCallback on_manifest_request,
                StateChangeCallback on_state_change,
                StatusChangeCallback on_status_change) {
-    debug_println("dfu_setup"); ////
+    // debug_println("dfu_setup"); ////
     dfu_manifest_request_callback = on_manifest_request;
     dfu_state_change_callback = on_state_change;
     dfu_status_change_callback = on_status_change;

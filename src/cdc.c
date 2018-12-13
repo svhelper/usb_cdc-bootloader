@@ -5,6 +5,9 @@
 #include "usb_conf.h"
 #include "cdc.h"
 
+#define CONTROL_CALLBACK_TYPE (USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE)
+#define CONTROL_CALLBACK_MASK (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
+
 /*
  * USB Control Requests:
  */
@@ -19,6 +22,10 @@ cdcacm_control_request(
     struct usb_setup_data *req
   ) __attribute__((unused))
 ) {
+	dump_usb_request("*** cdcacm_control", req); ////
+	if ((req->bmRequestType & CONTROL_CALLBACK_MASK) != CONTROL_CALLBACK_TYPE) {
+		return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
+	}
     if (req->wIndex != INTF_COMM && req->wIndex != INTF_DATA) {
 		//  Not for my interface.  Hand off to next interface.
         return USBD_REQ_NEXT_CALLBACK;
@@ -38,7 +45,7 @@ cdcacm_control_request(
 		}
 		return USBD_REQ_HANDLED;
 	}
-    debug_print("cdcacm_control notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
+    debug_print("*** cdcacm_control notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NOTSUPP;
 }
 
@@ -101,11 +108,15 @@ cdcacm_set_config(
 		USB_ENDPOINT_ATTR_BULK,
 		MAX_USB_PACKET_SIZE,
 		NULL);
-	usbd_register_control_callback(
+	//  TODO: Only 4 callbacks allowed. Aggregate them.
+	int status = usbd_register_control_callback(
 		usbd_dev,
-		USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
-		USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+		CONTROL_CALLBACK_TYPE,
+		CONTROL_CALLBACK_MASK,
 		cdcacm_control_request);
+	if (status < 0) {
+    	debug_println("*** cdcacm_set_config failed"); debug_flush(); ////
+	}
 }
 
 void cdc_setup(usbd_device* usbd_dev) {

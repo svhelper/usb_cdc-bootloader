@@ -789,6 +789,7 @@ static int msc_control_request(usbd_device *usbd_dev,
 				struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 				usbd_control_complete_callback *complete)
 {
+	dump_usb_request("msc_control", req); ////
     if (req->wIndex != msc_interface_index) {
 		//  Not for my interface.  Hand off to next interface.
         return USBD_REQ_NEXT_CALLBACK;
@@ -824,11 +825,14 @@ static void msc_set_config(usbd_device *usbd_dev, uint16_t wValue)
 	usbd_ep_setup(usbd_dev, ms->ep_out, USB_ENDPOINT_ATTR_BULK,
 		      ms->ep_out_size, msc_data_rx_cb);
 
-	usbd_register_control_callback(
+	int status = usbd_register_control_callback(
 				usbd_dev,
 				USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
 				USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
 				msc_control_request);
+	if (status < 0) {
+    	debug_println("*** msc_set_config failed"); debug_flush(); ////
+	}
 }
 
 /** @addtogroup usb_msc */

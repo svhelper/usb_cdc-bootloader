@@ -22,6 +22,9 @@
 #include "usb_conf.h"
 #include "usb21_standard.h"
 
+#define DESCRIPTOR_CALLBACK_TYPE (USB_REQ_TYPE_IN | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE)
+#define DESCRIPTOR_CALLBACK_MASK (USB_REQ_TYPE_DIRECTION | USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
+
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 static uint16_t build_bos_descriptor(const struct usb_bos_descriptor *bos,
@@ -64,9 +67,13 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 											usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
+	dump_usb_request("usb21_descriptor", req); ////
+	if ((req->bmRequestType & DESCRIPTOR_CALLBACK_MASK) != DESCRIPTOR_CALLBACK_TYPE) {
+		return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
+	}
 	int descr_type = req->wValue >> 8;
-    if (req->wIndex != INTF_DFU || descr_type != USB_DT_BOS) {
-		//  Not for my interface or not BOS.  Hand off to next interface.
+    if (descr_type != USB_DT_BOS) {
+		//  Not BOS request.  Hand off to next interface.
         return USBD_REQ_NEXT_CALLBACK;
     }
 	if (!usb21_bos) {
@@ -85,11 +92,14 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 static void usb21_set_config(usbd_device* usbd_dev, uint16_t wValue) {
     debug_println("usb21_set_config"); // debug_flush(); ////
 	(void)wValue;
-	usbd_register_control_callback(
+	int status = usbd_register_control_callback(
 		usbd_dev,
-		USB_REQ_TYPE_IN | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-		USB_REQ_TYPE_DIRECTION | USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+		DESCRIPTOR_CALLBACK_TYPE,
+		DESCRIPTOR_CALLBACK_MASK,
 		&usb21_standard_get_descriptor);
+	if (status < 0) {
+    	debug_println("*** usb21_set_config failed"); debug_flush(); ////
+	}
 }
 
 void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_object_store) {
