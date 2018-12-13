@@ -49,8 +49,8 @@ cdcacm_control_request(
 		}
 		return USBD_REQ_HANDLED;
 	}
-    debug_print("*** cdcacm_control notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
-	return USBD_REQ_NOTSUPP;
+    debug_print("*** cdcacm_control next "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
+	return USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
 }
 
 //  TODO: TX Up to MAX_USB_PACKET_SIZE

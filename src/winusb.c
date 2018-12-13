@@ -121,10 +121,6 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	if (req->bRequest != WINUSB_MS_VENDOR_CODE) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
-    if (req->wIndex != INTF_DFU) {
-		//  Not for my interface.  Hand off to next interface.
-        return USBD_REQ_NEXT_CALLBACK;
-    }
     debug_print("winusb_control "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	int status = USBD_REQ_NOTSUPP;
 	if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
@@ -142,11 +138,11 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		status = USBD_REQ_HANDLED;
 
 	} else {
-		status = USBD_REQ_NOTSUPP;
+		status = USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
 		if ((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) {
-    		debug_print("winusb NOTSUPP device "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
+    		debug_print("winusb_control next device "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
 		} else {
-    		debug_print("winusb NOTSUPP iface "); debug_print_unsigned(usb_descriptor_index(req->wValue)); debug_println(""); debug_flush(); ////
+    		debug_print("winusb_control next iface "); debug_print_unsigned(usb_descriptor_index(req->wValue)); debug_println(""); debug_flush(); ////
 		}
 	}
 
