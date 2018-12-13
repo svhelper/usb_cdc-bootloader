@@ -105,11 +105,14 @@ int main(void) {
         debug_println("bootloader usb_setup");  debug_flush();
         usbd_device* usbd_dev = usb_setup();
 
+        //  Pause a while before starting USB processing.
+        //  const int sleep_time_us = 10 * 1000 * 1000; for (int i = 0; i < sleep_time_us * 10; i++) { __asm__("nop"); }
+        debug_println("bootloader loop");  debug_flush();
+
         uint32_t cycleCount = 0;        
         while (1) {
             cycleCount++;
             if (cycleCount >= 700) {
-                // debug_println("bootloader loop");  debug_flush();
                 msTimer++;
                 cycleCount = 0;
 

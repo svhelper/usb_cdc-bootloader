@@ -154,7 +154,7 @@ static const struct {
 		.bDescriptorType = CS_INTERFACE,
 		.bDescriptorSubtype = USB_CDC_TYPE_CALL_MANAGEMENT,
 		.bmCapabilities = 0,
-		.bDataInterface = 1,
+		.bDataInterface = INTF_DATA,  //  Was 1
 	},
 	.acm = {
 		.bFunctionLength = sizeof(struct usb_cdc_acm_descriptor),
@@ -166,8 +166,8 @@ static const struct {
 		.bFunctionLength = sizeof(struct usb_cdc_union_descriptor),
 		.bDescriptorType = CS_INTERFACE,
 		.bDescriptorSubtype = USB_CDC_TYPE_UNION,
-		.bControlInterface = 0,
-		.bSubordinateInterface0 = 1,
+		.bControlInterface = INTF_COMM,  //  Was 0
+		.bSubordinateInterface0 = INTF_DATA,  //  Was 1
 	 }
 };
 
@@ -255,7 +255,7 @@ static const struct usb_config_descriptor config = {
     .bNumInterfaces = sizeof(interfaces) / sizeof(struct usb_interface),
     .bConfigurationValue = 1,
     .iConfiguration = 0,
-    .bmAttributes = 0x80,  ////  TODO: Should be 0x80 not 0xC0.  Self-powered, i.e. it draws power from USB bus.
+    .bmAttributes = 0x80,  //  Bus-powered, i.e. it draws power from USB bus.
     .bMaxPower = 0x32,
     .interface = interfaces,
 };
@@ -302,7 +302,7 @@ void msc_setup(usbd_device* usbd_dev0) {
 #endif  //  RAM_DISK
     
     custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_USB_PACKET_SIZE, MSC_OUT, MAX_USB_PACKET_SIZE, 
-        "Blue Pill ", "UF2 Bootloader", "42.00", 
+        "Blue Pill Ltd", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write
 #else
