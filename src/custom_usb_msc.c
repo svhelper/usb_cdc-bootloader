@@ -606,7 +606,7 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
                 debug_print_unsigned(trans->byte_count);
                 debug_print(", bytes_to_read "); 
                 debug_print_unsigned(trans->bytes_to_read);
-                debug_println(""); debug_flush(); ////
+                debug_println(""); // debug_flush(); ////
 
                 //usbd_ep_write_packet(usbd_dev, ms->ep_in, "", 0); //// Workaround
                 //trans->byte_count = trans->bytes_to_read; //// TODO

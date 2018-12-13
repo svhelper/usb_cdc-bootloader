@@ -20,6 +20,7 @@
 #include <libopencm3/cm3/vector.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/msc.h>
+#include <libopencm3/stm32/gpio.h>
 #include <bluepill.h>
 #include <logger.h>
 #include "dapboot.h"
@@ -33,6 +34,7 @@
 #include "backup.h"
 
 static void test_backup(void);
+static int test_swd(void);
 
 static inline void __set_MSP(uint32_t topOfMainStack) {
     asm("msr msp, %0" : : "r" (topOfMainStack));
@@ -115,7 +117,6 @@ int main(void) {
                 target_set_led(v < 50);
 
                 ghostfat_1ms();
-                //send_msc_packet("", 0);  //  Workaround for MSC hanging.
 
                 if (appValid && !msc_started && msTimer > 1000) {
                     debug_println("target_manifest_app");  debug_flush();
@@ -130,6 +131,16 @@ int main(void) {
         jump_to_application();
     }
     
+    return 0;
+}
+
+static int test_swd(void) {    
+    static int delay = 1;
+    if (delay++ % 40 != 0) { return 0; }
+    uint16_t swdio = gpio_get(GPIOA, GPIO13);  //  PA13 = SWDIO / JTMS 
+    uint16_t swclk = gpio_get(GPIOA, GPIO14);  //  PA14 = SWCLK / JTCK
+    // debug_print("swdio "); debug_print_unsigned(swdio); debug_print(", swclk "); debug_print_unsigned(swclk); debug_println(""); // debug_flush();
+    if (swdio == 8192 && swclk == 0) { return 1; }
     return 0;
 }
 
