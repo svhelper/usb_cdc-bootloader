@@ -85,6 +85,7 @@ cdcacm_set_config(
   usbd_device *usbd_dev,
   uint16_t wValue __attribute__((unused))
 ) {
+    debug_println("cdcacm_set_config"); ////
 	usbd_ep_setup(usbd_dev,
 		DATA_OUT,
 		USB_ENDPOINT_ATTR_BULK,
@@ -103,5 +104,6 @@ cdcacm_set_config(
 }
 
 void cdc_setup(usbd_device* usbd_dev) {
+    debug_println("cdc_setup"); ////
 	usbd_register_set_config_callback(usbd_dev, cdcacm_set_config);
 }

@@ -287,8 +287,8 @@ usbd_device* usb_setup(void) {
         usbd_control_buffer, sizeof(usbd_control_buffer));
 
     dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
-    msc_setup(usbd_dev);
     cdc_setup(usbd_dev);
+    msc_setup(usbd_dev);
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
 	winusb_setup(usbd_dev, INTF_DFU);
@@ -302,7 +302,7 @@ void msc_setup(usbd_device* usbd_dev0) {
 #endif  //  RAM_DISK
     
     custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_USB_PACKET_SIZE, MSC_OUT, MAX_USB_PACKET_SIZE, 
-        "Blue Pill", "UF2 Bootloader", "42.00", 
+        "Blue Pill ", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write
 #else
