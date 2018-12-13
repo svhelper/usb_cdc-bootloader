@@ -302,7 +302,7 @@ void msc_setup(usbd_device* usbd_dev0) {
 #endif  //  RAM_DISK
     
     custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_USB_PACKET_SIZE, MSC_OUT, MAX_USB_PACKET_SIZE, 
-        "Blue Pill Ltd", "UF2 Bootloader", "42.00", 
+        "BluePill", "UF2 Bootloader", "42.00", 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write
 #else
