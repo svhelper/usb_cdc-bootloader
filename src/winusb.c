@@ -88,7 +88,11 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 	if ((req->bmRequestType & USB_REQ_TYPE_TYPE) != USB_REQ_TYPE_STANDARD) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
-
+    if (req->wIndex != INTF_DFU) {
+		//  Not for my interface.  Hand off to next interface.
+        return USBD_REQ_NEXT_CALLBACK;
+    }
+    debug_print("winusb_descriptor "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR && usb_descriptor_type(req->wValue) == USB_DT_STRING) {
 		if (usb_descriptor_index(req->wValue) == WINUSB_EXTRA_STRING_INDEX) {
 			*buf = (uint8_t*)(&winusb_string_descriptor);
@@ -96,6 +100,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 			return USBD_REQ_HANDLED;
 		}
 	}
+    debug_print("winusb_descriptor notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 

@@ -279,9 +279,9 @@ usbd_device* usb_setup(void) {
     //dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
     cdc_setup(usbd_dev);
     //msc_setup(usbd_dev);
-	usb21_setup(usbd_dev, &bos_descriptor);
-	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, INTF_DFU);
+	//usb21_setup(usbd_dev, &bos_descriptor);
+	//webusb_setup(usbd_dev, origin_url);
+	//winusb_setup(usbd_dev, INTF_DFU);
     return usbd_dev;
 }
 
