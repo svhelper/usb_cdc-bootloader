@@ -64,6 +64,7 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 	(void)complete;
 	(void)usbd_dev;
 
+    debug_print("usb21_descriptor "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
 		int descr_type = req->wValue >> 8;
 		if (descr_type == USB_DT_BOS) {
@@ -75,12 +76,13 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 		}
 	}
 
+    debug_print("usb21_descriptor notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
 static void usb21_set_config(usbd_device* usbd_dev, uint16_t wValue) {
+    debug_println("usb21_set_config"); // debug_flush(); ////
 	(void)wValue;
-
 	usbd_register_control_callback(
 		usbd_dev,
 		USB_REQ_TYPE_IN | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
@@ -89,7 +91,7 @@ static void usb21_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_object_store) {
-    debug_println("usb21_setup"); debug_flush(); ////
+    debug_println("usb21_setup"); // debug_flush(); ////
 	usb21_bos = binary_object_store;
 
 	/* Register the control request handler _before_ the config is set */

@@ -60,7 +60,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 	}
     if (req->wIndex != INTF_DFU) {
 		//  Not for my interface.  Hand off to next interface.
-        return USBD_REQ_NEXT_CALLBACK;
+        ////return USBD_REQ_NEXT_CALLBACK;
     }
     debug_print("webusb_control "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	int status = USBD_REQ_NOTSUPP;
