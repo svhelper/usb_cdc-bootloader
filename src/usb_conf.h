@@ -30,14 +30,16 @@
 //  Index of each USB interface.
 #define INTF_DFU                0
 #define INTF_MSC                1
-#define INTF_CDC                2
+#define INTF_COMM               2
+#define INTF_DATA               3
 
 //  USB Endpoints.
 #define MSC_IN                  0x83
-#define CDC_IN                  0x84
+#define DATA_IN                 0x84
+#define COMM_IN                 0x85
 
 #define MSC_OUT                 0x02
-#define CDC_OUT                 0x03
+#define DATA_OUT                0x03
 
 extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);
