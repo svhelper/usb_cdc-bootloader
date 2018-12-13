@@ -39,8 +39,12 @@ cdcacm_control_request(
 		 * advertise it in the ACM functional descriptor.
 		 */
 		return USBD_REQ_HANDLED;
+
 	case USB_CDC_REQ_SET_LINE_CODING:
 		if ( *len < sizeof(struct usb_cdc_line_coding) ) {
+			debug_print("*** cdcacm_control notsupp line_coding "); debug_print_unsigned(sizeof(struct usb_cdc_line_coding)); 
+			debug_print(", len "); debug_print_unsigned(*len);
+			debug_println(""); debug_flush(); ////
 			return USBD_REQ_NOTSUPP;
 		}
 		return USBD_REQ_HANDLED;

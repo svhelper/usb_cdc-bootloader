@@ -472,8 +472,14 @@ usb21_descriptor type 0x80, req 0x06, val 768, idx 0
 usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
 *** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
+*** cdcacm_control 254
+*** cdcacm_control notsupp 254
 *** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
+*** cdcacm_control 254
+*** cdcacm_control notsupp 254
 *** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
+*** cdcacm_control 254
+*** cdcacm_control notsupp 254
 usb21_descriptor type 0x80, req 0x06, val 256, idx 0
 usb21_descriptor type 0x80, req 0x06, val 256, idx 0
 *** cdcacm_set_config
