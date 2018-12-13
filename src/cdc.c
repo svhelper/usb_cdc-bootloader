@@ -147,7 +147,6 @@ cdcacm_set_config(
 		NULL);
 #endif  //  NOTUSED
 
-	//  TODO: Only 4 callbacks allowed. Aggregate them.
 	int status = aggregate_register_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,

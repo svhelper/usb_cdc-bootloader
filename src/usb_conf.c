@@ -286,9 +286,9 @@ usbd_device* usb_setup(void) {
     //  For WinUSB: Windows probes the compatible ID before setting the configuration, so also register the callback now.
     set_aggregate_callback(usbd_dev, 0);
 
-    //dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
+    dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
+    msc_setup(usbd_dev);
     cdc_setup(usbd_dev);
-    //msc_setup(usbd_dev);
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
 	winusb_setup(usbd_dev, INTF_DFU);
@@ -445,173 +445,151 @@ bootloader target_get_serial_number
 bootloader usb_set_serial_number
 bootloader usb_setup
 usb_setup num_strings 4
+set_aggregate_callback
 *** cdc_setup
 usb21_set_config
+aggregate_register_callback
+aggregate_register_callback
+aggregate_register_callback
 bootloader loop
+>> type 0x80, req 0x06, val 256, idx 0
 usb21_descriptor type 0x80, req 0x06, val 256, idx 0
 winusb_descriptor type 0x80, req 0x06, val 256, idx 0
 winusb_descriptor 0
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 256, idx 0
+>> type 0x00, req 0x05, val 5, idx 0
 winusb_descriptor type 0x00, req 0x05, val 5, idx 0
 winusb_descriptor 0
 winusb_descriptor next 5
+>> next type 0x00, req 0x05, val 5, idx 0
+>> type 0x80, req 0x06, val 256, idx 0
 usb21_descriptor type 0x80, req 0x06, val 256, idx 0
 winusb_descriptor type 0x80, req 0x06, val 256, idx 0
 winusb_descriptor 0
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 256, idx 0
+>> type 0x80, req 0x06, val 512, idx 0
 usb21_descriptor type 0x80, req 0x06, val 512, idx 0
 winusb_descriptor type 0x80, req 0x06, val 512, idx 0
 winusb_descriptor 0
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 512, idx 0
+>> type 0x80, req 0x06, val 3840, idx 0
 usb21_descriptor type 0x80, req 0x06, val 3840, idx 0
 usb21_descriptor 0
+>> type 0x80, req 0x06, val 3840, idx 0
 usb21_descriptor type 0x80, req 0x06, val 3840, idx 0
 usb21_descriptor 0
+>> type 0x80, req 0x06, val 771, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
 winusb_descriptor type 0x80, req 0x06, val 771, idx 1033
 winusb_descriptor 1033
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 771, idx 1033
+>> type 0x80, req 0x06, val 768, idx 0
 usb21_descriptor type 0x80, req 0x06, val 768, idx 0
 winusb_descriptor type 0x80, req 0x06, val 768, idx 0
 winusb_descriptor 0
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 768, idx 0
+>> type 0x80, req 0x06, val 770, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
 winusb_descriptor type 0x80, req 0x06, val 770, idx 1033
 winusb_descriptor 1033
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 770, idx 1033
+>> type 0x80, req 0x06, val 256, idx 0
 usb21_descriptor type 0x80, req 0x06, val 256, idx 0
 winusb_descriptor type 0x80, req 0x06, val 256, idx 0
 winusb_descriptor 0
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 256, idx 0
+>> type 0x80, req 0x06, val 512, idx 0
 usb21_descriptor type 0x80, req 0x06, val 512, idx 0
 winusb_descriptor type 0x80, req 0x06, val 512, idx 0
 winusb_descriptor 0
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 512, idx 0
+>> type 0x80, req 0x06, val 512, idx 0
 usb21_descriptor type 0x80, req 0x06, val 512, idx 0
 winusb_descriptor type 0x80, req 0x06, val 512, idx 0
 winusb_descriptor 0
 winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 512, idx 0
+>> type 0x00, req 0x09, val 1, idx 0
 winusb_descriptor type 0x00, req 0x09, val 1, idx 0
 winusb_descriptor 0
 winusb_descriptor next 9
+>> next type 0x00, req 0x09, val 1, idx 0
+set_aggregate_callback
 *** cdcacm_set_config
+aggregate_register_callback
 usb21_set_config
+aggregate_register_callback
+callback exists
 webusb_set_config
-winusb_set_config
-*** winusb_set_config failed
->>  type 0xc0, req 0x21, val 0, idx 4
-webusb_control type 0xc0, req 0x21, val 0, idx 4
->>  type 0x80, req 0x06, val 772, idx 1033
+aggregate_register_callback
+>> type 0xc0, req 0x21, val 0, idx 4
+winusb_control type 0xc0, req 0x21, val 0, idx 4
+winusb_control 4
+>> type 0xc0, req 0x21, val 0, idx 4
+winusb_control type 0xc0, req 0x21, val 0, idx 4
+winusb_control 4
+>> type 0x80, req 0x06, val 772, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 772, idx 1033
->>  type 0x80, req 0x06, val 772, idx 1033
+winusb_descriptor type 0x80, req 0x06, val 772, idx 1033
+winusb_descriptor 1033
+winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 772, idx 1033
+>> type 0x80, req 0x06, val 772, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 772, idx 1033
->>  type 0xc1, req 0x21, val 0, idx 5
->>  type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor type 0x80, req 0x06, val 772, idx 1033
+winusb_descriptor 1033
+winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 772, idx 1033
+>> type 0xc1, req 0x21, val 0, idx 5
+winusb_control type 0xc1, req 0x21, val 0, idx 5
+winusb_control 5
+>> type 0xc1, req 0x21, val 0, idx 5
+winusb_control type 0xc1, req 0x21, val 0, idx 5
+winusb_control 5
+>> type 0x80, req 0x06, val 770, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
->>  type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor 1033
+winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 770, idx 1033
+>> type 0x80, req 0x06, val 770, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
->>  type 0xc1, req 0x21, val 1, idx 5
->>  type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor 1033
+winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 770, idx 1033
+>> type 0xc1, req 0x21, val 1, idx 5
+winusb_control type 0xc1, req 0x21, val 1, idx 5
+winusb_control 5
+winusb_control next iface 1
+>> next type 0xc1, req 0x21, val 1, idx 5
+>> type 0x80, req 0x06, val 770, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
->>  type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor 1033
+winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 770, idx 1033
+>> type 0xc1, req 0x21, val 2, idx 5
+winusb_control type 0xc1, req 0x21, val 2, idx 5
+winusb_control 5
+winusb_control next iface 2
+>> next type 0xc1, req 0x21, val 2, idx 5
+>> type 0x80, req 0x06, val 770, idx 1033
 usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
->>  type 0xc1, req 0x21, val 2, idx 5
->>  type 0x80, req 0x06, val 770, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
->>  type 0x80, req 0x06, val 770, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
->>  type 0xc1, req 0x21, val 3, idx 5
->>  type 0x80, req 0x06, val 768, idx 0
-usb21_descriptor type 0x80, req 0x06, val 768, idx 0
->>  type 0x80, req 0x06, val 768, idx 0
-usb21_descriptor type 0x80, req 0x06, val 768, idx 0
->>  type 0x80, req 0x06, val 771, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
->>  type 0x80, req 0x06, val 771, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
-*** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
-*** cdcacm_control 254
-*** cdcacm_control next 254
->>  type 0xa1, req 0xfe, val 0, idx 1
->>  type 0x02, req 0x01, val 0, idx 0
-*** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
-*** cdcacm_control 254
-*** cdcacm_control next 254
->>  type 0xa1, req 0xfe, val 0, idx 1
->>  type 0x02, req 0x01, val 0, idx 0
-*** cdcacm_control type 0xa1, req 0xfe, val 0, idx 1
-*** cdcacm_control 254
-*** cdcacm_control next 254
->>  type 0xa1, req 0xfe, val 0, idx 1
->>  type 0x02, req 0x01, val 0, idx 0
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x05, val 6, idx 0
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x09, val 1, idx 0
-*** cdcacm_set_config
-usb21_set_config
-webusb_set_config
-winusb_set_config
-*** winusb_set_config failed
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x05, val 5, idx 0
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x09, val 1, idx 0
-*** cdcacm_set_config
-usb21_set_config
-webusb_set_config
-winusb_set_config
-*** winusb_set_config failed
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x05, val 6, idx 0
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x09, val 1, idx 0
-*** cdcacm_set_config
-usb21_set_config
-webusb_set_config
-winusb_set_config
-*** winusb_set_config failed
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x05, val 5, idx 0
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x09, val 1, idx 0
-*** cdcacm_set_config
-usb21_set_config
-webusb_set_config
-winusb_set_config
-*** winusb_set_config failed
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x05, val 6, idx 0
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x09, val 1, idx 0
-*** cdcacm_set_config
-usb21_set_config
-webusb_set_config
-winusb_set_config
-*** winusb_set_config failed
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x05, val 5, idx 0
->>  type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
->>  type 0x00, req 0x09, val 1, idx 0
-*** cdcacm_set_config
-usb21_set_config
-webusb_set_config
-winusb_set_config
-*** winusb_set_config failed
->>  type 0x80, req 0x06, val 770, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
->>  type 0x80, req 0x06, val 770, idx 1033
-usb21_descriptor type 0x
+winusb_descriptor type 0x80, req 0x06, val 770, idx 1033
+winusb_descriptor 1033
+winusb_descriptor next 6
+>> next type 0x80, req 0x06, val 770, idx 1033
+>> type 0xc1, req 0x21, val 3, idx 5
+winusb_control type 0xc1, req 0x21, val 3, idx 5
+winusb_control 5
+winusb_control next iface 3
 */
