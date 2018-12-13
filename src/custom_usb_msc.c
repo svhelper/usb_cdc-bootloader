@@ -779,6 +779,9 @@ static void msc_data_tx_cb(usbd_device *usbd_dev, uint8_t ep)
 	}
 }
 
+//  Index of MSC interface.
+static uint8_t msc_interface_index = 0;
+
 /** @brief Handle various control requests related to the msc storage
  *	   interface.
  */
@@ -786,7 +789,11 @@ static int msc_control_request(usbd_device *usbd_dev,
 				struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 				usbd_control_complete_callback *complete)
 {
-    debug_println("msc_control_request"); // debug_flush(); ////
+    if (req->wIndex != msc_interface_index) {
+		//  Not for my interface.  Hand off to next interface.
+        return USBD_REQ_NEXT_CALLBACK;
+    }
+    debug_print("msc_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
 	(void)complete;
 	(void)usbd_dev;
 
@@ -800,7 +807,7 @@ static int msc_control_request(usbd_device *usbd_dev,
 		*len = 1;
 		return USBD_REQ_HANDLED;
 	}
-    debug_println("msc_control_request not supported"); debug_flush(); ////
+    debug_print("msc_control notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NOTSUPP;
 }
 
@@ -856,9 +863,11 @@ usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
 				 const char *product_revision_level,
 				 const uint32_t block_count,
 				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
-				 int (*write_block)(uint32_t lba, const uint8_t *copy_from))
+				 int (*write_block)(uint32_t lba, const uint8_t *copy_from),
+				 uint8_t msc_interface_index0)  //  Index of MSC interface
 {
     debug_println("custom_usb_msc_init"); // debug_flush(); ////
+	msc_interface_index = msc_interface_index0;
 	_mass_storage.usbd_dev = usbd_dev;
 	_mass_storage.ep_in = ep_in;
 	_mass_storage.ep_in_size = ep_in_size;

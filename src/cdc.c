@@ -19,7 +19,11 @@ cdcacm_control_request(
     struct usb_setup_data *req
   ) __attribute__((unused))
 ) {
-
+    if (req->wIndex != INTF_COMM && req->wIndex != INTF_DATA) {
+		//  Not for my interface.  Hand off to next interface.
+        return USBD_REQ_NEXT_CALLBACK;
+    }
+    debug_print("cdcacm_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
 	switch (req->bRequest) {
 	case USB_CDC_REQ_SET_CONTROL_LINE_STATE:
 		/*
@@ -34,6 +38,7 @@ cdcacm_control_request(
 		}
 		return USBD_REQ_HANDLED;
 	}
+    debug_print("cdcacm_control notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
 	return USBD_REQ_NOTSUPP;
 }
 
