@@ -401,23 +401,24 @@ static int aggregate_callback(
     uint16_t *len,
 	usbd_control_complete_callback *complete) {
 	int i, result = 0;
-	//  dump_usb_request(">>", req); ////
-	/* Call user command hook function. */
-	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
-		if (control_callback[i].cb == NULL) { break; }
-		if ((req->bmRequestType & control_callback[i].type_mask) == control_callback[i].type) {
-			result = control_callback[i].cb(
-                usbd_dev, 
-                req,
-                buf,
-                len,
-                complete);
-			if (result == USBD_REQ_HANDLED ||
-			    result == USBD_REQ_NOTSUPP) {
-				return result;
-			}
-		}
-	}
+    if (req->bmRequestType != 0xc0) {  //  If this is not a Set Configuration command...
+        /* Call user command hook function. */
+        for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
+            if (control_callback[i].cb == NULL) { break; }
+            if ((req->bmRequestType & control_callback[i].type_mask) == control_callback[i].type) {
+                result = control_callback[i].cb(
+                    usbd_dev, 
+                    req,
+                    buf,
+                    len,
+                    complete);
+                if (result == USBD_REQ_HANDLED ||
+                    result == USBD_REQ_NOTSUPP) {
+                    return result;
+                }
+            }
+        }
+    }
 	dump_usb_request(">> ", req); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
