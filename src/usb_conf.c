@@ -400,8 +400,9 @@ static int aggregate_callback(
     uint8_t **buf, 
     uint16_t *len,
 	usbd_control_complete_callback *complete) {
+    //  This callback is called whenever a USB request is received.
 	int i, result = 0;
-    if (req->bmRequestType != 0xc0) {  //  If this is not a Set Configuration command...
+    if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) {  //  If this is not a Set Configuration request...
         /* Call user command hook function. */
         for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
             if (control_callback[i].cb == NULL) { break; }
