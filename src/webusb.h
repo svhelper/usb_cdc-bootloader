@@ -23,7 +23,7 @@
 #include "webusb_defs.h"
 
 // Arbitrary
-#define WEBUSB_VENDOR_CODE 0x01
+#define WEBUSB_VENDOR_CODE 0x2205
 
 extern const struct webusb_platform_descriptor webusb_platform_capability_descriptor;
 extern const struct webusb_platform_descriptor webusb_platform_capability_descriptor_no_landing_page;
