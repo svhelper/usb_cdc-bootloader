@@ -790,27 +790,28 @@ static int msc_control_request(usbd_device *usbd_dev,
 				struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 				usbd_control_complete_callback *complete)
 {
-	dump_usb_request("msc_control", req); ////
 	(void)complete;
 	(void)usbd_dev;
 	switch (req->bRequest) {
 	case USB_MSC_REQ_BULK_ONLY_RESET:
 		/* Do any special reset code here. */
+		dump_usb_request("msc", req); ////
 		return USBD_REQ_HANDLED;
 	case USB_MSC_REQ_GET_MAX_LUN:
 		/* Return the number of LUNs.  We use 0. */
+		dump_usb_request("msc", req); ////
 		*buf[0] = 0;
 		*len = 1;
 		return USBD_REQ_HANDLED;
 	}
-    debug_print("*** msc_control next "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
+	dump_usb_request("msc next", req); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP. Allow unknown requests to fall to next callback e.g. CDC.
 }
 
 /** @brief Setup the endpoints to be bulk & register the callbacks. */
 static void msc_set_config(usbd_device *usbd_dev, uint16_t wValue)
 {
-    debug_println("msc_set_config"); // debug_flush(); ////
+    //  debug_println("msc_set_config"); // debug_flush(); ////
 	usbd_mass_storage *ms = &_mass_storage;
 
 	(void)wValue;
@@ -865,7 +866,7 @@ usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
 				 int (*write_block)(uint32_t lba, const uint8_t *copy_from),
 				 uint8_t msc_interface_index0)  //  Index of MSC interface
 {
-    debug_println("custom_usb_msc_init"); // debug_flush(); ////
+    //  debug_println("custom_usb_msc_init"); // debug_flush(); ////
 	msc_interface_index = msc_interface_index0;
 	_mass_storage.usbd_dev = usbd_dev;
 	_mass_storage.ep_in = ep_in;

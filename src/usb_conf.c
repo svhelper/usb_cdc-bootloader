@@ -275,7 +275,7 @@ usbd_device* usbd_dev = NULL;
 
 usbd_device* usb_setup(void) {
     int num_strings = sizeof(usb_strings)/sizeof(const char*);
-    debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); // debug_flush(); ////
+    // debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); // debug_flush(); ////
     const usbd_driver* driver = target_usb_init();
     usbd_dev = usbd_init(driver, &dev, &config, 
         usb_strings, num_strings,
@@ -286,6 +286,7 @@ usbd_device* usb_setup(void) {
     //  For WinUSB: Windows probes the compatible ID before setting the configuration, so also register the callback now.
     set_aggregate_callback(usbd_dev, 0);
 
+    //  The following USB setup functions will call aggregate_register_callback() to register callbacks.
     dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
     msc_setup(usbd_dev);
     cdc_setup(usbd_dev);
@@ -307,7 +308,7 @@ extern usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
 				 uint8_t msc_interface_index0);
                  
 void msc_setup(usbd_device* usbd_dev0) {
-    debug_println("msc_setup"); ////
+    //  debug_println("msc_setup"); ////
 #ifdef RAM_DISK
     ramdisk_init();
 #endif  //  RAM_DISK
@@ -339,7 +340,7 @@ int aggregate_register_callback(
     uint8_t type_mask,
     usbd_control_callback callback)
 {
-    debug_println("aggregate_register_callback"); ////
+    // debug_println("aggregate_register_callback"); ////
 	int i;
 	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
 		if (control_callback[i].cb) { 
@@ -347,7 +348,7 @@ int aggregate_register_callback(
             if (control_callback[i].type == type &&
                 control_callback[i].type_mask == type_mask &&
                 control_callback[i].cb == callback) { 
-                    debug_println("callback exists"); ////
+                    //  debug_println("callback exists"); ////
                     return 0;
                 }
             continue;  //  Continue checking.
@@ -368,7 +369,7 @@ static int aggregate_callback(
     uint16_t *len,
 	usbd_control_complete_callback *complete) {
 	int i, result = 0;
-	dump_usb_request(">>", req); ////
+	//  dump_usb_request(">>", req); ////
 	/* Call user command hook function. */
 	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
 		if (control_callback[i].cb == NULL) { break; }
@@ -393,7 +394,7 @@ static void set_aggregate_callback(
   usbd_device *usbd_dev,
   uint16_t wValue
 ) {
-    debug_println("set_aggregate_callback"); ////
+    // debug_println("set_aggregate_callback"); ////
 #ifdef NOTUSED
     int status = usbd_register_control_callback(
 		usbd_dev,
@@ -439,12 +440,22 @@ void usb_set_serial_number(const char* serial) {
     }
 }
 
+static int usb_descriptor_type(uint16_t wValue) {
+	return wValue >> 8;
+}
+
+static int usb_descriptor_index(uint16_t wValue) {
+	return wValue & 0xFF;
+}
+
 void dump_usb_request(const char *msg, struct usb_setup_data *req) {
     debug_print(msg);
     debug_print(" type 0x"); debug_printhex(req->bmRequestType);
     debug_print(", req 0x"); debug_printhex(req->bRequest);
     debug_print(", val "); debug_print_unsigned(req->wValue);
     debug_print(", idx "); debug_print_unsigned(req->wIndex);
+    debug_print(", type 0x"); debug_printhex(usb_descriptor_type(req->wValue)); 	
+	debug_print(", index 0x"); debug_printhex(usb_descriptor_index(req->wValue)); 	
     debug_println("");
 }
 

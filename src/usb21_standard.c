@@ -75,10 +75,6 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 											usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-	dump_usb_request("usb21_descriptor", req); ////
-	if ((req->bmRequestType & DESCRIPTOR_CALLBACK_MASK) != DESCRIPTOR_CALLBACK_TYPE) {
-		////return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
-	}
 	int descr_type = req->wValue >> 8;
     if (descr_type != USB_DT_BOS) {
 		//  Not BOS request.  Hand off to next interface.
@@ -88,23 +84,16 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 		debug_println("*** usb21_descriptor no bos "); debug_flush(); ////
 		return USBD_REQ_NOTSUPP;
 	}
-	debug_print("usb21_descriptor "); debug_print_unsigned(req->bRequest); 
-    debug_print(", type "); debug_print_unsigned(usb_descriptor_type(req->wValue)); 	
-    debug_print(", index "); debug_print_unsigned(usb_descriptor_index(req->wValue)); 	
-	debug_println(""); // debug_flush(); ////
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
+		dump_usb_request("u21", req); ////
 		*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));
 		return USBD_REQ_HANDLED;
 	}
-	debug_print("usb21_descriptor next "); debug_print_unsigned(req->bRequest); 
-    debug_print(", type "); debug_print_unsigned(usb_descriptor_type(req->wValue)); 	
-    debug_print(", index "); debug_print_unsigned(usb_descriptor_index(req->wValue)); 	
-	debug_println(""); // debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
 static void usb21_set_config(usbd_device* usbd_dev, uint16_t wValue) {
-    debug_println("usb21_set_config"); // debug_flush(); ////
+    //  debug_println("usb21_set_config"); // debug_flush(); ////
 	(void)wValue;
 	int status = aggregate_register_callback(
 		usbd_dev,

@@ -89,25 +89,18 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 					usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-	dump_usb_request("winusb_descriptor", req); ////
-	if ((req->bmRequestType & DESCRIPTOR_CALLBACK_MASK) != DESCRIPTOR_CALLBACK_TYPE) {
-		////return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
-	}
 	if ((req->bmRequestType & USB_REQ_TYPE_TYPE) != USB_REQ_TYPE_STANDARD) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
-    debug_print("winusb_descriptor "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR && usb_descriptor_type(req->wValue) == USB_DT_STRING) {
 		if (usb_descriptor_index(req->wValue) == WINUSB_EXTRA_STRING_INDEX) {
+			dump_usb_request("windes", req); ////
+
 			*buf = (uint8_t*)(&winusb_string_descriptor);
 			*len = MIN(*len, winusb_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
 		}
 	}
-    debug_print("winusb_descriptor next "); debug_print_unsigned(req->bRequest); 
-    debug_print(", type "); debug_print_unsigned(usb_descriptor_type(req->wValue)); 	
-    debug_print(", index "); debug_print_unsigned(usb_descriptor_index(req->wValue)); 	
-	debug_println(""); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
@@ -117,17 +110,14 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 					usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-	dump_usb_request("winusb_control", req); ////
-	if ((req->bmRequestType & CONTROL_CALLBACK_MASK) != CONTROL_CALLBACK_TYPE) {
-		////return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
-	}
 	if (req->bRequest != WINUSB_MS_VENDOR_CODE) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
-    debug_print("winusb_control "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	int status = USBD_REQ_NOTSUPP;
 	if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
 		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
+		dump_usb_request("winctl", req); ////
+
 		*buf = (uint8_t*)(&winusb_wcid);
 		*len = MIN(*len, winusb_wcid.header.dwLength);
 		status = USBD_REQ_HANDLED;
@@ -135,6 +125,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	} else if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_INTERFACE) &&
 		(req->wIndex == WINUSB_REQ_GET_EXTENDED_PROPERTIES_OS_FEATURE_DESCRIPTOR) &&
 		(usb_descriptor_index(req->wValue) == winusb_wcid.functions[0].bInterfaceNumber)) {
+		dump_usb_request("winctl", req); ////
 
 		*buf = (uint8_t*)(&guid);
 		*len = MIN(*len, guid.header.dwLength);
@@ -142,18 +133,20 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 
 	} else {
 		status = USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
+#ifdef NOTUSED		
 		if ((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) {
     		debug_print("winusb_control next device "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
 		} else {
     		debug_print("winusb_control next iface "); debug_print_unsigned(usb_descriptor_index(req->wValue)); debug_println(""); debug_flush(); ////
 		}
+#endif  //  NOTUSED		
 	}
 
 	return status;
 }
 
 static void winusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
-	debug_println("winusb_set_config"); // debug_flush(); ////
+	//  debug_println("winusb_set_config"); // debug_flush(); ////
 	(void)wValue;
 	int status = aggregate_register_callback(
 		usbd_dev,

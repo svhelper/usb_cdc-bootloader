@@ -58,16 +58,9 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 	(void)complete;
 	(void)usbd_dev;
 	dump_usb_request("webusb_control", req); ////
-	if ((req->bmRequestType & CONTROL_CALLBACK_MASK) != CONTROL_CALLBACK_TYPE) {
-		////return USBD_REQ_NEXT_CALLBACK;  //  Not my callback type.  Hand off to next callback.
-	}
 	if (req->bRequest != WEBUSB_VENDOR_CODE) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
-    if (req->wIndex != INTF_DFU) {
-		//  Not for my interface.  Hand off to next interface.
-        // return USBD_REQ_NEXT_CALLBACK;
-    }
     debug_print("webusb_control "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
 	int status = USBD_REQ_NOTSUPP;
 	switch (req->wIndex) {

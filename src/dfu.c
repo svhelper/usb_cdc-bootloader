@@ -127,11 +127,10 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
                                      struct usb_setup_data *req,
                                      uint8_t **buf, uint16_t *len,
                                      usbd_control_complete_callback* complete) {
-	dump_usb_request("dfu_control", req); ////
     if (req->wIndex != INTF_DFU) {
         return USBD_REQ_NEXT_CALLBACK;
     }
-    debug_print("dfu_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
+	dump_usb_request("dfu", req); ////
     int status = USBD_REQ_HANDLED;
     switch (req->bRequest) {
         case DFU_GETSTATE: {
@@ -273,7 +272,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
 }
 
 static void dfu_set_config(usbd_device* usbd_dev, uint16_t wValue) {
-    debug_println("dfu_set_config "); ////
+    //  debug_println("dfu_set_config "); ////
     (void)wValue;
     int status = aggregate_register_callback(
         usbd_dev,
