@@ -28,6 +28,9 @@
 #include "dapboot.h"
 #include "config.h"
 
+#define CONTROL_CALLBACK_TYPE (USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE)
+#define CONTROL_CALLBACK_MASK (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
+
 const struct usb_dfu_descriptor dfu_function = {
     .bLength = sizeof(struct usb_dfu_descriptor),
     .bDescriptorType = DFU_FUNCTIONAL,
@@ -276,12 +279,10 @@ static void dfu_set_config(usbd_device* usbd_dev, uint16_t wValue) {
     (void)wValue;
     int status = aggregate_register_callback(
         usbd_dev,
-        USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
-        USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+        CONTROL_CALLBACK_TYPE,
+        CONTROL_CALLBACK_MASK,
         dfu_control_class_request);        
-	if (status < 0) {
-    	debug_println("*** dfu_set_config failed"); debug_flush(); ////
-	}
+	if (status < 0) { debug_println("*** dfu_set_config failed"); debug_flush(); }
 }
 
 void dfu_setup(usbd_device* usbd_dev,
@@ -293,8 +294,18 @@ void dfu_setup(usbd_device* usbd_dev,
     dfu_state_change_callback = on_state_change;
     dfu_status_change_callback = on_status_change;
 
-    int status = aggregate_register_config_callback(usbd_dev, dfu_set_config);
+	//  Register the callback now because WebUSB requests come earlier.
+    int status = aggregate_register_callback(
+        usbd_dev,
+        CONTROL_CALLBACK_TYPE,
+        CONTROL_CALLBACK_MASK,
+        dfu_control_class_request);        
+	if (status < 0) { debug_println("*** dfu_setup failed"); debug_flush(); }
+
+    //  Re-register the callback in case the USB restarts.
+    status = aggregate_register_config_callback(usbd_dev, dfu_set_config);
     if (status < 0) { debug_println("*** dfu_setup failed"); debug_flush(); }
+
     current_dfu_state = STATE_DFU_IDLE;
     current_dfu_status = DFU_STATUS_OK;
     if (on_state_change) {

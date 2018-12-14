@@ -107,7 +107,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 			*len = MIN(*len, winusb_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
 		}
-		else if (usb_descriptor_index(req->wValue) == 0) {
+		else if (usb_descriptor_index(req->wValue) == 0 && *len == 2) {
 			//  Windows will request descriptor at index 0 with length 2, which causes libopencm3 to return a corrupted response.  We fix that here.
 			dump_usb_request("windes", req); ////			
 			debug_print_int(*len); debug_println(""); ////

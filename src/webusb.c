@@ -55,11 +55,10 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 									 struct usb_setup_data *req,
 									 uint8_t **buf, uint16_t *len,
 									 usbd_control_complete_callback* complete) {
+	//  Handle >>  type 0xc0, req 0x22, val 1, idx 2, type 0x00, index 0x01
 	(void)complete;
 	(void)usbd_dev;
-	if (req->bRequest != WEBUSB_VENDOR_CODE) {
-		return USBD_REQ_NEXT_CALLBACK;
-	}
+	if (req->bRequest != WEBUSB_VENDOR_CODE) { return USBD_REQ_NEXT_CALLBACK; }
 	dump_usb_request("web", req); ////
 	int status = USBD_REQ_NOTSUPP;
 	switch (req->wIndex) {
@@ -110,6 +109,16 @@ static void webusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 void webusb_setup(usbd_device* usbd_dev, const char* https_url) {
     // debug_println("webusb_setup"); // debug_flush(); ////
 	webusb_https_url = https_url;
-	int status = aggregate_register_config_callback(usbd_dev, webusb_set_config);
+
+	//  Register the callback now because WebUSB requests come earlier.
+	int status = aggregate_register_callback(
+		usbd_dev,
+		CONTROL_CALLBACK_TYPE,
+		CONTROL_CALLBACK_MASK,
+		webusb_control_vendor_request);
+	if (status < 0) { debug_println("*** webusb_setup failed"); debug_flush(); }
+
+    //  Re-register the callback in case the USB restarts.
+	status = aggregate_register_config_callback(usbd_dev, webusb_set_config);
 	if (status < 0) { debug_println("*** webusb_setup failed"); debug_flush(); }
 }

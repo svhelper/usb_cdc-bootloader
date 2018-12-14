@@ -292,13 +292,6 @@ usbd_device* usb_setup(void) {
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
 
-    //  Set the aggregate callback.    
-	int status = usbd_register_set_config_callback(usbd_dev, set_aggregate_callback);
-    if (status < 0) { debug_println("*** usb_setup failed"); debug_flush(); }
-
-    //  For WinUSB: Windows probes the compatible ID before setting the configuration, so also register the callback now.
-    set_aggregate_callback(usbd_dev, 0);
-
     //  The following USB setup functions will call aggregate_register_callback() to register callbacks.
     dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
     msc_setup(usbd_dev);
@@ -306,6 +299,13 @@ usbd_device* usb_setup(void) {
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
 	winusb_setup(usbd_dev, INTF_DFU);
+
+    //  Set the aggregate callback.    
+	int status = usbd_register_set_config_callback(usbd_dev, set_aggregate_callback);
+    if (status < 0) { debug_println("*** usb_setup failed"); debug_flush(); }
+
+    //  For WinUSB: Windows probes the compatible ID before setting the configuration, so also register the callback now.
+    set_aggregate_callback(usbd_dev, (uint16_t) -1);
     return usbd_dev;
 }
 
@@ -426,54 +426,23 @@ static void set_aggregate_callback(
   usbd_device *usbd_dev,
   uint16_t wValue
 ) {
-    // debug_println("set_aggregate_callback"); ////
+    if (wValue != (uint16_t) -1) {  //  If this is an actual callback, not a call by usb_setup()...
+        //  Call the config functions before setting our callback.
+        debug_println("set_aggregate_callback"); ////
+        int i;
+        for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
+            if (!config_callback[i]) { break; }
+            (config_callback[i])(usbd_dev, wValue);
+        }
+    }
+    //  Set our callback.
 	int status;
         status = usbd_register_control_callback(
 		usbd_dev,
-        0,
+        0,  //  Register for all notifications.
         0,
 		aggregate_callback);
 	if (status < 0) { debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush(); }  
-
-    //  Call the config functions.
-    int i;
-	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
-        if (!config_callback[i]) { break; }
-		(config_callback[i])(usbd_dev, wValue);
-	}
-
-/*
-    status = usbd_register_control_callback(
-		usbd_dev,
-        USB_REQ_TYPE_VENDOR,
-        USB_REQ_TYPE_TYPE,
-		aggregate_callback);
-	if (status < 0) { debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush(); }    
-    status = usbd_register_control_callback(
-		usbd_dev,
-        USB_REQ_TYPE_DEVICE,
-        USB_REQ_TYPE_RECIPIENT,
-		aggregate_callback);
-	if (status < 0) { debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush(); }    
-    status = usbd_register_control_callback(
-		usbd_dev,
-        USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_DEVICE,
-        USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-		aggregate_callback);
-	if (status < 0) { debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush(); }    
-    status = usbd_register_control_callback(
-        usbd_dev,
-        USB_REQ_TYPE_IN | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-        USB_REQ_TYPE_DIRECTION | USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-        aggregate_callback);        
-	if (status < 0) { debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush(); }
-    status = usbd_register_control_callback(
-        usbd_dev,
-        USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
-        USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-        aggregate_callback);        
-	if (status < 0) { debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush(); }
-*/    
 }
 
 void usb_set_serial_number(const char* serial) {

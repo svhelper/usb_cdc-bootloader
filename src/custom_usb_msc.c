@@ -804,7 +804,7 @@ static int msc_control_request(usbd_device *usbd_dev,
 		*len = 1;
 		return USBD_REQ_HANDLED;
 	}
-	dump_usb_request("msc next", req); debug_flush(); ////
+	//  dump_usb_request("msc next", req); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP. Allow unknown requests to fall to next callback e.g. CDC.
 }
 
