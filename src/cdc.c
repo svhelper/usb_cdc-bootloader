@@ -79,7 +79,10 @@ cdcacm_data_rx_cb(
     if (len == 0) { return; }
     uint16_t pos = (len < MAX_USB_PACKET_SIZE) ? len : MAX_USB_PACKET_SIZE;
     cdcbuf[pos] = 0;
-    debug_print("<< "); debug_println(cdcbuf); ////
+
+	usbd_ep_write_packet(usbd_dev, DATA_IN, cdcbuf, pos); ////
+	
+    debug_print("["); debug_println(cdcbuf); debug_print("]"); // debug_flush(); ////
 /*
 	// How much queue capacity left?
 	unsigned rx_avail = uxQueueSpacesAvailable(usb_rxq);
