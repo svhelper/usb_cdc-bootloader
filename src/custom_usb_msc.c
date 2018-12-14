@@ -791,14 +791,8 @@ static int msc_control_request(usbd_device *usbd_dev,
 				usbd_control_complete_callback *complete)
 {
 	dump_usb_request("msc_control", req); ////
-    if (req->wIndex != msc_interface_index) {
-		//  Not for my interface.  Hand off to next interface.
-        ////return USBD_REQ_NEXT_CALLBACK;
-    }
-    debug_print("msc_control "); debug_print_unsigned(req->bRequest); debug_println(""); // debug_flush(); ////
 	(void)complete;
 	(void)usbd_dev;
-
 	switch (req->bRequest) {
 	case USB_MSC_REQ_BULK_ONLY_RESET:
 		/* Do any special reset code here. */
@@ -809,8 +803,8 @@ static int msc_control_request(usbd_device *usbd_dev,
 		*len = 1;
 		return USBD_REQ_HANDLED;
 	}
-    debug_print("*** msc_control notsupp "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
-	return USBD_REQ_NOTSUPP;
+    debug_print("*** msc_control next "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
+	return USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP. Allow unknown requests to fall to next callback e.g. CDC.
 }
 
 /** @brief Setup the endpoints to be bulk & register the callbacks. */
