@@ -84,6 +84,14 @@ cdcacm_data_rx_cb(
     debug_print("["); debug_println(cdcbuf); debug_print("]"); // debug_flush(); ////
 }
 
+static void
+cdcacm_comm_cb(
+  usbd_device *usbd_dev,
+  uint8_t ep __attribute__((unused))
+) {
+	debug_println("comm"); debug_flush();
+}
+
 /*
  * USB Configuration:
  */
@@ -96,7 +104,7 @@ cdcacm_set_config(
     //  debug_println("*** cdcacm_set_config"); ////
 	usbd_ep_setup(usbd_dev, DATA_OUT, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, cdcacm_data_rx_cb);
 	usbd_ep_setup(usbd_dev, DATA_IN, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, NULL);
-	usbd_ep_setup(usbd_dev, COMM_IN, USB_ENDPOINT_ATTR_INTERRUPT, COMM_PACKET_SIZE, NULL);
+	usbd_ep_setup(usbd_dev, COMM_IN, USB_ENDPOINT_ATTR_INTERRUPT, COMM_PACKET_SIZE, cdcacm_comm_cb);
 	int status = aggregate_register_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,
