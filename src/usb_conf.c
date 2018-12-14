@@ -50,8 +50,13 @@ static const char *usb_strings[] = {
     "Devanarchy",              //  USB Manufacturer
     "DAPBoot DFU Bootloader",  //  USB Product
     serial_number,             //  Serial number
-    "Blue Pill DFU"            //  DFU
+    //"Blue Pill DFU"            //  DFU
+    "DAPBoot DFU"
 };
+
+#define MSC_VENDOR_ID "BluePill"
+#define MSC_PRODUCT_ID "UF2 Bootloader"
+#define MSC_PRODUCT_REVISION_LEVEL "42.00"
 
 enum usb_strings_index {  //  Index of USB strings.  Must sync with above, starts from 1.
     USB_STRINGS_MANUFACTURER = 1,
@@ -306,7 +311,7 @@ extern usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
 				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
 				 int (*write_block)(uint32_t lba, const uint8_t *copy_from),
 				 uint8_t msc_interface_index0);
-                 
+
 void msc_setup(usbd_device* usbd_dev0) {
     //  debug_println("msc_setup"); ////
 #ifdef RAM_DISK
@@ -314,7 +319,7 @@ void msc_setup(usbd_device* usbd_dev0) {
 #endif  //  RAM_DISK
     
     custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_USB_PACKET_SIZE, MSC_OUT, MAX_USB_PACKET_SIZE, 
-        "BluePill", "UF2 Bootloader", "42.00", 
+        MSC_VENDOR_ID, MSC_PRODUCT_ID, MSC_PRODUCT_REVISION_LEVEL, 
 #ifdef RAM_DISK    
         ramdisk_blocks(), ramdisk_read, ramdisk_write,
 #else

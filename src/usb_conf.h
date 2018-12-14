@@ -24,8 +24,10 @@
 #define USB_VID                 0x1209
 #define USB_PID                 0xdb42
 #define USB_SERIAL_NUM_LENGTH   24
-#define USB_CONTROL_BUF_SIZE    1024  //  Previously 256
-#define MAX_USB_PACKET_SIZE     64
+////#define USB_CONTROL_BUF_SIZE    1024  //  Previously 256
+#define USB_CONTROL_BUF_SIZE    256
+////#define MAX_USB_PACKET_SIZE     64
+#define MAX_USB_PACKET_SIZE     32
 
 //  Index of each USB interface.  Must sync with interfaces[].
 #define INTF_DFU                0
@@ -40,15 +42,6 @@
 
 #define DATA_OUT                0x01
 #define MSC_OUT                 0x02
-
-#ifdef NOTUSED
-#define MSC_IN                  0x83
-#define DATA_IN                 0x84
-#define COMM_IN                 0x85
-
-#define MSC_OUT                 0x02
-#define DATA_OUT                0x03
-#endif
 
 extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);

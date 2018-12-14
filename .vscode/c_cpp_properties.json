@@ -2,38 +2,37 @@
     "!!! WARNING !!!": "PLEASE DO NOT MODIFY THIS FILE! USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags",
     "configurations": [
         {
-            "name": "Mac",
-            "macFrameworkPath": [],
+            "name": "Win32",
             "includePath": [
-                "/Users/Luppy/bluepill-bootloader/src/stm32f103",
-                "/Users/Luppy/bluepill-bootloader/src/stm32f103/generic",
-                "/Users/Luppy/.platformio/packages/framework-libopencm3",
-                "/Users/Luppy/.platformio/packages/framework-libopencm3/include",
-                "/Users/Luppy/bluepill-bootloader/stm32/bluepill",
-                "/Users/Luppy/bluepill-bootloader/stm32/logger",
-                "/Users/Luppy/.platformio/packages/tool-unity",
-                "/Users/Luppy/bluepill-bootloader/include",
-                "/Users/Luppy/bluepill-bootloader/src",
+                "c:/bluepill-bootloader/src/stm32f103",
+                "c:/bluepill-bootloader/src/stm32f103/generic",
+                "C:/Users/guppy/.platformio/packages/framework-libopencm3",
+                "C:/Users/guppy/.platformio/packages/framework-libopencm3/include",
+                "c:/bluepill-bootloader/stm32/bluepill",
+                "c:/bluepill-bootloader/stm32/logger",
+                "C:/Users/guppy/.platformio/packages/tool-unity",
+                "c:/bluepill-bootloader/include",
+                "c:/bluepill-bootloader/src",
                 ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": "${workspaceRoot}/.vscode/.browse.c_cpp.db",
                 "path": [
-                    "/Users/Luppy/bluepill-bootloader/src/stm32f103",
-                    "/Users/Luppy/bluepill-bootloader/src/stm32f103/generic",
-                    "/Users/Luppy/.platformio/packages/framework-libopencm3",
-                    "/Users/Luppy/.platformio/packages/framework-libopencm3/include",
-                    "/Users/Luppy/bluepill-bootloader/stm32/bluepill",
-                    "/Users/Luppy/bluepill-bootloader/stm32/logger",
-                    "/Users/Luppy/.platformio/packages/tool-unity",
-                    "/Users/Luppy/bluepill-bootloader/include",
-                    "/Users/Luppy/bluepill-bootloader/src",
+                    "c:/bluepill-bootloader/src/stm32f103",
+                    "c:/bluepill-bootloader/src/stm32f103/generic",
+                    "C:/Users/guppy/.platformio/packages/framework-libopencm3",
+                    "C:/Users/guppy/.platformio/packages/framework-libopencm3/include",
+                    "c:/bluepill-bootloader/stm32/bluepill",
+                    "c:/bluepill-bootloader/stm32/logger",
+                    "C:/Users/guppy/.platformio/packages/tool-unity",
+                    "c:/bluepill-bootloader/include",
+                    "c:/bluepill-bootloader/src",
                     ""
                 ]
             },
             "defines": [
-                "PLATFORMIO=30602",
+                "PLATFORMIO=30603",
                 "STM32F1",
                 "STM32F103xB",
                 "UF2_FAMILY=0x5ee21072",
@@ -89,9 +88,7 @@
             ],
             "intelliSenseMode": "clang-x64",
             "cppStandard": "c++11",
-            "compilerPath": "/Users/Luppy/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc -fwrapv -fno-rtti -fno-threadsafe-statics -fno-exceptions -fno-unwind-tables -Wno-array-bounds -mcpu=cortex-m3 -mthumb -Os -ffunction-sections -fdata-sections -Wall -mthumb -nostdlib -mcpu=cortex-m3",
-            "cStandard": "c11"
+            "compilerPath": "C:/Users/guppy/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -mthumb -mcpu=cortex-m3"
         }
-    ],
-    "version": 4
+    ]
 }
