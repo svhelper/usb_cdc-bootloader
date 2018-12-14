@@ -504,12 +504,13 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
 }
 
 /*
-> Executing task in folder bluepill-bootloader: openocd -f interface/stlink-v2.cfg -f target/stm32f1x.cfg -f scripts/connect.ocd <
+> Executing task in folder bluepill-bootloader: c:\openocd\bin\openocd -f interface/stlink-v2.cfg -f target/stm32f1x.cfg -f scripts/connect.ocd <
 
-Open On-Chip Debugger 0.10.0
+GNU MCU Eclipse 64-bits Open On-Chip Debugger 0.10.0+dev-00487-gaf359c18 (2018-05-12-19:30)
 Licensed under GNU GPL v2
 For bug reports, read
-        http://openocd.org/doc/doxygen/bugs.html
+                                                                                                       http://openocd.org/doc/doxygen/bugs.html
+WARNING: interface/stlink-v2.cfg is deprecated, please switch to interface/stlink.cfg
 Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
 Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
 adapter speed: 1000 kHz
@@ -521,229 +522,179 @@ NOTE: Trash this window before uploading a program to the Blue Pill
 Restarting the Blue Pill...
 ----platform_setup
 ----bootloader
-bootloader target_get_force_bootloader
-bootloader target_get_serial_number
-bootloader usb_set_serial_number
-bootloader usb_setup
-usb_setup num_strings 4
-set_aggregate_callback
-msc_setup
-custom_usb_msc_init
-*** cdc_setup
-usb21_set_config
-aggregate_register_callback
-aggregate_register_callback
-aggregate_register_callback
-bootloader loop
->> type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
-winusb_descriptor type 0x80, req 0x06, val 256, idx 0
-winusb_descriptor 0
-winusb_descriptor next 6, type 1, index 0
->> *** type 0x80, req 0x06, val 256, idx 0
->> type 0x80, req 0x06, val 256, idx 0
-usb21_descriptor type 0x80, req 0x06, val 256, idx 0
-winusb_descriptor type 0x80, req 0x06, val 256, idx 0
-winusb_descriptor 0
-winusb_descriptor next 6, type 1, index 0
->> *** type 0x80, req 0x06, val 256, idx 0
->> type 0x80, req 0x06, val 770, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
-winusb_descriptor type 0x80, req 0x06, val 770, idx 1033
-winusb_descriptor 1033
-winusb_descriptor next 6, type 3, index 2
->> *** type 0x80, req 0x06, val 770, idx 1033
->> type 0x80, req 0x06, val 770, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 770, idx 1033
-winusb_descriptor type 0x80, req 0x06, val 770, idx 1033
-winusb_descriptor 1033
-winusb_descriptor next 6, type 3, index 2
->> *** type 0x80, req 0x06, val 770, idx 1033
->> type 0x80, req 0x06, val 769, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 769, idx 1033
-winusb_descriptor type 0x80, req 0x06, val 769, idx 1033
-winusb_descriptor 1033
-winusb_descriptor next 6, type 3, index 1
->> *** type 0x80, req 0x06, val 769, idx 1033
->> type 0x80, req 0x06, val 769, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 769, idx 1033
-winusb_descriptor type 0x80, req 0x06, val 769, idx 1033
-winusb_descriptor 1033
-winusb_descriptor next 6, type 3, index 1
->> *** type 0x80, req 0x06, val 769, idx 1033
->> type 0x80, req 0x06, val 771, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
-winusb_descriptor type 0x80, req 0x06, val 771, idx 1033
-winusb_descriptor 1033
-winusb_descriptor next 6, type 3, index 3
->> *** type 0x80, req 0x06, val 771, idx 1033
->> type 0x80, req 0x06, val 771, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 771, idx 1033
-winusb_descriptor type 0x80, req 0x06, val 771, idx 1033
-winusb_descriptor 1033
-winusb_descriptor next 6, type 3, index 3
->> *** type 0x80, req 0x06, val 771, idx 1033
->> type 0x80, req 0x06, val 3840, idx 0
-usb21_descriptor type 0x80, req 0x06, val 3840, idx 0
-usb21_descriptor 6, type 15, index 0
->> type 0x80, req 0x06, val 3840, idx 0
-usb21_descriptor type 0x80, req 0x06, val 3840, idx 0
-usb21_descriptor 6, type 15, index 0
->> type 0x80, req 0x06, val 512, idx 0
-usb21_descriptor type 0x80, req 0x06, val 512, idx 0
-winusb_descriptor type 0x80, req 0x06, val 512, idx 0
-winusb_descriptor 0
-winusb_descriptor next 6, type 2, index 0
->> *** type 0x80, req 0x06, val 512, idx 0
->> type 0x80, req 0x06, val 512, idx 0
-usb21_descriptor type 0x80, req 0x06, val 512, idx 0
-winusb_descriptor type 0x80, req 0x06, val 512, idx 0
-winusb_descriptor 0
-winusb_descriptor next 6, type 2, index 0
->> *** type 0x80, req 0x06, val 512, idx 0
->> type 0x80, req 0x06, val 768, idx 0
-usb21_descriptor type 0x80, req 0x06, val 768, idx 0
-winusb_descriptor type 0x80, req 0x06, val 768, idx 0
-winusb_descriptor 0
-winusb_descriptor next 6, type 3, index 0
->> *** type 0x80, req 0x06, val 768, idx 0
->> type 0xc0, req 0x01, val 1, idx 2
-winusb_control type 0xc0, req 0x01, val 1, idx 2
-winusb_descriptor type 0xc0, req 0x01, val 1, idx 2
->> *** type 0xc0, req 0x01, val 1, idx 2
-set_aggregate_callback
+target_get_force_bootloader
+target_get_serial_number
+usb_set_serial_number
+usb_setup
+loop
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x80, req 0x06, val 512, idx 0, type 0x02, index 0x00
+u21 type 0x80, req 0x06, val 3840, idx 0, type 0x0f, index 0x00
+u21 type 0x80, req 0x06, val 3840, idx 0, type 0x0f, index 0x00
+>>  type 0x80, req 0x06, val 771, idx 1033, type 0x03, index 0x03
+>>  type 0x80, req 0x06, val 768, idx 0, type 0x03, index 0x00
+>>  type 0x80, req 0x06, val 770, idx 1033, type 0x03, index 0x02
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x80, req 0x06, val 512, idx 0, type 0x02, index 0x00
+>>  type 0x80, req 0x06, val 512, idx 0, type 0x02, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
 dfu_set_config
-aggregate_register_callback
-msc_set_config
-aggregate_register_callback
-*** cdcacm_set_config
->> type 0x80, req 0x06, val 772, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 772, idx 1033
-winusb_descriptor type 0x80, req 0x06, val 772, idx 1033
-winusb_descriptor 1033
-winusb_descriptor next 6, type 3, index 4
->> *** type 0x80, req 0x06, val 772, idx 1033
->> type 0x80, req 0x06, val 772, idx 1033
-usb21_descriptor type 0x80, req 0x06, val 772, idx 1033
-winusb_descriptor type 0x80, req 0x06, val 772, idx 1033
-winusb_descriptor 1033
-winusb_descriptor next 6, type 3, index 4
->> *** type 0x80, req 0x06, val 772, idx 1033
->> type 0xa1, req 0xfe, val 0, idx 1
-dfu_control type 0xa1, req 0xfe, val 0, idx 1
-msc_control type 0xa1, req 0xfe, val 0, idx 1
+webusb_set_config
+winctl type 0xc0, req 0x21, val 0, idx 4, type 0x00, index 0x00
+winctl type 0xc0, req 0x21, val 0, idx 4, type 0x00, index 0x00
+>>  type 0x80, req 0x06, val 772, idx 1033, type 0x03, index 0x04
+>>  type 0x80, req 0x06, val 772, idx 1033, type 0x03, index 0x04
+winctl type 0xc1, req 0x21, val 0, idx 5, type 0x00, index 0x00
+winctl type 0xc1, req 0x21, val 0, idx 5, type 0x00, index 0x00
+>>  type 0x80, req 0x06, val 773, idx 1033, type 0x03, index 0x05
+>>  type 0x80, req 0x06, val 773, idx 1033, type 0x03, index 0x05
+>>  type 0xc1, req 0x21, val 1, idx 5, type 0x00, index 0x01
+>>  type 0x80, req 0x06, val 774, idx 1033, type 0x03, index 0x06
+>>  type 0x80, req 0x06, val 774, idx 1033, type 0x03, index 0x06
+>>  type 0xc1, req 0x21, val 2, idx 5, type 0x00, index 0x02
+>>  type 0x80, req 0x06, val 775, idx 1033, type 0x03, index 0x07
+>>  type 0x80, req 0x06, val 775, idx 1033, type 0x03, index 0x07
+>>  type 0xc1, req 0x21, val 3, idx 5, type 0x00, index 0x03
+>>  type 0x80, req 0x00, val 0, idx 0, type 0x00, index 0x00
+>>  type 0x80, req 0x06, val 768, idx 0, type 0x03, index 0x00
+>>  type 0x80, req 0x06, val 768, idx 0, type 0x03, index 0x00
+>>  type 0x80, req 0x06, val 771, idx 1033, type 0x03, index 0x03
+>>  type 0x80, req 0x06, val 771, idx 1033, type 0x03, index 0x03
+msc type 0xa1, req 0xfe, val 0, idx 1, type 0x00, index 0x00
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
 SBC_SENSE_KEY_ILLEGAL_REQUEST 1e
 SBC_SENSE_KEY_ILLEGAL_REQUEST 1e
->> type 0x21, req 0x22, val 3, idx 2
-dfu_control type 0x21, req 0x22, val 3, idx 2
-msc_control type 0x21, req 0x22, val 3, idx 2
-*** msc_control next 34
->> *** type 0x21, req 0x22, val 3, idx 2
-*** cdcacm_control type 0x21, req 0x22, val 3, idx 2
-*** cdcacm_control 34
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
->> type 0x21, req 0x20, val 0, idx 2
-dfu_control type 0x21, req 0x20, val 0, idx 2
-msc_control type 0x21, req 0x20, val 0, idx 2
-*** msc_control next 32
->> *** type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control type 0x21, req 0x20, val 0, idx 2
-*** cdcacm_control 32
-[t
-][e
-][s
-][t
-][i
-][n
-][g
-][
-][o
-][k
-][
-][1
-][2
-][3
-][
-][g
-][s
-][h
-][s
-][h
-][s
-][
-][s
-][u
-][c
-][c
-][e
-][s
-][s
-][!
-][
-][h
-][e
-][l
-][l
-][o
-][!
-][
-][y
-][e
-][s
-][
+>>  type 0x80, req 0x06, val 774, idx 1033, type 0x03, index 0x06
+>>  type 0x80, req 0x06, val 774, idx 1033, type 0x03, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 6, idx 0, type 0x00, index 0x06
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
+dfu_set_config
+webusb_set_config
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x05, val 5, idx 0, type 0x00, index 0x05
+>>  type 0x80, req 0x06, val 256, idx 0, type 0x01, index 0x00
+>>  type 0x00, req 0x09, val 1, idx 0, type 0x00, index 0x01
 */
