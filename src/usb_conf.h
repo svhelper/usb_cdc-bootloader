@@ -34,12 +34,21 @@
 #define INTF_DATA               3
 
 //  USB Endpoints.
+#define DATA_IN                 0x82
+#define COMM_IN                 0x83
+#define MSC_IN                  0x84
+
+#define DATA_OUT                0x01
+#define MSC_OUT                 0x02
+
+#ifdef NOTUSED
 #define MSC_IN                  0x83
 #define DATA_IN                 0x84
 #define COMM_IN                 0x85
 
 #define MSC_OUT                 0x02
 #define DATA_OUT                0x03
+#endif
 
 extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);

@@ -106,6 +106,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 	}
     debug_print("winusb_descriptor next "); debug_print_unsigned(req->bRequest); 
     debug_print(", type "); debug_print_unsigned(usb_descriptor_type(req->wValue)); 	
+    debug_print(", index "); debug_print_unsigned(usb_descriptor_index(req->wValue)); 	
 	debug_println(""); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }

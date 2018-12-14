@@ -59,6 +59,14 @@ static uint16_t build_bos_descriptor(const struct usb_bos_descriptor *bos,
 	return total;
 }
 
+static int usb_descriptor_type(uint16_t wValue) {
+	return wValue >> 8;
+}
+
+static int usb_descriptor_index(uint16_t wValue) {
+	return wValue & 0xFF;
+}
+
 static const struct usb_bos_descriptor* usb21_bos;
 
 static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
@@ -80,12 +88,18 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 		debug_println("*** usb21_descriptor no bos "); debug_flush(); ////
 		return USBD_REQ_NOTSUPP;
 	}
-    debug_print("usb21_descriptor "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
+	debug_print("usb21_descriptor "); debug_print_unsigned(req->bRequest); 
+    debug_print(", type "); debug_print_unsigned(usb_descriptor_type(req->wValue)); 	
+    debug_print(", index "); debug_print_unsigned(usb_descriptor_index(req->wValue)); 	
+	debug_println(""); // debug_flush(); ////
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
 		*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));
 		return USBD_REQ_HANDLED;
 	}
-    debug_print("usb21_descriptor next "); debug_print_unsigned(req->bRequest); debug_println(""); debug_flush(); ////
+	debug_print("usb21_descriptor next "); debug_print_unsigned(req->bRequest); 
+    debug_print(", type "); debug_print_unsigned(usb_descriptor_type(req->wValue)); 	
+    debug_print(", index "); debug_print_unsigned(usb_descriptor_index(req->wValue)); 	
+	debug_println(""); // debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 

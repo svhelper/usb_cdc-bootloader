@@ -385,7 +385,7 @@ static int aggregate_callback(
 			}
 		}
 	}
-	dump_usb_request(">> next", req); ////
+	dump_usb_request(">> ***", req); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
