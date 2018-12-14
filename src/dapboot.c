@@ -80,8 +80,8 @@ int main(void) {
     }
 #endif  //  SKIP_BOOTLOADER         
     
-    //  enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
-    disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
+    enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
+    //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
     platform_setup();     //  STM32 platform setup.
     debug_println("----bootloader");  debug_flush();
     
