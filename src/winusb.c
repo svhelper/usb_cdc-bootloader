@@ -102,7 +102,6 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR && usb_descriptor_type(req->wValue) == USB_DT_STRING) {
 		if (usb_descriptor_index(req->wValue) == WINUSB_EXTRA_STRING_INDEX) {
 			dump_usb_request("windes", req); ////
-
 			*buf = (uint8_t*)(&winusb_string_descriptor);
 			*len = MIN(*len, winusb_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
@@ -111,10 +110,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 			//  Windows will request descriptor at index 0 with length 2, which causes libopencm3 to return a corrupted response.  We fix that here.
 			dump_usb_request("windes", req); ////			
 			debug_print_int(*len); debug_println(""); ////
-			struct usb_string_descriptor *desc = (*len == 2)  //  Is requested length 2?
-			? (&default_string_descriptor)  //  If so, return the empty string.
-			: (&winusb_string_descriptor);  //  Else return a longer string.
-
+			struct usb_string_descriptor *desc = &default_string_descriptor;  //  Return the empty string.
 			*buf = (uint8_t*)(desc);
 			*len = MIN(*len, desc->bLength);
 			return USBD_REQ_HANDLED;
@@ -152,13 +148,6 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 
 	} else {
 		status = USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
-#ifdef NOTUSED		
-		if ((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) {
-    		debug_print("winusb_control next device "); debug_print_unsigned(req->wIndex); debug_println(""); debug_flush(); ////
-		} else {
-    		debug_print("winusb_control next iface "); debug_print_unsigned(usb_descriptor_index(req->wValue)); debug_println(""); debug_flush(); ////
-		}
-#endif  //  NOTUSED		
 	}
 
 	return status;
