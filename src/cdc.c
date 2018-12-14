@@ -22,10 +22,6 @@ cdcacm_control_request(
     struct usb_setup_data *req
   ) __attribute__((unused))
 ) {
-    if (req->wIndex != INTF_COMM && req->wIndex != INTF_DATA) {
-		//  Not for my interface.  Hand off to next interface.
-        ////return USBD_REQ_NEXT_CALLBACK;
-    }
 	dump_usb_request("*** cdc", req); ////
 	switch (req->bRequest) {
 	case USB_CDC_REQ_SET_CONTROL_LINE_STATE: {

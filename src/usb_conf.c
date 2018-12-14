@@ -467,6 +467,7 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
     debug_print(", req 0x"); debug_printhex(req->bRequest);
     debug_print(", val "); debug_print_unsigned(req->wValue);
     debug_print(", idx "); debug_print_unsigned(req->wIndex);
+    debug_print(", len "); debug_print_unsigned(req->wLength);
     debug_print(", type 0x"); debug_printhex(usb_descriptor_type(req->wValue)); 	
 	debug_print(", index 0x"); debug_printhex(usb_descriptor_index(req->wValue)); 	
     debug_println("");
