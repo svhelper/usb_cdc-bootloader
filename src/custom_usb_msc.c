@@ -894,7 +894,8 @@ usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
 
 	set_sbc_status_good(&_mass_storage);
 
-	usbd_register_set_config_callback(usbd_dev, msc_set_config);
+	int status = aggregate_register_config_callback(usbd_dev, msc_set_config);
+	if (status < 0) { debug_println("*** custom_usb_msc_init failed"); debug_flush(); }
 
 	return &_mass_storage;
 }

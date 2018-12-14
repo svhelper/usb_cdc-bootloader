@@ -83,31 +83,31 @@ int main(void) {
     enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
     //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
     platform_setup();     //  STM32 platform setup.
-    debug_println("----bootloader");  debug_flush();
+    debug_println("----bootloader");  // debug_flush();
     
     //  target_clock_setup();  //  Clock already setup in platform_setup()
     target_gpio_setup();       //  Initialize GPIO/LEDs if needed
     // test_backup();          //  Test backup.
 
-    debug_println("bootloader target_get_force_bootloader");  debug_flush();
+    debug_println("target_get_force_bootloader");  // debug_flush();
     if (target_get_force_bootloader() || !appValid) {
         //  Setup USB
         {
             char serial[USB_SERIAL_NUM_LENGTH+1];
             serial[0] = '\0';
-            debug_println("bootloader target_get_serial_number");  debug_flush();
+            debug_println("target_get_serial_number");  // debug_flush();
             target_get_serial_number(serial, USB_SERIAL_NUM_LENGTH);
 
-            debug_println("bootloader usb_set_serial_number");  debug_flush();
+            debug_println("usb_set_serial_number");  // debug_flush();
             usb_set_serial_number(serial);
         }
 
-        debug_println("bootloader usb_setup");  debug_flush();
+        debug_println("usb_setup");  // debug_flush();
         usbd_device* usbd_dev = usb_setup();
 
         //  Pause a while before starting USB processing.
         //  const int sleep_time_us = 10 * 1000 * 1000; for (int i = 0; i < sleep_time_us * 10; i++) { __asm__("nop"); }
-        debug_println("bootloader loop");  debug_flush();
+        debug_println("loop");  // debug_flush();
 
         uint32_t cycleCount = 0;        
         while (1) {

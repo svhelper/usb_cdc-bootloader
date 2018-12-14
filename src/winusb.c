@@ -162,7 +162,7 @@ void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
 	// debug_println("winusb_setup"); // debug_flush(); ////
 	winusb_wcid.functions[0].bInterfaceNumber = interface;
 
-	usbd_register_set_config_callback(usbd_dev, winusb_set_config);
+	int status = aggregate_register_config_callback(usbd_dev, winusb_set_config);
 
 	/* Windows probes the compatible ID before setting the configuration,
 	   so also register the callback now */
@@ -179,8 +179,5 @@ void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
 		DESCRIPTOR_CALLBACK_MASK,
 		winusb_descriptor_request);
 
-	if (status1 < 0 || status2 < 0) {
-    	debug_println("*** winusb_setup failed"); debug_flush(); ////
-	}
+	if (status < 0 || status1 < 0 || status2 < 0) { debug_println("*** winusb_setup failed"); debug_flush(); }
 }
-

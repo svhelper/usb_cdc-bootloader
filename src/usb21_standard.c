@@ -100,9 +100,7 @@ static void usb21_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 		DESCRIPTOR_CALLBACK_TYPE,
 		DESCRIPTOR_CALLBACK_MASK,
 		&usb21_standard_get_descriptor);
-	if (status < 0) {
-    	debug_println("*** usb21_set_config failed"); debug_flush(); ////
-	}
+	if (status < 0) { debug_println("*** usb21_set_config failed"); debug_flush(); }
 }
 
 void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_object_store) {
@@ -111,5 +109,6 @@ void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_
 
 	/* Register the control request handler _before_ the config is set */
 	usb21_set_config(usbd_dev, 0x0000);
-	usbd_register_set_config_callback(usbd_dev, usb21_set_config);
+	int status = aggregate_register_config_callback(usbd_dev, usb21_set_config);
+	if (status < 0) { debug_println("*** usb21_setup failed"); debug_flush(); }
 }

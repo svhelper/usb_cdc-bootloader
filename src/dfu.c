@@ -272,7 +272,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
 }
 
 static void dfu_set_config(usbd_device* usbd_dev, uint16_t wValue) {
-    //  debug_println("dfu_set_config "); ////
+    debug_println("dfu_set_config "); ////
     (void)wValue;
     int status = aggregate_register_callback(
         usbd_dev,
@@ -293,7 +293,8 @@ void dfu_setup(usbd_device* usbd_dev,
     dfu_state_change_callback = on_state_change;
     dfu_status_change_callback = on_status_change;
 
-    usbd_register_set_config_callback(usbd_dev, dfu_set_config);
+    int status = aggregate_register_config_callback(usbd_dev, dfu_set_config);
+    if (status < 0) { debug_println("*** dfu_setup failed"); debug_flush(); }
     current_dfu_state = STATE_DFU_IDLE;
     current_dfu_status = DFU_STATUS_OK;
     if (on_state_change) {

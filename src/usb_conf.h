@@ -48,6 +48,9 @@ extern usbd_device* usb_setup(void);
 extern void msc_setup(usbd_device* usbd_dev0);
 extern uint16_t send_msc_packet(const void *buf, int len);
 extern void dump_usb_request(const char *msg, struct usb_setup_data *req);
+extern int aggregate_register_config_callback(
+    usbd_device *usbd_dev,
+	usbd_set_config_callback callback);
 extern int aggregate_register_callback(
     usbd_device *usbd_dev, 
     uint8_t type,

@@ -57,11 +57,10 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 									 usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-	dump_usb_request("webusb_control", req); ////
 	if (req->bRequest != WEBUSB_VENDOR_CODE) {
 		return USBD_REQ_NEXT_CALLBACK;
 	}
-    debug_print("webusb_control "); debug_print_unsigned(req->wIndex); debug_println(""); // debug_flush(); ////
+	dump_usb_request("web", req); ////
 	int status = USBD_REQ_NOTSUPP;
 	switch (req->wIndex) {
 		case WEBUSB_REQ_GET_URL: {
@@ -105,13 +104,12 @@ static void webusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 		CONTROL_CALLBACK_TYPE,
 		CONTROL_CALLBACK_MASK,
 		webusb_control_vendor_request);
-	if (status < 0) {
-    	debug_println("*** webusb_set_config failed"); debug_flush(); ////
-	}
+	if (status < 0) { debug_println("*** webusb_set_config failed"); debug_flush(); }
 }
 
 void webusb_setup(usbd_device* usbd_dev, const char* https_url) {
     // debug_println("webusb_setup"); // debug_flush(); ////
 	webusb_https_url = https_url;
-	usbd_register_set_config_callback(usbd_dev, webusb_set_config);
+	int status = aggregate_register_config_callback(usbd_dev, webusb_set_config);
+	if (status < 0) { debug_println("*** webusb_setup failed"); debug_flush(); }
 }

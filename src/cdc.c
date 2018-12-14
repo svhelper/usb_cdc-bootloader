@@ -97,17 +97,16 @@ cdcacm_set_config(
 	usbd_ep_setup(usbd_dev, DATA_OUT, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, cdcacm_data_rx_cb);
 	usbd_ep_setup(usbd_dev, DATA_IN, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, NULL);
 	usbd_ep_setup(usbd_dev, COMM_IN, USB_ENDPOINT_ATTR_INTERRUPT, COMM_PACKET_SIZE, NULL);
-	int status = usbd_register_control_callback(
+	int status = aggregate_register_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,
 		CONTROL_CALLBACK_MASK,
 		cdcacm_control_request);
-	if (status < 0) {
-    	debug_println("*** cdcacm_set_config failed"); debug_flush(); ////
-	}
+	if (status < 0) { debug_println("*** cdcacm_set_config failed"); debug_flush(); }
 }
 
 void cdc_setup(usbd_device* usbd_dev) {
     //  debug_println("*** cdc_setup"); ////
-	usbd_register_set_config_callback(usbd_dev, cdcacm_set_config);
+	int status = aggregate_register_config_callback(usbd_dev, cdcacm_set_config);
+	if (status < 0) { debug_println("*** cdc_setup failed"); debug_flush(); }
 }
