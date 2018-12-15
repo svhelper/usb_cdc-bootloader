@@ -481,7 +481,7 @@ static int aggregate_callback(
             }
         }
     }
-	dump_usb_request(">> ", req); debug_flush(); ////
+	dump_usb_request(">", req); debug_flush(); ////
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
@@ -528,11 +528,11 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
     uint8_t desc_type = usb_descriptor_type(req->wValue);
     uint8_t desc_index = usb_descriptor_index(req->wValue);
     debug_print(msg);
-    debug_print(" typ 0x"); debug_printhex(req->bmRequestType);
-    debug_print(", req 0x"); debug_printhex(req->bRequest);
-    debug_print(", val 0x"); debug_printhex(req->wValue >> 8); debug_printhex(req->wValue & 0xff);
-    debug_print(", idx 0x"); debug_printhex(req->wIndex >> 8); debug_printhex(req->wIndex & 0xff);
-    debug_print(", len 0x"); debug_printhex(req->wLength >> 8); debug_printhex(req->wLength & 0xff);
+    debug_print(" typ "); debug_printhex(req->bmRequestType);
+    debug_print(", req "); debug_printhex(req->bRequest);
+    debug_print(", val "); debug_printhex(req->wValue >> 8); debug_printhex(req->wValue & 0xff);
+    debug_print(", idx "); debug_printhex(req->wIndex >> 8); debug_printhex(req->wIndex & 0xff);
+    debug_print(", len "); debug_printhex(req->wLength >> 8); debug_printhex(req->wLength & 0xff);
 
     if (req->bmRequestType == 0x00 || req->bmRequestType == 0x80) {
         //  Dump USB standard requests.
@@ -553,8 +553,8 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
         } else {
             debug_print(",");
         }
-        debug_print(" dtyp 0x"); debug_printhex(desc_type); 	
-        debug_print(" didx 0x"); debug_printhex(desc_index); 	
+        debug_print(" t "); debug_printhex(desc_type); 	
+        debug_print(" i "); debug_printhex(desc_index); 	
     }
     debug_println("");
 }
