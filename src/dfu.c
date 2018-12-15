@@ -276,7 +276,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
 }
 
 static void dfu_set_config(usbd_device* usbd_dev, uint16_t wValue) {
-    debug_println("dfu_set_config "); ////
+    //  debug_println("dfu_set_config "); ////
     (void)wValue;
     int status = aggregate_register_callback(
         usbd_dev,
