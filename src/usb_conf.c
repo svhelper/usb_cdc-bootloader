@@ -55,7 +55,7 @@ static const char *usb_strings[] = {
     //"Blue Pill DFU",         //  DFU
     "DAPBoot DFU",             //  DFU
     "Blue Pill MSC",           //  MSC
-    "Blue Pill Serial Port"    //  Serial Port
+    "Blue Pill Serial Port",   //  Serial Port
     "Blue Pill COMM",          //  COMM
     "Blue Pill DATA",          //  DATA
 };
