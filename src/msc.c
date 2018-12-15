@@ -799,11 +799,11 @@ static int msc_control_request(usbd_device *usbd_dev,
 	switch (req->bRequest) {
 	case USB_MSC_REQ_BULK_ONLY_RESET:
 		/* Do any special reset code here. */
-		dump_usb_request("msc", req); ////
+		//  dump_usb_request("msc", req); ////
 		return USBD_REQ_HANDLED;
 	case USB_MSC_REQ_GET_MAX_LUN:
 		/* Return the number of LUNs.  We use 0. */
-		dump_usb_request("msc", req); ////
+		//  dump_usb_request("msc", req); ////
 		*buf[0] = 0;
 		*len = 1;
 		return USBD_REQ_HANDLED;

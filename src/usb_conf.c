@@ -534,25 +534,28 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
     debug_print(", idx 0x"); debug_printhex(req->wIndex >> 8); debug_printhex(req->wIndex & 0xff);
     debug_print(", len 0x"); debug_printhex(req->wLength >> 8); debug_printhex(req->wLength & 0xff);
 
-    if (req->bmRequestType == 0x80 && req->bRequest == 0x06) {
-        debug_print(", GET_DES");
-        switch(desc_type) {
-            case 1: debug_print("_DEV"); break;
-            case 2: debug_print("_CFG"); break;
-            case 3: debug_print("_STR"); break;
-            case 4: debug_print("_INF"); break;
-            case 5: debug_print("_ENP"); break;
-            case 15: debug_print("_BOS"); break;
+    if (req->bmRequestType == 0x00 || req->bmRequestType == 0x80) {
+        //  Dump USB standard requests.
+        if (req->bmRequestType == 0x80 && req->bRequest == 0x06) {
+            debug_print(", GET_DES");
+            switch(desc_type) {
+                case 1: debug_print("_DEV"); break;
+                case 2: debug_print("_CFG"); break;
+                case 3: debug_print("_STR"); break;
+                case 4: debug_print("_INF"); break;
+                case 5: debug_print("_ENP"); break;
+                case 15: debug_print("_BOS"); break;
+            }
+        } else if (req->bmRequestType == 0x00 && req->bRequest == 0x05) {
+            debug_print(", SET_ADR    ");
+        } else if (req->bmRequestType == 0x00 && req->bRequest == 0x09) {
+            debug_print(", SET_CFG    ");
+        } else {
+            debug_print(",");
         }
-    } else if (req->bmRequestType == 0x00 && req->bRequest == 0x05) {
-        debug_print(", SET_ADR    ");
-    } else if (req->bmRequestType == 0x00 && req->bRequest == 0x09) {
-        debug_print(", SET_CFG    ");
-    } else {
-        debug_print(",");
+        debug_print(" dtyp 0x"); debug_printhex(desc_type); 	
+        debug_print(" didx 0x"); debug_printhex(desc_index); 	
     }
-    debug_print(" dtyp 0x"); debug_printhex(desc_type); 	
-	debug_print(" didx 0x"); debug_printhex(desc_index); 	
     debug_println("");
 }
 
