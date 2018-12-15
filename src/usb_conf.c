@@ -82,7 +82,12 @@ static const struct usb_device_descriptor dev = {
 #else
     .bcdUSB = 0x0200,  //  USB Version 2.0.  No need to handle special requests e.g. BOS.
 #endif  //  USB21_INTERFACE
-    .bDeviceClass = 0,
+
+#ifdef SERIAL_INTERFACE
+	.bDeviceClass = USB_CLASS_CDC,  //  Set the class to CDC if it's only serial.
+#else
+    .bDeviceClass = 0,  //  For composite device, let host probe the interfaces.
+#endif  //  SERIAL_INTERFACE
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
     .bMaxPacketSize0 = MAX_USB_PACKET_SIZE,
