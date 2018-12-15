@@ -239,7 +239,7 @@ static const struct usb_interface_descriptor comm_iface = {
     .bInterfaceClass = USB_CLASS_CDC,
     .bInterfaceSubClass = USB_CDC_SUBCLASS_ACM,
     .bInterfaceProtocol = USB_CDC_PROTOCOL_AT,
-    .iInterface = USB_STRINGS_COMM,  //  Name of COMM
+    .iInterface = 0,  //  Previously USB_STRINGS_COMM,  //  Name of COMM
     .endpoint = comm_endp,  //  COMM Endpoint
     .extra = &cdcacm_functional_descriptors,
     .extralen = sizeof(cdcacm_functional_descriptors)
@@ -254,7 +254,7 @@ static const struct usb_interface_descriptor data_iface = {
     .bInterfaceClass = USB_CLASS_DATA,
     .bInterfaceSubClass = 0,
     .bInterfaceProtocol = 0,
-    .iInterface = USB_STRINGS_DATA,  //  Name of DATA
+    .iInterface = 0,  //  Previously USB_STRINGS_DATA,  //  Name of DATA
     .endpoint = data_endp,  //  DATA Endpoints
 };
 #endif  //  INTF_COMM
