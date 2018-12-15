@@ -34,10 +34,10 @@
 
 //  Index of each USB interface.  Must be consecutive and must sync with interfaces[].
 #ifdef ALL_USB_INTERFACES
-#define INTF_MSC                0
-#define INTF_COMM               1
-#define INTF_DATA               2
-#define INTF_DFU                3
+#define INTF_DFU                0
+#define INTF_MSC                1
+#define INTF_COMM               2
+#define INTF_DATA               3
 #endif  //  ALL_USB_INTERFACES
 
 #ifdef STORAGE_AND_SERIAL_USB_INTERFACE
