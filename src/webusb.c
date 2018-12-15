@@ -145,7 +145,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 									 struct usb_setup_data *req,
 									 uint8_t **buf, uint16_t *len,
 									 usbd_control_complete_callback* complete) {
-	//  Handle >>  type 0xc0, req 0x22, val 1, idx 2, type 0x00, index 0x01
+	//  Handle >>  type 0xc0, req WEBUSB_VENDOR_CODE, val 1, idx 2, type 0x00, index 0x01
 	(void)complete;
 	(void)usbd_dev;
 	//  For WebUSB, only request types C0 and C1 are allowed.

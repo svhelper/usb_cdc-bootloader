@@ -465,13 +465,6 @@ static int aggregate_callback(
 	usbd_control_complete_callback *complete) {
     //  This callback is called whenever a USB request is received.  We route to the right driver callbacks.
 	int i, result = 0;
-#ifdef NOTUSED
-    //  Ignore 0xc0 and 0xc1 request types.  Not sure what they are.
-    if (req->bmRequestType == 0xc0 || req->bmRequestType == 0xc1) {
-	    dump_usb_request("*** ", req); debug_flush(); ////
-        return USBD_REQ_NEXT_CALLBACK;
-    }
-#endif  //  NOTUSED
     //  Call the callbacks registered by the drivers.
     for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
         if (control_callback[i].cb == NULL) { break; }
@@ -543,7 +536,7 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
     debug_println("");
 }
 
-/* CDC and MSC OK
+/* CDC, MSC and DFU OK.  WebUSB failed.
 > Executing task in folder bluepill-bootloader: c:\openocd\bin\openocd -f interface/stlink-v2.cfg -f target/stm32f1x.cfg -f scripts/connect.ocd <
 
 GNU MCU Eclipse 64-bits Open On-Chip Debugger 0.10.0+dev-00487-gaf359c18 (2018-05-12-19:30)
@@ -584,7 +577,8 @@ set_aggregate_callback
 dfu_set_config
 *** cdcacm_set_config
 webusb_set_config
->>  type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
+winctl type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
+winctl type 0xc0, req 0x21, val 0, idx 4, len 40, type 0x00, index 0x00
 >>  type 0x80, req 0x06, val 773, idx 1033, len 4, type 0x03, index 0x05
 >>  type 0x80, req 0x06, val 773, idx 1033, len 28, type 0x03, index 0x05
 >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
@@ -593,7 +587,8 @@ webusb_set_config
 >>  type 0xc1, req 0x21, val 1, idx 5, len 10, type 0x00, index 0x01
 >>  type 0x80, req 0x06, val 772, idx 1033, len 4, type 0x03, index 0x04
 >>  type 0x80, req 0x06, val 772, idx 1033, len 24, type 0x03, index 0x04
->>  type 0xc1, req 0x21, val 3, idx 5, len 10, type 0x00, index 0x03
+winctl type 0xc1, req 0x21, val 3, idx 5, len 10, type 0x00, index 0x03
+winctl type 0xc1, req 0x21, val 3, idx 5, len 146, type 0x00, index 0x03
 >>  type 0x80, req 0x06, val 768, idx 0, len 2, type 0x03, index 0x00
 >>  type 0x80, req 0x06, val 768, idx 0, len 4, type 0x03, index 0x00
 >>  type 0x80, req 0x06, val 771, idx 1033, len 2, type 0x03, index 0x03
@@ -638,10 +633,17 @@ webusb_set_config
 *** cdc type 0x21, req 0x22, val 3, idx 1, len 0, type 0x00, index 0x03
 *** cdc type 0x21, req 0x20, val 0, idx 1, len 7, type 0x00, index 0x00
 *** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-[a
+[s
+][a
+][s
+][s
 ][d
-][f
+][s
 ][d
+][
 ][d
-]*** cdc type 0x21, req 0x22, val
+][s
+][d
+][s
+][
 */
