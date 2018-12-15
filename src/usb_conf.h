@@ -27,6 +27,8 @@
 #define USB_CONTROL_BUF_SIZE    256  //  Previously 1024
 #define MAX_USB_PACKET_SIZE     64   //  Previously 32
 
+//  #define USB21_INTERFACE   //  Enable USB 2.1 with BOS support.
+
 //  #define ALL_INTERFACES  //  Enable all interfaces.
 #define SERIAL_INTERFACE  //  Enable only serial interface.
 

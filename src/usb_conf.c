@@ -42,7 +42,9 @@ static void set_aggregate_callback(
   uint16_t wValue
 );
 
+#ifdef USB21_INTERFACE
 static const char* origin_url = "visualbluepill.github.io";
+#endif  //  USB21_INTERFACE
 
 static char serial_number[USB_SERIAL_NUM_LENGTH+1];
 
@@ -75,14 +77,18 @@ enum usb_strings_index {  //  Index of USB strings.  Must sync with above, start
 static const struct usb_device_descriptor dev = {
     .bLength = USB_DT_DEVICE_SIZE,
     .bDescriptorType = USB_DT_DEVICE,
-    .bcdUSB = 0x0210,
+#ifdef USB21_INTERFACE
+    .bcdUSB = 0x0210,  //  USB Version 2.1.  Need to handle special requests e.g. BOS.
+#else
+    .bcdUSB = 0x0200,  //  USB Version 2.0.  No need to handle special requests e.g. BOS.
+#endif  //  USB21_INTERFACE
     .bDeviceClass = 0,
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
     .bMaxPacketSize0 = MAX_USB_PACKET_SIZE,
     .idVendor = USB_VID,
     .idProduct = USB_PID,
-    .bcdDevice = 0x0210,  //  Release number 2.1
+    .bcdDevice = 0x0210,  //  Device Release number 2.1
     .iManufacturer = USB_STRINGS_MANUFACTURER,
     .iProduct = USB_STRINGS_PRODUCT,
     .iSerialNumber = USB_STRINGS_SERIAL_NUMBER,
@@ -287,6 +293,7 @@ static const struct usb_config_descriptor config = {
     .interface = interfaces,
 };
 
+#ifdef USB21_INTERFACE
 //  BOS Capabilities for WebUSB
 static const struct usb_device_capability_descriptor* capabilities[] = {
 	(const struct usb_device_capability_descriptor*) 
@@ -300,6 +307,7 @@ static const struct usb_bos_descriptor bos_descriptor = {
 	.bNumDeviceCaps = sizeof(capabilities) / sizeof(capabilities[0]),
 	.capabilities = capabilities
 };
+#endif  //  USB21_INTERFACE
 
 /* Buffer to be used for control requests. */
 static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE] __attribute__ ((aligned (2)));
@@ -323,11 +331,13 @@ usbd_device* usb_setup(void) {
 #ifdef INTF_COMM    
     cdc_setup(usbd_dev);
 #endif  //  INTF_COMM
-#ifdef INTF_DFU
+
+#ifdef USB21_INTERFACE
+    //  Define USB 2.1 BOS interface used by WebUSB.
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, INTF_DFU);  //  Previously INTF_DFU
-#endif  //  INTF_DFU
+	winusb_setup(usbd_dev, 0);  //  Previously INTF_DFU
+#endif  //  USB21_INTERFACE
 
     //  Set the aggregate callback.    
 	int status = usbd_register_set_config_callback(usbd_dev, set_aggregate_callback);
