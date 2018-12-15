@@ -52,9 +52,10 @@ static const char *usb_strings[] = {
     "Devanarchy",              //  USB Manufacturer
     "DAPBoot DFU Bootloader",  //  USB Product
     serial_number,             //  Serial number
-    //"Blue Pill DFU",           //  DFU
-    "DAPBoot DFU",           //  DFU
+    //"Blue Pill DFU",         //  DFU
+    "DAPBoot DFU",             //  DFU
     "Blue Pill MSC",           //  MSC
+    "Blue Pill Serial Port"    //  Serial Port
     "Blue Pill COMM",          //  COMM
     "Blue Pill DATA",          //  DATA
 };
@@ -62,6 +63,7 @@ static const char *usb_strings[] = {
 #define MSC_VENDOR_ID "BluePill"
 #define MSC_PRODUCT_ID "UF2 Bootloader"
 #define MSC_PRODUCT_REVISION_LEVEL "42.00"
+#define USB_CLASS_MISCELLANEOUS 0xef  //  Copy from microbit.
 
 enum usb_strings_index {  //  Index of USB strings.  Must sync with above, starts from 1.
     USB_STRINGS_MANUFACTURER = 1,
@@ -69,6 +71,7 @@ enum usb_strings_index {  //  Index of USB strings.  Must sync with above, start
     USB_STRINGS_SERIAL_NUMBER,
     USB_STRINGS_DFU,
     USB_STRINGS_MSC,
+    USB_STRINGS_SERIAL_PORT,
     USB_STRINGS_COMM,
     USB_STRINGS_DATA,
 };
@@ -83,13 +86,15 @@ static const struct usb_device_descriptor dev = {
     .bcdUSB = 0x0200,  //  USB Version 2.0.  No need to handle special requests e.g. BOS.
 #endif  //  USB21_INTERFACE
 
-#ifdef SERIAL_INTERFACE
-	.bDeviceClass = USB_CLASS_CDC,  //  Set the class to CDC if it's only serial.
-#else
-    .bDeviceClass = 0,  //  For composite device, let host probe the interfaces.
-#endif  //  SERIAL_INTERFACE
+#ifdef SERIAL_ONLY_INTERFACE  //  If we are providing serial interface only...
+	.bDeviceClass = USB_CLASS_CDC,  //  Set the class to CDC if it's only serial.  Serial interface will not start on Windows when class = 0.
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
+#else  //  If we are providing multiple interfaces...
+    .bDeviceClass = USB_CLASS_MISCELLANEOUS,  //  Copied from microbit. For composite device, let host probe the interfaces.
+    .bDeviceSubClass = 2,  //  Common Class
+    .bDeviceProtocol = 1,  //  Interface Association Descriptor
+#endif  //  SERIAL_ONLY_INTERFACE
     .bMaxPacketSize0 = MAX_USB_PACKET_SIZE,
     .idVendor = USB_VID,
     .idProduct = USB_PID,
@@ -174,7 +179,7 @@ static const struct {
 		.bDescriptorType = CS_INTERFACE,
 		.bDescriptorSubtype = USB_CDC_TYPE_CALL_MANAGEMENT,
 		.bmCapabilities = 0,
-		.bDataInterface = INTF_DATA,  //  Was 1
+		.bDataInterface = INTF_DATA,  //  DATA Interface
 	},
 	.acm = {
 		.bFunctionLength = sizeof(struct usb_cdc_acm_descriptor),
@@ -186,8 +191,8 @@ static const struct {
 		.bFunctionLength = sizeof(struct usb_cdc_union_descriptor),
 		.bDescriptorType = CS_INTERFACE,
 		.bDescriptorSubtype = USB_CDC_TYPE_UNION,
-		.bControlInterface = INTF_COMM,  //  Was 0
-		.bSubordinateInterface0 = INTF_DATA,  //  Was 1
+		.bControlInterface = INTF_COMM,       //  COMM Interface
+		.bSubordinateInterface0 = INTF_DATA,  //  DATA Interface
 	 }
 };
 #endif  //  INTF_MSC
@@ -230,6 +235,17 @@ static const struct usb_interface_descriptor msc_iface = {
 
 #ifdef INTF_COMM
 //  CDC Interfaces
+static const struct usb_iface_assoc_descriptor cdc_iface_assoc = {  //  Copied from microbit.  Mandatory for composite device.
+	.bLength = USB_DT_INTERFACE_ASSOCIATION_SIZE,
+	.bDescriptorType = USB_DT_INTERFACE_ASSOCIATION,
+	.bFirstInterface = INTF_COMM,  //  First associated interface (INTF_COMM and INTF_DATA)
+	.bInterfaceCount = 2,          //  Total number of associated interfaces (INTF_COMM and INTF_DATA), ID must be consecutive.
+	.bFunctionClass = USB_CLASS_CDC,
+	.bFunctionSubClass = USB_CDC_SUBCLASS_ACM,
+	.bFunctionProtocol = USB_CDC_PROTOCOL_AT,
+	.iFunction = USB_STRINGS_SERIAL_PORT  //  Name of Serial Port
+};
+
 static const struct usb_interface_descriptor comm_iface = {
     .bLength = USB_DT_INTERFACE_SIZE,
     .bDescriptorType = USB_DT_INTERFACE,
@@ -239,8 +255,8 @@ static const struct usb_interface_descriptor comm_iface = {
     .bInterfaceClass = USB_CLASS_CDC,
     .bInterfaceSubClass = USB_CDC_SUBCLASS_ACM,
     .bInterfaceProtocol = USB_CDC_PROTOCOL_AT,
-    .iInterface = 0,  //  Previously USB_STRINGS_COMM,  //  Name of COMM
-    .endpoint = comm_endp,  //  COMM Endpoint
+    .iInterface = USB_STRINGS_COMM,  //  Name of COMM
+    .endpoint = comm_endp,           //  COMM Endpoint
     .extra = &cdcacm_functional_descriptors,
     .extralen = sizeof(cdcacm_functional_descriptors)
 };
@@ -254,8 +270,8 @@ static const struct usb_interface_descriptor data_iface = {
     .bInterfaceClass = USB_CLASS_DATA,
     .bInterfaceSubClass = 0,
     .bInterfaceProtocol = 0,
-    .iInterface = 0,  //  Previously USB_STRINGS_DATA,  //  Name of DATA
-    .endpoint = data_endp,  //  DATA Endpoints
+    .iInterface = USB_STRINGS_DATA,  //  Name of DATA
+    .endpoint = data_endp,           //  DATA Endpoints
 };
 #endif  //  INTF_COMM
 
@@ -276,6 +292,9 @@ static const struct usb_interface interfaces[] = {
 #ifdef INTF_COMM
     {
         .num_altsetting = 1,
+#ifndef SERIAL_ONLY_INTERFACE
+	    .iface_assoc = &cdc_iface_assoc,  //  Mandatory for composite device with multiple interfaces.
+#endif  //  SERIAL_ONLY_INTERFACE
         .altsetting = &comm_iface,  //  Index must sync with INTF_COMM.
     }, 
     {
@@ -294,7 +313,7 @@ static const struct usb_config_descriptor config = {
     .bConfigurationValue = 1,
     .iConfiguration = 0,
     .bmAttributes = 0x80,  //  Bus-powered, i.e. it draws power from USB bus.
-    .bMaxPower = 0x64,     //  200 mA
+    .bMaxPower = 0xfa,     //  500 mA. Copied from microbit.
     .interface = interfaces,
 };
 
