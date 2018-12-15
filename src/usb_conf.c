@@ -360,7 +360,7 @@ usbd_device* usb_setup(void) {
     //  Define USB 2.1 BOS interface used by WebUSB.
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, 0);  //  Previously INTF_DFU
+	winusb_setup(usbd_dev, INTF_DFU);  //  Previously INTF_DFU
 #endif  //  USB21_INTERFACE
 
     //  Set the aggregate callback.    
@@ -412,11 +412,10 @@ struct control_callback_struct {
 static struct control_callback_struct control_callback[MAX_CONTROL_CALLBACK];
 static usbd_set_config_callback config_callback[MAX_CONTROL_CALLBACK];
 
-//  Register the USB config callback.  We handle this to overcome the 5 callback limit.
 int aggregate_register_config_callback(
     usbd_device *usbd_dev,
-	usbd_set_config_callback callback)
-{
+	usbd_set_config_callback callback) {
+    //  Register the USB config callback.  We do this to overcome the 4 callback limit.
 	int i;
 	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
 		if (config_callback[i]) {
@@ -430,13 +429,12 @@ int aggregate_register_config_callback(
 	return -1;
 }
 
-/* Register application callback function for handling USB control requests.  We aggregate here so we can handle more than 4 callbacks.  */
 int aggregate_register_callback(
     usbd_device *usbd_dev, 
     uint8_t type,
     uint8_t type_mask,
-    usbd_control_callback callback)
-{
+    usbd_control_callback callback) {
+    // Register application callback function for handling USB control requests.  We aggregate here so we can handle more than 4 callbacks.
     // debug_println("aggregate_register_callback"); ////
 	int i;
 	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
@@ -459,47 +457,32 @@ int aggregate_register_callback(
 	return -1;
 }
 
-#include <libopencm3/usb/cdc.h>
-//  Line config to be returned.
-static const struct usb_cdc_line_coding line_coding = {
-	.dwDTERate = 115200,
-	.bCharFormat = USB_CDC_1_STOP_BITS,
-	.bParityType = USB_CDC_NO_PARITY,
-	.bDataBits = 0x08
-};
-
 static int aggregate_callback(
     usbd_device *usbd_dev,
 	struct usb_setup_data *req, 
     uint8_t **buf, 
     uint16_t *len,
 	usbd_control_complete_callback *complete) {
-    //  This callback is called whenever a USB request is received.
+    //  This callback is called whenever a USB request is received.  We route to the right driver callbacks.
 	int i, result = 0;
-    ////  TODO: Handle CDC
-    if (req->bmRequestType == 0xc0 && req->bRequest == 0x21) {
+    //  Ignore 0xc0 and 0xc1 request types.  Not sure what they are.
+    if (req->bmRequestType == 0xc0 || req->bmRequestType == 0xc1) {
 	    dump_usb_request("*** ", req); debug_flush(); ////
         return USBD_REQ_NEXT_CALLBACK;
-        //*buf = (uint8_t *) &line_coding;
-        //*len = sizeof(struct usb_cdc_line_coding);
-        //return USBD_REQ_HANDLED;
     }
-    // if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) 
-    {  //  If this is not a Set Configuration request...
-        /* Call user command hook function. */
-        for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
-            if (control_callback[i].cb == NULL) { break; }
-            if ((req->bmRequestType & control_callback[i].type_mask) == control_callback[i].type) {
-                result = control_callback[i].cb(
-                    usbd_dev, 
-                    req,
-                    buf,
-                    len,
-                    complete);
-                if (result == USBD_REQ_HANDLED ||
-                    result == USBD_REQ_NOTSUPP) {
-                    return result;
-                }
+    //  Call the callbacks registered by the drivers.
+    for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
+        if (control_callback[i].cb == NULL) { break; }
+        if ((req->bmRequestType & control_callback[i].type_mask) == control_callback[i].type) {
+            result = control_callback[i].cb(
+                usbd_dev, 
+                req,
+                buf,
+                len,
+                complete);
+            if (result == USBD_REQ_HANDLED ||
+                result == USBD_REQ_NOTSUPP) {
+                return result;
             }
         }
     }
@@ -509,8 +492,8 @@ static int aggregate_callback(
 
 static void set_aggregate_callback(
   usbd_device *usbd_dev,
-  uint16_t wValue
-) {
+  uint16_t wValue) {
+    //  This callback is called when the device is updated.  We set our control callback.
     if (wValue != (uint16_t) -1) {  //  If this is an actual callback, not a call by usb_setup()...
         //  Call the config functions before setting our callback.
         debug_println("set_aggregate_callback"); ////
