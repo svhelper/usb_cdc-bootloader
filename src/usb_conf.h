@@ -27,22 +27,29 @@
 #define USB_CONTROL_BUF_SIZE    256  //  Previously 1024
 #define MAX_USB_PACKET_SIZE     64   //  Previously 32
 
-#define USB21_INTERFACE   //  Enable USB 2.1 with BOS support.
-#define ALL_INTERFACES  //  Enable all interfaces.
-//  #define SERIAL_ONLY_INTERFACE  //  Enable only serial interface.
+#define USB21_INTERFACE                   //  Enable USB 2.1 with WebUSB and BOS support.
+//  #define ALL_USB_INTERFACES            //  Enable all USB interfaces.
+#define STORAGE_AND_SERIAL_USB_INTERFACE  //  Enable only storage and serial USB interfaces.  No DFU.
+//  #define SERIAL_USB_INTERFACE          //  Enable only serial USB interface.  No DFU and storage.
 
 //  Index of each USB interface.  Must be consecutive and must sync with interfaces[].
-#ifdef ALL_INTERFACES
+#ifdef ALL_USB_INTERFACES
 #define INTF_DFU                0
 #define INTF_MSC                1
 #define INTF_COMM               2
 #define INTF_DATA               3
-#endif  //  ALL_INTERFACES
+#endif  //  ALL_USB_INTERFACES
 
-#ifdef SERIAL_ONLY_INTERFACE
-#define INTF_COMM               0
+#ifdef STORAGE_AND_SERIAL_USB_INTERFACE
+#define INTF_MSC                0
+#define INTF_COMM               1  //  COMM must be immediately before DATA because of Associated Interface Descriptor.
+#define INTF_DATA               2
+#endif  //  STORAGE_AND_SERIAL_USB_INTERFACE
+
+#ifdef SERIAL_USB_INTERFACE
+#define INTF_COMM               0  //  COMM must be immediately before DATA because of Associated Interface Descriptor.
 #define INTF_DATA               1
-#endif  //  SERIAL_ONLY_INTERFACE
+#endif  //  SERIAL_USB_INTERFACE
 
 //  USB Endpoints.
 #define DATA_IN                 0x82

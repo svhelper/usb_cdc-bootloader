@@ -86,7 +86,7 @@ static const struct usb_device_descriptor dev = {
     .bcdUSB = 0x0200,  //  USB Version 2.0.  No need to handle special requests e.g. BOS.
 #endif  //  USB21_INTERFACE
 
-#ifdef SERIAL_ONLY_INTERFACE  //  If we are providing serial interface only...
+#ifdef SERIAL_USB_INTERFACE  //  If we are providing serial interface only...
 	.bDeviceClass = USB_CLASS_CDC,  //  Set the class to CDC if it's only serial.  Serial interface will not start on Windows when class = 0.
     .bDeviceSubClass = 0,
     .bDeviceProtocol = 0,
@@ -94,7 +94,7 @@ static const struct usb_device_descriptor dev = {
     .bDeviceClass = USB_CLASS_MISCELLANEOUS,  //  Copied from microbit. For composite device, let host probe the interfaces.
     .bDeviceSubClass = 2,  //  Common Class
     .bDeviceProtocol = 1,  //  Interface Association Descriptor
-#endif  //  SERIAL_ONLY_INTERFACE
+#endif  //  SERIAL_USB_INTERFACE
     .bMaxPacketSize0 = MAX_USB_PACKET_SIZE,
     .idVendor = USB_VID,
     .idProduct = USB_PID,
@@ -292,9 +292,9 @@ static const struct usb_interface interfaces[] = {
 #ifdef INTF_COMM
     {
         .num_altsetting = 1,
-#ifndef SERIAL_ONLY_INTERFACE
+#ifndef SERIAL_USB_INTERFACE
 	    .iface_assoc = &cdc_iface_assoc,  //  Mandatory for composite device with multiple interfaces.
-#endif  //  SERIAL_ONLY_INTERFACE
+#endif  //  SERIAL_USB_INTERFACE
         .altsetting = &comm_iface,  //  Index must sync with INTF_COMM.
     }, 
     {
