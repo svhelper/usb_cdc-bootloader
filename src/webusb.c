@@ -63,6 +63,7 @@ aa:00:20:00
 0030   9f 00 00 03 06 aa 00 20 00                        .....ª. .
 */
 
+#ifdef NOTUSED
 //  From https://github.com/intel/zephyr.js/blob/master/src/zjs_webusb.c
 /* Microsoft OS 2.0 Descriptor Set */
 static const uint8_t ms_os_20_descriptor_set[] = {
@@ -114,6 +115,7 @@ static const uint8_t ms_os_20_descriptor_set[] = {
 
 /* Microsoft OS 2.0 descriptor request */
 #define MS_OS_20_REQUEST_DESCRIPTOR 0x07
+#endif  //  NOTUSED
 
 const struct webusb_platform_descriptor webusb_platform_capability_descriptor = {
 	.bLength = WEBUSB_PLATFORM_DESCRIPTOR_SIZE,
@@ -143,8 +145,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 									 struct usb_setup_data *req,
 									 uint8_t **buf, uint16_t *len,
 									 usbd_control_complete_callback* complete) {
-	//  Handle >>  type 0xc0, req WEBUSB_VENDOR_CODE, val 0, idx 4, len 16, type 0x00, index 0x00
-	//         >>  type 0xc1, req WEBUSB_VENDOR_CODE, val 0, idx 5, len 10, type 0x00, index 0x00
+	//  Handle >>  type 0xc0, req 0x22, val 1, idx 2, type 0x00, index 0x01
 	(void)complete;
 	(void)usbd_dev;
 	//  For WebUSB, only request types C0 and C1 are allowed.

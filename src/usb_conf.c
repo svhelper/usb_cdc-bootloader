@@ -578,26 +578,33 @@ u21 type 0x80, req 0x06, val 3840, idx 0, len 29, type 0x0f, index 0x00
 >>  type 0x80, req 0x06, val 770, idx 1033, len 255, type 0x03, index 0x02
 >>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
 >>  type 0x80, req 0x06, val 512, idx 0, len 9, type 0x02, index 0x00
->>  type 0x80, req 0x06, val 512, idx 0, len 98, type 0x02, index 0x00
+>>  type 0x80, req 0x06, val 512, idx 0, len 116, type 0x02, index 0x00
 >>  type 0x00, req 0x09, val 1, idx 0, len 0, type 0x00, index 0x01
 set_aggregate_callback
+dfu_set_config
 *** cdcacm_set_config
 webusb_set_config
-***  type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
+>>  type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
 >>  type 0x80, req 0x06, val 773, idx 1033, len 4, type 0x03, index 0x05
 >>  type 0x80, req 0x06, val 773, idx 1033, len 28, type 0x03, index 0x05
 >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
 >>  type 0x80, req 0x06, val 774, idx 1033, len 4, type 0x03, index 0x06
 >>  type 0x80, req 0x06, val 774, idx 1033, len 44, type 0x03, index 0x06
 >>  type 0xc1, req 0x21, val 1, idx 5, len 10, type 0x00, index 0x01
-windes type 0x80, req 0x06, val 768, idx 0, len 2, type 0x03, index 0x00
-2
+>>  type 0x80, req 0x06, val 772, idx 1033, len 4, type 0x03, index 0x04
+>>  type 0x80, req 0x06, val 772, idx 1033, len 24, type 0x03, index 0x04
+>>  type 0xc1, req 0x21, val 3, idx 5, len 10, type 0x00, index 0x03
+>>  type 0x80, req 0x06, val 768, idx 0, len 2, type 0x03, index 0x00
+>>  type 0x80, req 0x06, val 768, idx 0, len 4, type 0x03, index 0x00
+>>  type 0x80, req 0x06, val 771, idx 1033, len 2, type 0x03, index 0x03
+>>  type 0x80, req 0x06, val 771, idx 1033, len 50, type 0x03, index 0x03
 msc type 0xa1, req 0xfe, val 0, idx 0, len 1, type 0x00, index 0x00
 >>  type 0x80, req 0x06, val 256, idx 0, len 64, type 0x01, index 0x00
 >>  type 0x00, req 0x05, val 6, idx 0, len 0, type 0x00, index 0x06
 >>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
 >>  type 0x00, req 0x09, val 1, idx 0, len 0, type 0x00, index 0x01
 set_aggregate_callback
+dfu_set_config
 *** cdcacm_set_config
 webusb_set_config
 >>  type 0x80, req 0x06, val 256, idx 0, len 64, type 0x01, index 0x00
@@ -605,6 +612,7 @@ webusb_set_config
 >>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
 >>  type 0x00, req 0x09, val 1, idx 0, len 0, type 0x00, index 0x01
 set_aggregate_callback
+dfu_set_config
 *** cdcacm_set_config
 webusb_set_config
 >>  type 0x80, req 0x06, val 256, idx 0, len 64, type 0x01, index 0x00
@@ -612,6 +620,7 @@ webusb_set_config
 >>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
 >>  type 0x00, req 0x09, val 1, idx 0, len 0, type 0x00, index 0x01
 set_aggregate_callback
+dfu_set_config
 *** cdcacm_set_config
 webusb_set_config
 >>  type 0x80, req 0x06, val 774, idx 1033, len 4, type 0x03, index 0x06
@@ -630,16 +639,9 @@ webusb_set_config
 *** cdc type 0x21, req 0x20, val 0, idx 1, len 7, type 0x00, index 0x00
 *** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
 [a
-][s
+][d
 ][f
-][g
-][f
-][g
-][f
-][
-][k
-][l
-][k
-][l
-][
+][d
+][d
+]*** cdc type 0x21, req 0x22, val
 */

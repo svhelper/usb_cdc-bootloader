@@ -107,13 +107,16 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 					struct usb_setup_data *req,
 					uint8_t **buf, uint16_t *len,
 					usbd_control_complete_callback* complete) {
+	//  Handle requests like:
+	//  >>  type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
+	//  >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
 	(void)complete;
 	(void)usbd_dev;
+	//  For WinUSB, only request types C0 and C1 are allowed.
+	if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) { return USBD_REQ_NEXT_CALLBACK; }
 	if (req->bRequest != WINUSB_MS_VENDOR_CODE) { return USBD_REQ_NEXT_CALLBACK; }
-	//  Skip requests meant for CDC.
-	if (req->bmRequestType == 0xc0 || req->bmRequestType == 0xc1) { return USBD_REQ_NEXT_CALLBACK; }
 
-	int status = USBD_REQ_NOTSUPP;
+	int status = USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
 	if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
 		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
 		dump_usb_request("winctl", req); ////
