@@ -323,9 +323,11 @@ usbd_device* usb_setup(void) {
 #ifdef INTF_COMM    
     cdc_setup(usbd_dev);
 #endif  //  INTF_COMM
+#ifdef INTF_DFU
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, 0);  //  Previously INTF_DFU
+	winusb_setup(usbd_dev, INTF_DFU);  //  Previously INTF_DFU
+#endif  //  INTF_DFU
 
     //  Set the aggregate callback.    
 	int status = usbd_register_set_config_callback(usbd_dev, set_aggregate_callback);
