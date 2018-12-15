@@ -89,6 +89,7 @@ static const struct usb_device_descriptor dev = {
     .bNumConfigurations = 1,
 };
 
+#ifdef INTF_MSC
 //  MSC Endpoints
 static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.bLength = USB_DT_ENDPOINT_SIZE,
@@ -105,7 +106,9 @@ static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.wMaxPacketSize = MAX_USB_PACKET_SIZE,
 	.bInterval = 0,
 }};
+#endif  //  INTF_MSC
 
+#ifdef INTF_COMM
 //  CDC Endpoints
 
 /*
@@ -176,7 +179,9 @@ static const struct {
 		.bSubordinateInterface0 = INTF_DATA,  //  Was 1
 	 }
 };
+#endif  //  INTF_MSC
 
+#ifdef INTF_DFU
 //  DFU Interface
 static const struct usb_interface_descriptor dfu_iface = {
     .bLength = USB_DT_INTERFACE_SIZE,
@@ -192,7 +197,9 @@ static const struct usb_interface_descriptor dfu_iface = {
     .extra = &dfu_function,
     .extralen = sizeof(dfu_function),
 };
+#endif  //  INTF_DFU
 
+#ifdef INTF_MSC
 //  MSC Interface
 static const struct usb_interface_descriptor msc_iface = {
 	.bLength = USB_DT_INTERFACE_SIZE,
@@ -208,7 +215,9 @@ static const struct usb_interface_descriptor msc_iface = {
 	.extra = NULL,
 	.extralen = 0
 };
+#endif  //  INTF_MSC
 
+#ifdef INTF_COMM
 //  CDC Interfaces
 static const struct usb_interface_descriptor comm_iface = {
     .bLength = USB_DT_INTERFACE_SIZE,
@@ -237,21 +246,33 @@ static const struct usb_interface_descriptor data_iface = {
     .iInterface = USB_STRINGS_DATA,  //  Name of DATA
     .endpoint = data_endp,  //  DATA Endpoints
 };
+#endif  //  INTF_COMM
 
 //  All USB Interfaces
-static const struct usb_interface interfaces[] = {{
-    .num_altsetting = 1,
-    .altsetting = &dfu_iface,  //  Index must sync with INTF_DFU.
-}, {
-    .num_altsetting = 1,
-    .altsetting = &msc_iface,  //  Index must sync with INTF_MSC.
-}, 	{
-    .num_altsetting = 1,
-    .altsetting = &comm_iface,  //  Index must sync with INTF_COMM.
-}, {
-    .num_altsetting = 1,
-    .altsetting = &data_iface,  //  Index must sync with INTF_DATA.
-}};
+static const struct usb_interface interfaces[] = {
+#ifdef INTF_DFU    
+    {
+        .num_altsetting = 1,
+        .altsetting = &dfu_iface,  //  Index must sync with INTF_DFU.
+    }, 
+#endif  //  INTF_DFU
+#ifdef INTF_MSC    
+    {
+        .num_altsetting = 1,
+        .altsetting = &msc_iface,  //  Index must sync with INTF_MSC.
+    }, 	
+#endif  //  INTF_MSC
+#ifdef INTF_COMM
+    {
+        .num_altsetting = 1,
+        .altsetting = &comm_iface,  //  Index must sync with INTF_COMM.
+    }, 
+    {
+        .num_altsetting = 1,
+        .altsetting = &data_iface,  //  Index must sync with INTF_DATA.
+    }
+#endif  //  INTF_COMM
+};
 
 //  USB Config
 static const struct usb_config_descriptor config = {
@@ -262,7 +283,7 @@ static const struct usb_config_descriptor config = {
     .bConfigurationValue = 1,
     .iConfiguration = 0,
     .bmAttributes = 0x80,  //  Bus-powered, i.e. it draws power from USB bus.
-    .bMaxPower = 0x32,
+    .bMaxPower = 0x64,     //  200 mA
     .interface = interfaces,
 };
 
@@ -293,12 +314,18 @@ usbd_device* usb_setup(void) {
         usbd_control_buffer, sizeof(usbd_control_buffer));
 
     //  The following USB setup functions will call aggregate_register_callback() to register callbacks.
+#ifdef INTF_DFU    
     dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
+#endif  //  INTF_DFU
+#ifdef INTF_MSC    
     msc_setup(usbd_dev);
+#endif  //  INTF_MSC
+#ifdef INTF_COMM    
     cdc_setup(usbd_dev);
+#endif  //  INTF_COMM
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, INTF_DFU);
+	winusb_setup(usbd_dev, 0);  //  Previously INTF_DFU
 
     //  Set the aggregate callback.    
 	int status = usbd_register_set_config_callback(usbd_dev, set_aggregate_callback);
@@ -309,6 +336,7 @@ usbd_device* usb_setup(void) {
     return usbd_dev;
 }
 
+#ifdef INTF_MSC    
 extern usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
 				 uint8_t ep_in, uint8_t ep_in_size,
 				 uint8_t ep_out, uint8_t ep_out_size,
@@ -336,6 +364,7 @@ void msc_setup(usbd_device* usbd_dev0) {
         INTF_MSC
     );
 }
+#endif  //  INTF_MSC
 
 struct control_callback_struct {
     uint8_t type;

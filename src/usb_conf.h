@@ -24,16 +24,24 @@
 #define USB_VID                 0x1209
 #define USB_PID                 0xdb42
 #define USB_SERIAL_NUM_LENGTH   24
-#define USB_CONTROL_BUF_SIZE    256
-////#define USB_CONTROL_BUF_SIZE    1024
-#define MAX_USB_PACKET_SIZE     64
-////#define MAX_USB_PACKET_SIZE     32
+#define USB_CONTROL_BUF_SIZE    256  //  Previously 1024
+#define MAX_USB_PACKET_SIZE     64   //  Previously 32
+
+//  #define ALL_INTERFACES  //  Enable all interfaces.
+#define SERIAL_INTERFACE  //  Enable only serial interface.
 
 //  Index of each USB interface.  Must sync with interfaces[].
+#ifdef ALL_INTERFACES
 #define INTF_DFU                0
 #define INTF_MSC                1
 #define INTF_COMM               2
 #define INTF_DATA               3
+#endif  //  ALL_INTERFACES
+
+#ifdef SERIAL_INTERFACE
+#define INTF_COMM               0
+#define INTF_DATA               1
+#endif  //  SERIAL_INTERFACE
 
 //  USB Endpoints.
 #define DATA_IN                 0x82

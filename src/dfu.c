@@ -28,6 +28,7 @@
 #include "dapboot.h"
 #include "config.h"
 
+#ifdef INTF_DFU
 #define CONTROL_CALLBACK_TYPE (USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE)
 #define CONTROL_CALLBACK_MASK (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
 
@@ -312,3 +313,4 @@ void dfu_setup(usbd_device* usbd_dev,
         on_state_change(current_dfu_state);
     }
 }
+#endif  //  INTF_DFU
