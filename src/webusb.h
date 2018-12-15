@@ -23,7 +23,7 @@
 #include "webusb_defs.h"
 
 // Arbitrary
-#define WEBUSB_VENDOR_CODE 0x22
+#define WEBUSB_VENDOR_CODE 0x21  //  Copied from microbit
 
 extern const struct webusb_platform_descriptor webusb_platform_capability_descriptor;
 extern const struct webusb_platform_descriptor webusb_platform_capability_descriptor_no_landing_page;

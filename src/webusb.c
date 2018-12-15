@@ -29,12 +29,29 @@
 
 /*
 microbit bos:
-05:0f:39:00:02:18:10:05:00:
+
+Binary Object Store descriptor
+05:0f:39:00:02:
+
+WebUSB Platform Capability Descriptor:
+https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
+bLength: 18:
+bDescriptorType: 10:
+bDevCapabilityType: 05:
+bReserved: 00:
 platformCapabilityUUID: 38:b6:08:34:a9:09:a0:47:8b:fd:a0:76:88:15:b6:65:
 bcdVersion: 00:01:
 bVendorCode: 21:
 iLandingPage: 00:
-1c:10:05:00:df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:00:00:03:06:aa:00:20:00
+
+bLength: 1c:
+bDescriptorType: 10:
+bDevCapabilityType: 05:
+bReserved: 00:
+platformCapabilityUUID: df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:
+bcdVersion: 00:00:
+bVendorCode: 03:
+06:aa:00:20:00
 
 0000   05 0f 39 00 02 18 10 05 00 38 b6 08 34 a9 09 a0   ..9......8¶.4©. 
 0010   47 8b fd a0 76 88 15 b6 65 00 01 21 00 1c 10 05   G.ý v..¶e..!....
@@ -70,9 +87,12 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 									 struct usb_setup_data *req,
 									 uint8_t **buf, uint16_t *len,
 									 usbd_control_complete_callback* complete) {
-	//  Handle >>  type 0xc0, req 0x22, val 1, idx 2, type 0x00, index 0x01
+	//  Handle >>  type 0xc0, req 0x21, val 1, idx 2, type 0x00, index 0x01
+	//         >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
 	(void)complete;
 	(void)usbd_dev;
+	//  For WebUSB, only request types C0 and C1 are allowed.
+	if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) { return USBD_REQ_NEXT_CALLBACK; }
 	if (req->bRequest != WEBUSB_VENDOR_CODE) { return USBD_REQ_NEXT_CALLBACK; }
 	dump_usb_request("web", req); ////
 	int status = USBD_REQ_NOTSUPP;

@@ -360,7 +360,7 @@ usbd_device* usb_setup(void) {
     //  Define USB 2.1 BOS interface used by WebUSB.
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, INTF_DFU);  //  Previously INTF_DFU
+	winusb_setup(usbd_dev, 0);  //  Previously INTF_DFU
 #endif  //  USB21_INTERFACE
 
     //  Set the aggregate callback.    
@@ -465,11 +465,13 @@ static int aggregate_callback(
 	usbd_control_complete_callback *complete) {
     //  This callback is called whenever a USB request is received.  We route to the right driver callbacks.
 	int i, result = 0;
+#ifdef NOTUSED
     //  Ignore 0xc0 and 0xc1 request types.  Not sure what they are.
     if (req->bmRequestType == 0xc0 || req->bmRequestType == 0xc1) {
 	    dump_usb_request("*** ", req); debug_flush(); ////
         return USBD_REQ_NEXT_CALLBACK;
     }
+#endif  //  NOTUSED
     //  Call the callbacks registered by the drivers.
     for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
         if (control_callback[i].cb == NULL) { break; }
