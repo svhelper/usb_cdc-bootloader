@@ -583,90 +583,80 @@ target_get_serial_number
 usb_set_serial_number
 usb_setup
 usbd polling...
->>  type 0x80, req 0x06, val 256, idx 0, len 64, type 0x01, index 0x00
->>  type 0x00, req 0x05, val 5, idx 0, len 0, type 0x00, index 0x05
->>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
->>  type 0x80, req 0x06, val 512, idx 0, len 255, type 0x02, index 0x00
-u21 type 0x80, req 0x06, val 3840, idx 0, len 5, type 0x0f, index 0x00
-u21 type 0x80, req 0x06, val 3840, idx 0, len 29, type 0x0f, index 0x00
->>  type 0x80, req 0x06, val 771, idx 1033, len 255, type 0x03, index 0x03
->>  type 0x80, req 0x06, val 768, idx 0, len 255, type 0x03, index 0x00
->>  type 0x80, req 0x06, val 770, idx 1033, len 255, type 0x03, index 0x02
->>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
->>  type 0x80, req 0x06, val 512, idx 0, len 9, type 0x02, index 0x00
->>  type 0x80, req 0x06, val 512, idx 0, len 116, type 0x02, index 0x00
->>  type 0x00, req 0x09, val 1, idx 0, len 0, type 0x00, index 0x01
+>>  typ 80, req 06, val 0100, idx 0000, len 0040, GET_DES_DEV t 01 i 00
+>>  typ 00, req 05, val 0005, idx 0000, len 0000, SET_ADR     t 00 i 05
+>>  typ 80, req 06, val 0100, idx 0000, len 0012, GET_DES_DEV t 01 i 00
+>>  typ 80, req 06, val 0200, idx 0000, len 00ff, GET_DES_CFG t 02 i 00
+u21 typ 80, req 06, val 0f00, idx 0000, len 0005, GET_DES_BOS t 0f i 00
+u21 typ 80, req 06, val 0f00, idx 0000, len 001d, GET_DES_BOS t 0f i 00
+>>  typ 80, req 06, val 0303, idx 0409, len 00ff, GET_DES_STR t 03 i 03
+>>  typ 80, req 06, val 0300, idx 0000, len 00ff, GET_DES_STR t 03 i 00
+>>  typ 80, req 06, val 0302, idx 0409, len 00ff, GET_DES_STR t 03 i 02
+>>  typ 80, req 06, val 0100, idx 0000, len 0012, GET_DES_DEV t 01 i 00
+>>  typ 80, req 06, val 0200, idx 0000, len 0009, GET_DES_CFG t 02 i 00
+>>  typ 80, req 06, val 0200, idx 0000, len 0074, GET_DES_CFG t 02 i 00
+>>  typ 00, req 09, val 0001, idx 0000, len 0000, SET_CFG     t 00 i 01
 set_aggregate_callback
 dfu_set_config
-*** cdcacm_set_config
 webusb_set_config
-winctl type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
-winctl type 0xc0, req 0x21, val 0, idx 4, len 40, type 0x00, index 0x00
->>  type 0x80, req 0x06, val 773, idx 1033, len 4, type 0x03, index 0x05
->>  type 0x80, req 0x06, val 773, idx 1033, len 28, type 0x03, index 0x05
->>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
->>  type 0x80, req 0x06, val 774, idx 1033, len 4, type 0x03, index 0x06
->>  type 0x80, req 0x06, val 774, idx 1033, len 44, type 0x03, index 0x06
->>  type 0xc1, req 0x21, val 1, idx 5, len 10, type 0x00, index 0x01
->>  type 0x80, req 0x06, val 772, idx 1033, len 4, type 0x03, index 0x04
->>  type 0x80, req 0x06, val 772, idx 1033, len 24, type 0x03, index 0x04
-winctl type 0xc1, req 0x21, val 3, idx 5, len 10, type 0x00, index 0x03
-winctl type 0xc1, req 0x21, val 3, idx 5, len 146, type 0x00, index 0x03
->>  type 0x80, req 0x06, val 768, idx 0, len 2, type 0x03, index 0x00
->>  type 0x80, req 0x06, val 768, idx 0, len 4, type 0x03, index 0x00
->>  type 0x80, req 0x06, val 771, idx 1033, len 2, type 0x03, index 0x03
->>  type 0x80, req 0x06, val 771, idx 1033, len 50, type 0x03, index 0x03
-msc type 0xa1, req 0xfe, val 0, idx 0, len 1, type 0x00, index 0x00
->>  type 0x80, req 0x06, val 256, idx 0, len 64, type 0x01, index 0x00
->>  type 0x00, req 0x05, val 6, idx 0, len 0, type 0x00, index 0x06
->>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
->>  type 0x00, req 0x09, val 1, idx 0, len 0, type 0x00, index 0x01
+winctl typ c0, req 21, val 0000, idx 0004, len 0010
+winctl typ c0, req 21, val 0000, idx 0004, len 0028
+>>  typ 80, req 06, val 0305, idx 0409, len 0004, GET_DES_STR t 03 i 05
+>>  typ 80, req 06, val 0305, idx 0409, len 001c, GET_DES_STR t 03 i 05
+>>  typ c1, req 21, val 0000, idx 0005, len 000a
+>>  typ 80, req 06, val 0306, idx 0409, len 0004, GET_DES_STR t 03 i 06
+>>  typ 80, req 06, val 0306, idx 0409, len 002c, GET_DES_STR t 03 i 06
+>>  typ c1, req 21, val 0001, idx 0005, len 000a
+>>  typ 80, req 06, val 0304, idx 0409, len 0004, GET_DES_STR t 03 i 04
+>>  typ 80, req 06, val 0304, idx 0409, len 0018, GET_DES_STR t 03 i 04
+winctl typ c1, req 21, val 0003, idx 0005, len 000a
+winctl typ c1, req 21, val 0003, idx 0005, len 0092
+>>  typ 80, req 06, val 0300, idx 0000, len 0002, GET_DES_STR t 03 i 00
+>>  typ 80, req 06, val 0300, idx 0000, len 0004, GET_DES_STR t 03 i 00
+>>  typ 80, req 06, val 0303, idx 0409, len 0002, GET_DES_STR t 03 i 03
+>>  typ 80, req 06, val 0303, idx 0409, len 0032, GET_DES_STR t 03 i 03
+>>  typ 80, req 06, val 0100, idx 0000, len 0040, GET_DES_DEV t 01 i 00
+>>  typ 00, req 05, val 0006, idx 0000, len 0000, SET_ADR     t 00 i 06
+>>  typ 80, req 06, val 0100, idx 0000, len 0012, GET_DES_DEV t 01 i 00
+>>  typ 00, req 09, val 0001, idx 0000, len 0000, SET_CFG     t 00 i 01
 set_aggregate_callback
 dfu_set_config
-*** cdcacm_set_config
 webusb_set_config
->>  type 0x80, req 0x06, val 256, idx 0, len 64, type 0x01, index 0x00
->>  type 0x00, req 0x05, val 5, idx 0, len 0, type 0x00, index 0x05
->>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
->>  type 0x00, req 0x09, val 1, idx 0, len 0, type 0x00, index 0x01
+>>  typ 80, req 06, val 0100, idx 0000, len 0040, GET_DES_DEV t 01 i 00
+>>  typ 00, req 05, val 0005, idx 0000, len 0000, SET_ADR     t 00 i 05
+>>  typ 80, req 06, val 0100, idx 0000, len 0012, GET_DES_DEV t 01 i 00
+>>  typ 00, req 09, val 0001, idx 0000, len 0000, SET_CFG     t 00 i 01
 set_aggregate_callback
 dfu_set_config
-*** cdcacm_set_config
 webusb_set_config
->>  type 0x80, req 0x06, val 256, idx 0, len 64, type 0x01, index 0x00
->>  type 0x00, req 0x05, val 6, idx 0, len 0, type 0x00, index 0x06
->>  type 0x80, req 0x06, val 256, idx 0, len 18, type 0x01, index 0x00
->>  type 0x00, req 0x09, val 1, idx 0, len 0, type 0x00, index 0x01
+>>  typ 80, req 06, val 0100, idx 0000, len 0040, GET_DES_DEV t 01 i 00
+>>  typ 00, req 05, val 0006, idx 0000, len 0000, SET_ADR     t 00 i 06
+>>  typ 80, req 06, val 0100, idx 0000, len 0012, GET_DES_DEV t 01 i 00
+>>  typ 00, req 09, val 0001, idx 0000, len 0000, SET_CFG     t 00 i 01
 set_aggregate_callback
 dfu_set_config
-*** cdcacm_set_config
 webusb_set_config
->>  type 0x80, req 0x06, val 774, idx 1033, len 4, type 0x03, index 0x06
->>  type 0x80, req 0x06, val 774, idx 1033, len 44, type 0x03, index 0x06
-*** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0x21, req 0x22, val 0, idx 1, len 0, type 0x00, index 0x00
-*** cdc type 0x21, req 0x20, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0x21, req 0x20, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0x21, req 0x22, val 3, idx 1, len 0, type 0x00, index 0x03
-*** cdc type 0x21, req 0x20, val 0, idx 1, len 7, type 0x00, index 0x00
-*** cdc type 0xa1, req 0x21, val 0, idx 1, len 7, type 0x00, index 0x00
-[s
+>>  typ 80, req 06, val 0306, idx 0409, len 0004, GET_DES_STR t 03 i 06
+>>  typ 80, req 06, val 0306, idx 0409, len 002c, GET_DES_STR t 03 i 06
+[a
+][s
+][d
+][f
+][
+][s
 ][a
 ][s
+][a
 ][s
+][
+][f
 ][d
-][s
-][d
+][f
+][f
 ][
 ][d
 ][s
 ][d
 ][s
-][
+]
 */
