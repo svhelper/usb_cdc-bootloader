@@ -28,7 +28,10 @@
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 /*
-microbit bos:
+Test in Chrome console:
+navigator.usb.getDevices().then(console.log)
+
+Captured BOS from microbit:
 
 Binary Object Store descriptor
 05:0f:39:00:02:
