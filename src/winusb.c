@@ -106,6 +106,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 			*len = MIN(*len, winusb_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
 		}
+#ifdef NOTUSED		
 		else if (usb_descriptor_index(req->wValue) == 0 && *len == 2) {
 			//  Windows will request descriptor for Language ID at index 0 with length 2, 
 			//  which causes libopencm3 to return a corrupted response.  We fix that here.
@@ -114,6 +115,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 			*len = MIN(*len, empty_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
 		}
+#endif  //  NOTUSED		
 	}
 	return USBD_REQ_NEXT_CALLBACK;
 }

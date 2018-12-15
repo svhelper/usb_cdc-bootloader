@@ -27,6 +27,21 @@
 
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
+/*
+microbit bos:
+05:0f:39:00:02:18:10:05:00:
+platformCapabilityUUID: 38:b6:08:34:a9:09:a0:47:8b:fd:a0:76:88:15:b6:65:
+bcdVersion: 00:01:
+bVendorCode: 21:
+iLandingPage: 00:
+1c:10:05:00:df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:00:00:03:06:aa:00:20:00
+
+0000   05 0f 39 00 02 18 10 05 00 38 b6 08 34 a9 09 a0   ..9......8¶.4©. 
+0010   47 8b fd a0 76 88 15 b6 65 00 01 21 00 1c 10 05   G.ý v..¶e..!....
+0020   00 df 60 dd d8 89 45 c7 4c 9c d2 65 9d 9e 64 8a   .ß`ÝØ.EÇL.Òe..d.
+0030   9f 00 00 03 06 aa 00 20 00                        .....ª. .
+*/
+
 const struct webusb_platform_descriptor webusb_platform_capability_descriptor = {
 	.bLength = WEBUSB_PLATFORM_DESCRIPTOR_SIZE,
 	.bDescriptorType = USB_DT_DEVICE_CAPABILITY,
