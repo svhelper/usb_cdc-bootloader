@@ -33,9 +33,6 @@
 #include "uf2.h"
 #include "backup.h"
 
-static void test_backup(void);
-static int test_swd(void);
-
 static inline void __set_MSP(uint32_t topOfMainStack) {
     asm("msr msp, %0" : : "r" (topOfMainStack));
 }
@@ -90,9 +87,8 @@ int main(void) {
     // test_backup();          //  Test backup.
 
     debug_println("target_get_force_bootloader");  // debug_flush();
-    if (target_get_force_bootloader() || !appValid) {
-        //  Setup USB
-        {
+    if (target_get_force_bootloader() || !appValid) {        
+        {  //  Setup USB
             char serial[USB_SERIAL_NUM_LENGTH+1];
             serial[0] = '\0';
             debug_println("target_get_serial_number");  // debug_flush();
@@ -101,14 +97,9 @@ int main(void) {
             debug_println("usb_set_serial_number");  // debug_flush();
             usb_set_serial_number(serial);
         }
-
         debug_println("usb_setup");  // debug_flush();
         usbd_device* usbd_dev = usb_setup();
-
-        //  Pause a while before starting USB processing.
-        //  const int sleep_time_us = 10 * 1000 * 1000; for (int i = 0; i < sleep_time_us * 10; i++) { __asm__("nop"); }
-        debug_println("loop");  // debug_flush();
-
+        debug_println("usbd polling...");  debug_flush();  ////
         uint32_t cycleCount = 0;        
         while (1) {
             cycleCount++;
@@ -132,21 +123,11 @@ int main(void) {
     } else {
         debug_println("jump_to_application");  debug_flush();
         jump_to_application();
-    }
-    
+    }    
     return 0;
 }
 
-static int test_swd(void) {    
-    static int delay = 1;
-    if (delay++ % 40 != 0) { return 0; }
-    uint16_t swdio = gpio_get(GPIOA, GPIO13);  //  PA13 = SWDIO / JTMS 
-    uint16_t swclk = gpio_get(GPIOA, GPIO14);  //  PA14 = SWCLK / JTCK
-    // debug_print("swdio "); debug_print_unsigned(swdio); debug_print(", swclk "); debug_print_unsigned(swclk); debug_println(""); // debug_flush();
-    if (swdio == 8192 && swclk == 0) { return 1; }
-    return 0;
-}
-
+#ifdef NOTUSED
 static void test_backup(void) {
     //  Test whether RTC backup registers are written correctly.
     //  static const uint32_t CMD_BOOT = 0x544F4F42UL;
@@ -164,3 +145,4 @@ static void test_backup(void) {
     cmd = backup_read(reg);
     debug_print("test_backup read again "); debug_print_unsigned((size_t) cmd); debug_println(""); debug_flush();
 }
+#endif  //  NOTUSED

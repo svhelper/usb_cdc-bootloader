@@ -57,6 +57,8 @@ static struct winusb_compatible_id_descriptor winusb_wcid = {
 	}
 };
 
+static const char language_id[2] = "\x09\x04";  // Language ID string (US English)
+
 static const struct usb_string_descriptor winusb_string_descriptor = {
 	.bLength = 0x12,
 	.bDescriptorType = USB_DT_STRING,
@@ -107,10 +109,13 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 			return USBD_REQ_HANDLED;
 		}
 		else if (usb_descriptor_index(req->wValue) == 0 && *len == 2) {
-			//  Windows will request descriptor at index 0 with length 2, which causes libopencm3 to return a corrupted response.  We fix that here.
+			//  Windows will request descriptor for Language ID at index 0 with length 2, 
+			//  which causes libopencm3 to return a corrupted response.  We fix that here.
 			dump_usb_request("windes", req); debug_print_int(*len); debug_println(""); ////
-			*buf = (uint8_t*) &default_string_descriptor;  //  Return the empty string.
-			*len = MIN(*len, default_string_descriptor.bLength);
+			// *buf = (uint8_t*) &default_string_descriptor;  //  Return the empty string.
+			// *len = MIN(*len, default_string_descriptor.bLength);
+			*buf = language_id;
+			*len = 2;
 			return USBD_REQ_HANDLED;
 		}
 	}

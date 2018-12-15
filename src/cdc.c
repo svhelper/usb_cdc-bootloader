@@ -61,6 +61,7 @@ static enum usbd_request_return_codes cdcacm_control_request(
 				return USBD_REQ_NOTSUPP;
 			}
 			*buf = (uint8_t *) &line_coding;
+			*len = sizeof(struct usb_cdc_line_coding);
 			return USBD_REQ_HANDLED;
 		}
 		case USB_CDC_REQ_SET_LINE_CODING: {
@@ -117,7 +118,7 @@ cdcacm_set_config(
   uint16_t wValue __attribute__((unused))
 ) {
 	//  From https://github.com/libopencm3/libopencm3-examples/blob/master/examples/stm32/f3/stm32f3-discovery/usb_cdcacm/cdcacm.c
-    //  debug_println("*** cdcacm_set_config"); ////
+    debug_println("*** cdcacm_set_config"); ////
 	usbd_ep_setup(usbd_dev, DATA_OUT, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, cdcacm_data_rx_cb);
 	usbd_ep_setup(usbd_dev, DATA_IN, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, NULL);
 	usbd_ep_setup(usbd_dev, COMM_IN, USB_ENDPOINT_ATTR_INTERRUPT, COMM_PACKET_SIZE, cdcacm_comm_cb);

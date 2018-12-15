@@ -394,6 +394,15 @@ int aggregate_register_callback(
 	return -1;
 }
 
+#include <libopencm3/usb/cdc.h>
+//  Line config to be returned.
+static const struct usb_cdc_line_coding line_coding = {
+	.dwDTERate = 115200,
+	.bCharFormat = USB_CDC_1_STOP_BITS,
+	.bParityType = USB_CDC_NO_PARITY,
+	.bDataBits = 0x08
+};
+
 static int aggregate_callback(
     usbd_device *usbd_dev,
 	struct usb_setup_data *req, 
@@ -402,6 +411,13 @@ static int aggregate_callback(
 	usbd_control_complete_callback *complete) {
     //  This callback is called whenever a USB request is received.
 	int i, result = 0;
+    ////  TODO: Handle CDC
+    if (req->bmRequestType == 0xc0 && req->bRequest == 0x21) {
+	    dump_usb_request("*** ", req); debug_flush(); ////
+        *buf = (uint8_t *) &line_coding;
+        *len = sizeof(struct usb_cdc_line_coding);
+        return USBD_REQ_HANDLED;
+    }
     // if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) 
     {  //  If this is not a Set Configuration request...
         /* Call user command hook function. */
