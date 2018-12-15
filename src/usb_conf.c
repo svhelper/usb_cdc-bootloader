@@ -414,9 +414,10 @@ static int aggregate_callback(
     ////  TODO: Handle CDC
     if (req->bmRequestType == 0xc0 && req->bRequest == 0x21) {
 	    dump_usb_request("*** ", req); debug_flush(); ////
-        *buf = (uint8_t *) &line_coding;
-        *len = sizeof(struct usb_cdc_line_coding);
-        return USBD_REQ_HANDLED;
+        return USBD_REQ_NEXT_CALLBACK;
+        //*buf = (uint8_t *) &line_coding;
+        //*len = sizeof(struct usb_cdc_line_coding);
+        //return USBD_REQ_HANDLED;
     }
     // if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) 
     {  //  If this is not a Set Configuration request...

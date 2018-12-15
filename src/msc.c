@@ -27,7 +27,7 @@
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/msc.h>
 #include <logger.h>
-#include "custom_usb_private.h"
+#include "msc.h"
 #include "usb_conf.h"
 
 /* Definitions of Mass Storage Class from:
@@ -547,9 +547,13 @@ static void scsi_command(usbd_mass_storage *ms,
 		scsi_write_10(ms, trans, event);
 		break;
 //////////////////ADDED THIS///////////////////////////////////////////////////////////////////////////////////////////////////
+//  Windows will send these commands...
 	case SCSI_READ_FORMAT_CAPACITIES:
 		scsi_read_format_capacities(ms, trans, event);
 	 	break;
+	case SCSI_PREVENT_ALLOW_MEDIUM_REMOVAL:
+		set_sbc_status_good(ms);
+		break;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	default:
         debug_print("SBC_SENSE_KEY_ILLEGAL_REQUEST "); debug_printhex(trans->cbw.cbw.CBWCB[0]); debug_println(""); debug_flush(); ////
