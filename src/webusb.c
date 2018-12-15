@@ -39,25 +39,81 @@ bLength: 18:
 bDescriptorType: 10:
 bDevCapabilityType: 05:
 bReserved: 00:
+PlatformCapability UUID:
 platformCapabilityUUID: 38:b6:08:34:a9:09:a0:47:8b:fd:a0:76:88:15:b6:65:
 bcdVersion: 00:01:
 bVendorCode: 21:
 iLandingPage: 00:
 
+Microsoft OS 2.0 Platform Capability Descriptor:
 bLength: 1c:
 bDescriptorType: 10:
 bDevCapabilityType: 05:
 bReserved: 00:
+MS OS 2.0 Platform Capability ID:
 platformCapabilityUUID: df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:
-bcdVersion: 00:00:
-bVendorCode: 03:
-06:aa:00:20:00
+Windows version:
+bcdVersion: 00:00:03:06:
+Descriptor set length, Vendor code, Alternate enumeration code:
+aa:00:20:00
 
 0000   05 0f 39 00 02 18 10 05 00 38 b6 08 34 a9 09 a0   ..9......8¶.4©. 
 0010   47 8b fd a0 76 88 15 b6 65 00 01 21 00 1c 10 05   G.ý v..¶e..!....
 0020   00 df 60 dd d8 89 45 c7 4c 9c d2 65 9d 9e 64 8a   .ß`ÝØ.EÇL.Òe..d.
 0030   9f 00 00 03 06 aa 00 20 00                        .....ª. .
 */
+
+//  From https://github.com/intel/zephyr.js/blob/master/src/zjs_webusb.c
+/* Microsoft OS 2.0 Descriptor Set */
+static const uint8_t ms_os_20_descriptor_set[] = {
+    0x0A, 0x00,              // wLength
+    0x00, 0x00,              // MS OS 2.0 descriptor set header
+    0x00, 0x00, 0x03, 0x06,  // Windows 8.1
+    0xB2, 0x00,              // Size, MS OS 2.0 descriptor set
+
+    // Configuration subset header
+    0x08, 0x00,  // wLength
+    0x01, 0x00,  // wDescriptorType
+    0x00,        // bConfigurationValue
+    0x00,        // bReserved
+    0xA8, 0x00,  // wTotalLength of this subset header
+
+    // Function subset header
+    0x08, 0x00,  // wLength
+    0x02, 0x00,  // wDescriptorType
+    0x02,        // bFirstInterface
+    0x00,        // bReserved
+    0xA0, 0x00,  // wTotalLength of this subset header
+
+    // Compatible ID descriptor
+    0x14, 0x00,                                      // wLength
+    0x03, 0x00,                                      // wDescriptorType
+    'W', 'I', 'N', 'U', 'S', 'B', 0x00, 0x00,        // compatible ID
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // subCompatibleID
+
+    // Extended properties descriptor with interface GUID
+    0x84, 0x00,  // wLength
+    0x04, 0x00,  // wDescriptorType
+    0x07, 0x00,  // wPropertyDataType
+    0x2A, 0x00,  // wPropertyNameLength
+    // Property name : DeviceInterfaceGUIDs
+    'D', 0x00, 'e', 0x00, 'v', 0x00, 'i', 0x00, 'c', 0x00, 'e', 0x00,
+    'I', 0x00, 'n', 0x00, 't', 0x00, 'e', 0x00, 'r', 0x00, 'f', 0x00,
+    'a', 0x00, 'c', 0x00, 'e', 0x00, 'G', 0x00, 'U', 0x00, 'I', 0x00,
+    'D', 0x00, 's', 0x00, 0x00, 0x00,
+    0x50, 0x00,  // wPropertyDataLength
+    // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA336}
+    '{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
+    '8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
+    'B', 0x00, '2', 0x00, '-', 0x00, '4', 0x00, '4', 0x00, '8', 0x00,
+    '6', 0x00, '-', 0x00, '8', 0x00, '5', 0x00, '0', 0x00, '1', 0x00,
+    '-', 0x00, 'B', 0x00, '6', 0x00, '1', 0x00, '4', 0x00, '5', 0x00,
+    'B', 0x00, '5', 0x00, 'B', 0x00, 'A', 0x00, '3', 0x00, '3', 0x00,
+    '6', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+/* Microsoft OS 2.0 descriptor request */
+#define MS_OS_20_REQUEST_DESCRIPTOR 0x07
 
 const struct webusb_platform_descriptor webusb_platform_capability_descriptor = {
 	.bLength = WEBUSB_PLATFORM_DESCRIPTOR_SIZE,
@@ -87,8 +143,8 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 									 struct usb_setup_data *req,
 									 uint8_t **buf, uint16_t *len,
 									 usbd_control_complete_callback* complete) {
-	//  Handle >>  type 0xc0, req 0x21, val 1, idx 2, type 0x00, index 0x01
-	//         >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
+	//  Handle >>  type 0xc0, req WEBUSB_VENDOR_CODE, val 0, idx 4, len 16, type 0x00, index 0x00
+	//         >>  type 0xc1, req WEBUSB_VENDOR_CODE, val 0, idx 5, len 10, type 0x00, index 0x00
 	(void)complete;
 	(void)usbd_dev;
 	//  For WebUSB, only request types C0 and C1 are allowed.

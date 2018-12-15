@@ -63,13 +63,6 @@ static const struct usb_string_descriptor winusb_string_descriptor = {
 	.wData = WINUSB_EXTRA_STRING
 };
 
-static const struct usb_string_descriptor empty_string_descriptor = {
-	//  Empty string
-	.bLength = 0x02,  //  Number of chars * 2 (unicode) + 2 (length, desc)
-	.bDescriptorType = USB_DT_STRING,
-	.wData = { }
-};
-
 static const struct winusb_extended_properties_descriptor guid = {
 	.header = {
 		.dwLength = sizeof(struct winusb_extended_properties_descriptor_header)
@@ -106,16 +99,6 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 			*len = MIN(*len, winusb_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
 		}
-#ifdef NOTUSED		
-		else if (usb_descriptor_index(req->wValue) == 0 && *len == 2) {
-			//  Windows will request descriptor for Language ID at index 0 with length 2, 
-			//  which causes libopencm3 to return a corrupted response.  We fix that here.
-			dump_usb_request("windes", req); debug_print_int(*len); debug_println(""); ////
-			*buf = (uint8_t*) &empty_string_descriptor;  //  Return the empty string.
-			*len = MIN(*len, empty_string_descriptor.bLength);
-			return USBD_REQ_HANDLED;
-		}
-#endif  //  NOTUSED		
 	}
 	return USBD_REQ_NEXT_CALLBACK;
 }

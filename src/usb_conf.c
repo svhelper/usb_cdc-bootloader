@@ -338,7 +338,7 @@ static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE] __attribute__ ((aligned
 usbd_device* usbd_dev = NULL;
 
 usbd_device* usb_setup(void) {
-    int num_strings = sizeof(usb_strings)/sizeof(const char*);
+    int num_strings = sizeof(usb_strings) / sizeof(const char*);
     // debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); // debug_flush(); ////
     const usbd_driver* driver = target_usb_init();
     usbd_dev = usbd_init(driver, &dev, &config, 
@@ -360,7 +360,7 @@ usbd_device* usb_setup(void) {
     //  Define USB 2.1 BOS interface used by WebUSB.
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, 0);  //  Previously INTF_DFU
+	winusb_setup(usbd_dev, INTF_DFU);  //  Previously INTF_DFU
 #endif  //  USB21_INTERFACE
 
     //  Set the aggregate callback.    
