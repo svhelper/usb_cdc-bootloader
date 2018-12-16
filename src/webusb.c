@@ -28,16 +28,32 @@
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 /*
-Test in Chrome console:
+Test WebUSB in Chrome console:
 navigator.usb.getDevices().then(console.log)
+
+Captured BOS from Blue Pill:
+
+Binary Object Store descriptor
+05:0f:1d:00:01:
+
+WebUSB Platform Capability Descriptor: https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
+bLength: 18:
+bDescriptorType: 10:
+bDevCapabilityType: 05:
+bReserved: 00:
+PlatformCapability UUID:
+platformCapabilityUUID: 38:b6:08:34:a9:09:a0:47:8b:fd:a0:76:88:15:b6:65:
+bcdVersion: 00:01:
+bVendorCode: 22:
+iLandingPage: 01:
+
 
 Captured BOS from microbit:
 
 Binary Object Store descriptor
 05:0f:39:00:02:
 
-WebUSB Platform Capability Descriptor:
-https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
+WebUSB Platform Capability Descriptor: https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
 bLength: 18:
 bDescriptorType: 10:
 bDevCapabilityType: 05:
@@ -154,7 +170,6 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 	//  For WebUSB, only request types C0 and C1 are allowed.
 	if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) { return USBD_REQ_NEXT_CALLBACK; }
 	if (req->bRequest != WEBUSB_VENDOR_CODE) { return USBD_REQ_NEXT_CALLBACK; }
-	dump_usb_request("web", req); ////
 	int status = USBD_REQ_NOTSUPP;
 	switch (req->wIndex) {
 		case WEBUSB_REQ_GET_URL: {
@@ -164,8 +179,8 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
     			debug_print("*** webusb notsupp index "); debug_print_unsigned(index); debug_println(""); debug_flush(); ////
 				return USBD_REQ_NOTSUPP;
 			}
-
 			if (index == 1) {
+				dump_usb_request("weburl", req); debug_flush(); ////
 				size_t url_len = strlen(webusb_https_url);
 				url->bLength = WEBUSB_DT_URL_DESCRIPTOR_SIZE + url_len;
 				url->bDescriptorType = WEBUSB_DT_URL;

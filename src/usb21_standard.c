@@ -28,16 +28,15 @@
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
 static uint16_t build_bos_descriptor(const struct usb_bos_descriptor *bos,
-									 uint8_t *buf, uint16_t len)
-{
+									 uint8_t *buf, uint16_t len) {
 	uint8_t *tmpbuf = buf;
-	uint16_t count, total = 0, totallen = 0;
-	uint16_t i;
+	uint16_t i, bytes_to_copy, total = 0, totallen = 0;
 
-	memcpy(buf, bos, count = MIN(len, bos->bLength));
-	buf += count;
-	len -= count;
-	total += count;
+	bytes_to_copy = MIN(len, bos->bLength);
+	memcpy(buf, bos, bytes_to_copy);
+	buf += bytes_to_copy;
+	len -= bytes_to_copy;
+	total += bytes_to_copy;
 	totallen += bos->bLength;
 
 	/* For each device capability */
@@ -45,26 +44,16 @@ static uint16_t build_bos_descriptor(const struct usb_bos_descriptor *bos,
 		/* Copy device capability descriptor. */
 		const struct usb_device_capability_descriptor *cap =
 			bos->capabilities[i];
-
-		memcpy(buf, cap, count = MIN(len, cap->bLength));
-		buf += count;
-		len -= count;
-		total += count;
+		bytes_to_copy = MIN(len, cap->bLength);
+		memcpy(buf, cap, bytes_to_copy);
+		buf += bytes_to_copy;
+		len -= bytes_to_copy;
+		total += bytes_to_copy;
 		totallen += cap->bLength;
 	}
-
 	/* Fill in wTotalLength. */
 	*(uint16_t *)(tmpbuf + 2) = totallen;
-
 	return total;
-}
-
-static int usb_descriptor_type(uint16_t wValue) {
-	return wValue >> 8;
-}
-
-static int usb_descriptor_index(uint16_t wValue) {
-	return wValue & 0xFF;
 }
 
 static const struct usb_bos_descriptor* usb21_bos;
@@ -76,16 +65,14 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 	(void)complete;
 	(void)usbd_dev;
 	int descr_type = req->wValue >> 8;
-    if (descr_type != USB_DT_BOS) {
-		//  Not BOS request.  Hand off to next interface.
-        return USBD_REQ_NEXT_CALLBACK;
-    }
+	//  If not BOS request.  Hand off to next interface.
+    if (descr_type != USB_DT_BOS) { return USBD_REQ_NEXT_CALLBACK; }
 	if (!usb21_bos) {
 		debug_println("*** usb21_descriptor no bos "); debug_flush(); ////
 		return USBD_REQ_NOTSUPP;
 	}
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
-		dump_usb_request("u21", req); ////
+		dump_usb_request("bos", req); debug_flush(); ////
 		*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));
 		return USBD_REQ_HANDLED;
 	}

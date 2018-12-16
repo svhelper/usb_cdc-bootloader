@@ -94,7 +94,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 	}
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR && usb_descriptor_type(req->wValue) == USB_DT_STRING) {
 		if (usb_descriptor_index(req->wValue) == WINUSB_EXTRA_STRING_INDEX) {
-			dump_usb_request("windes", req); ////
+			dump_usb_request("windes", req); debug_flush(); ////
 			*buf = (uint8_t*) &winusb_string_descriptor;
 			*len = MIN(*len, winusb_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
@@ -119,7 +119,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	int status = USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
 	if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
 		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
-		dump_usb_request("winctl", req); ////
+		dump_usb_request("winid", req); debug_flush(); ////
 
 		*buf = (uint8_t*)(&winusb_wcid);
 		*len = MIN(*len, winusb_wcid.header.dwLength);
@@ -128,7 +128,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	} else if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_INTERFACE) &&
 		(req->wIndex == WINUSB_REQ_GET_EXTENDED_PROPERTIES_OS_FEATURE_DESCRIPTOR) &&
 		(usb_descriptor_index(req->wValue) == winusb_wcid.functions[0].bInterfaceNumber)) {
-		dump_usb_request("winctl", req); ////
+		dump_usb_request("winprp", req); debug_flush(); ////
 
 		*buf = (uint8_t*)(&guid);
 		*len = MIN(*len, guid.header.dwLength);
