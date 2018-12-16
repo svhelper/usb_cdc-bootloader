@@ -318,13 +318,15 @@ static const struct usb_config_descriptor config = {
 };
 
 #ifdef USB21_INTERFACE
-//  BOS Capabilities for WebUSB
+//  BOS Capabilities for WebUSB and Microsoft Platform
 static const struct usb_device_capability_descriptor* capabilities[] = {
 	(const struct usb_device_capability_descriptor*) 
         &webusb_platform_capability_descriptor,
+	(const struct usb_device_capability_descriptor*) 
+        &microsoft_platform_capability_descriptor,
 };
 
-//  BOS Descriptor for WebUSB
+//  BOS Descriptor for WebUSB and Microsoft Platform
 static const struct usb_bos_descriptor bos_descriptor = {
 	.bLength = USB_DT_BOS_SIZE,
 	.bDescriptorType = USB_DT_BOS,

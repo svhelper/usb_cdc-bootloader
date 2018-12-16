@@ -136,6 +136,7 @@ static const uint8_t ms_os_20_descriptor_set[] = {
 #define MS_OS_20_REQUEST_DESCRIPTOR 0x07
 #endif  //  NOTUSED
 
+//  WebUSB Descriptor with landing page.
 const struct webusb_platform_descriptor webusb_platform_capability_descriptor = {
 	.bLength = WEBUSB_PLATFORM_DESCRIPTOR_SIZE,
 	.bDescriptorType = USB_DT_DEVICE_CAPABILITY,
@@ -147,6 +148,7 @@ const struct webusb_platform_descriptor webusb_platform_capability_descriptor = 
 	.iLandingPage = 1
 };
 
+//  WebUSB Descriptor without landing page.
 const struct webusb_platform_descriptor webusb_platform_capability_descriptor_no_landing_page = {
 	.bLength = WEBUSB_PLATFORM_DESCRIPTOR_SIZE,
 	.bDescriptorType = USB_DT_DEVICE_CAPABILITY,
@@ -156,6 +158,23 @@ const struct webusb_platform_descriptor webusb_platform_capability_descriptor_no
 	.bcdVersion = 0x0100,
 	.bVendorCode = WEBUSB_VENDOR_CODE,
 	.iLandingPage = 0
+};
+
+//  Microsoft Platform Descriptor
+const struct microsoft_platform_descriptor microsoft_platform_capability_descriptor = {
+	.bLength = MICROSOFT_PLATFORM_DESCRIPTOR_SIZE,
+	.bDescriptorType = USB_DT_DEVICE_CAPABILITY,
+	.bDevCapabilityType = USB_DC_PLATFORM,
+	.bReserved = 0,
+	.platformCapabilityUUID = WEBUSB_UUID,
+	//  Windows version e.g. 0x00, 0x00, 0x03, 0x06
+	.dwWindowsVersion = MICROSOFT_WINDOWS_VERSION,
+	//  Descriptor set length e.g. 0xaa
+	.wMSOSDescriptorSetTotalLength = 0xaa,
+	//  Vendor code e.g. 0x20
+	.bMS_VendorCode = 0x20,
+	//  Alternate enumeration code e.g. 0x00
+	.bAltEnumCode = 0
 };
 
 static const char* webusb_https_url;

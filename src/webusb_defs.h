@@ -42,12 +42,32 @@ struct webusb_platform_descriptor {
 	uint8_t iLandingPage;
 } __attribute__((packed));
 
-#define WEBUSB_PLATFORM_DESCRIPTOR_SIZE sizeof(struct webusb_platform_descriptor)
-
 // from https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
 // see also this (for endianness explanation)
 // https://github.com/WICG/webusb/issues/115#issuecomment-352206549
-#define WEBUSB_UUID {0x38, 0xB6, 0x08, 0x34, 0xA9, 0x09, 0xA0, 0x47,0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65}
+#define WEBUSB_UUID { 0x38, 0xB6, 0x08, 0x34, 0xA9, 0x09, 0xA0, 0x47,0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65 }
+#define WEBUSB_PLATFORM_DESCRIPTOR_SIZE sizeof(struct webusb_platform_descriptor)
+
+//  From http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
+struct microsoft_platform_descriptor {
+	uint8_t bLength;
+	uint8_t bDescriptorType;
+	uint8_t bDevCapabilityType;
+	uint8_t bReserved;
+	uint8_t platformCapabilityUUID[16];
+	//  Windows version e.g. 0x00, 0x00, 0x03, 0x06
+	uint8_t dwWindowsVersion[4];
+	//  Descriptor set length e.g. 0xaa
+	uint16_t wMSOSDescriptorSetTotalLength;
+	//  Vendor code e.g. 0x20
+	uint8_t bMS_VendorCode;
+	//  Alternate enumeration code e.g. 0x00
+	uint8_t bAltEnumCode;
+} __attribute__((packed));
+
+#define MICROSOFT_PLATFORM { 0xdf, 0x60, 0xdd, 0xd8, 0x89, 0x45, 0xc7, 0x4c, 0x9c, 0xd2, 0x65, 0x9d, 0x9e, 0x64, 0x8a, 0x9f }
+#define MICROSOFT_WINDOWS_VERSION { 0x00, 0x00, 0x03, 0x06 }
+#define MICROSOFT_PLATFORM_DESCRIPTOR_SIZE sizeof(struct microsoft_platform_descriptor)
 
 struct webusb_url_descriptor {
 	uint8_t bLength;
