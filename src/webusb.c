@@ -28,66 +28,6 @@
 
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
 
-/*
-Test WebUSB in Chrome console:
-navigator.usb.getDevices().then(console.log)
-
-Captured BOS from Blue Pill:
-
-Binary Object Store descriptor
-05:0f:39:00:02:
-
-WebUSB Platform Capability Descriptor: https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
-bLength: 18:
-bDescriptorType: 10:
-bDevCapabilityType: 05:
-bReserved: 00:
-PlatformCapability UUID:
-platformCapabilityUUID: 38:b6:08:34:a9:09:a0:47:8b:fd:a0:76:88:15:b6:65:
-bcdVersion: 00:01:
-bVendorCode: 22:
-iLandingPage: 01:
-
-Microsoft OS 2.0 Platform Capability Descriptor:
-bLength: 1c:
-bDescriptorType: 10:
-bDevCapabilityType: 05:
-bReserved: 00:
-MS OS 2.0 Platform Capability ID:
-platformCapabilityUUID: df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:
-Windows version:
-bcdVersion: 00:00:03:06:
-Descriptor set length, Vendor code, Alternate enumeration code:
-aa:00:20:00
-
-Captured BOS from microbit:
-
-Binary Object Store descriptor
-05:0f:39:00:02:
-
-WebUSB Platform Capability Descriptor: https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
-bLength: 18:
-bDescriptorType: 10:
-bDevCapabilityType: 05:
-bReserved: 00:
-PlatformCapability UUID:
-platformCapabilityUUID: 38:b6:08:34:a9:09:a0:47:8b:fd:a0:76:88:15:b6:65:
-bcdVersion: 00:01:
-bVendorCode: 21:
-iLandingPage: 00:
-
-Microsoft OS 2.0 Platform Capability Descriptor:
-bLength: 1c:
-bDescriptorType: 10:
-bDevCapabilityType: 05:
-bReserved: 00:
-MS OS 2.0 Platform Capability ID:
-platformCapabilityUUID: df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:
-Windows version:
-bcdVersion: 00:00:03:06:
-Descriptor set length, Vendor code, Alternate enumeration code:
-aa:00:20:00 */
-
 //  WebUSB Descriptor with landing page.
 const struct webusb_platform_descriptor webusb_platform_capability_descriptor = {
 	.bLength = WEBUSB_PLATFORM_DESCRIPTOR_SIZE,
@@ -131,7 +71,8 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 									 struct usb_setup_data *req,
 									 uint8_t **buf, uint16_t *len,
 									 usbd_control_complete_callback* complete) {
-	//  Handle >>  type 0xc0, req WEBUSB_VENDOR_CODE, val 1, idx 2, type 0x00, index 0x01
+	//  Handle a request for the WebUSB URL:
+	//  >> typ c0, req 22, val 0001, idx 0002, len 00ff
 	(void)complete;
 	(void)usbd_dev;
 	//  For WebUSB, only request types C0 and C1 are allowed.
@@ -199,3 +140,4 @@ void webusb_setup(usbd_device* usbd_dev, const char* https_url) {
 	status = aggregate_register_config_callback(usbd_dev, webusb_set_config);
 	if (status < 0) { debug_println("*** webusb_setup failed"); debug_flush(); }
 }
+

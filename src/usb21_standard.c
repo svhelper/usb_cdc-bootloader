@@ -62,6 +62,8 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 											struct usb_setup_data *req,
 											uint8_t **buf, uint16_t *len,
 											usbd_control_complete_callback* complete) {
+	//  Handle a BOS request: 
+	//  >> typ 80, req 06, val 0f00, idx 0000, len 0005, GET_DES_BOS t 0f i 00
 	(void)complete;
 	(void)usbd_dev;
 	int descr_type = req->wValue >> 8;
@@ -75,9 +77,9 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 		dump_usb_request("bos", req); debug_flush(); ////
 		*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));
 
-		uint8_t *b = &buf; int i;
+		uint8_t *b = *buf; int i;
 		debug_print_unsigned(*len); debug_print(" / ");
-		for (i = 0; i < *len; i++) { debug_printhex(b[i]); debug_print(" "); } debug_flush(); ////
+		for (i = 0; i < *len; i++) { debug_printhex(b[i]); debug_print(" "); } debug_println(""); debug_flush(); ////
 
 		return USBD_REQ_HANDLED;
 	}
@@ -104,3 +106,36 @@ void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_
 	int status = aggregate_register_config_callback(usbd_dev, usb21_set_config);
 	if (status < 0) { debug_println("*** usb21_setup failed"); debug_flush(); }
 }
+
+#ifdef NOTUSED
+Test WebUSB in Chrome console:
+navigator.usb.getDevices().then(console.log)
+
+Captured BOS from microbit:
+
+Binary Object Store descriptor
+05:0f:39:00:02:
+
+WebUSB Platform Capability Descriptor: https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
+bLength: 18:
+bDescriptorType: 10:
+bDevCapabilityType: 05:
+bReserved: 00:
+PlatformCapability UUID:
+platformCapabilityUUID: 38:b6:08:34:a9:09:a0:47:8b:fd:a0:76:88:15:b6:65:
+bcdVersion: 00:01:
+bVendorCode: 21:
+iLandingPage: 00:
+
+Microsoft OS 2.0 Platform Capability Descriptor:
+bLength: 1c:
+bDescriptorType: 10:
+bDevCapabilityType: 05:
+bReserved: 00:
+MS OS 2.0 Platform Capability ID:
+platformCapabilityUUID: df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:
+Windows version:
+bcdVersion: 00:00:03:06:
+Descriptor set length, Vendor code, Alternate enumeration code:
+aa:00:20:00
+#endif  //  NOTUSED

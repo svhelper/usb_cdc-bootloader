@@ -31,7 +31,8 @@ static int usb_descriptor_type(uint16_t wValue) { return wValue >> 8; }
 static int usb_descriptor_index(uint16_t wValue) { return wValue & 0xFF; }
 
 //  Microsoft OS 2.0 Descriptor Set. Values from https://github.com/intel/zephyr.js/blob/master/src/zjs_webusb.c
-//  See http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
+//  See also http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
+//  http://searchingforbit.blogspot.com/2014/05/winusb-communication-with-stm32-round-2.html
 
 static struct msos20_descriptor_set_struct msos20_descriptor_set = {
 	//  Descriptor set header
@@ -158,12 +159,11 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 static int winusb_control_vendor_request(usbd_device *usbd_dev,
 					struct usb_setup_data *req,
 					uint8_t **buf, uint16_t *len,
-					usbd_control_complete_callback* complete) {
-	//  Handle requests like:
-	//  >>  type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
-	//  >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
-	(void)complete;
-	(void)usbd_dev;
+					usbd_control_complete_callback* complete) {  (void)complete; (void)usbd_dev;
+	//  Handle requests for MS OS 2.0 Descriptors, MS OS 1.0 Compatible ID and Extended Properties, like:
+	//  >>  typ c0, req 21, val 0000, idx 0007, len 00b2 (MS OS 2.0 Descriptors)
+	//  >>  type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00 (MS OS 1.0 Compatible ID)
+	//  >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00 (MS OS 1.0 Extended Properties)
 	//  For WinUSB, only request types C0 and C1 are allowed.  Request code must be the MS vendor code (0x21).
 	if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) { return USBD_REQ_NEXT_CALLBACK; }
 	if (req->bRequest != WINUSB_MS_VENDOR_CODE) { return USBD_REQ_NEXT_CALLBACK; }
@@ -171,7 +171,8 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	int status = USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
 	if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
 		(req->wIndex == MSOS20_REQ_GET_DESCRIPTOR)) {
-		//  Request for the MS OS 2.0 Descriptor referenced by the BOS.
+		//  Request for the MS OS 2.0 Descriptor referenced by the BOS, e.g.
+		//  >>  typ c0, req 21, val 0000, idx 0007, len 00b2
 		//  See http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
 		dump_usb_request("windes", req); debug_flush(); ////
 		*buf = (uint8_t*) &msos20_descriptor_set;
@@ -180,7 +181,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 
 		uint8_t *b = (uint8_t*) &msos20_descriptor_set; int i;
 		debug_print_unsigned(MSOS20_DESCRIPTOR_SET_SIZE); debug_print(" / ");
-		for (i = 0; i < MSOS20_DESCRIPTOR_SET_SIZE; i++) { debug_printhex(b[i]); debug_print(" "); } debug_flush(); ////
+		for (i = 0; i < MSOS20_DESCRIPTOR_SET_SIZE; i++) { debug_printhex(b[i]); debug_print(" "); } debug_println(""); debug_flush(); ////
 
 	} else if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
 		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
@@ -240,3 +241,54 @@ void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
 		winusb_descriptor_request);
 	if (status < 0 || status1 < 0 || status2 < 0) { debug_println("*** winusb_setup failed"); debug_flush(); }
 }
+
+#ifdef NOTUSED
+Generated MS OS 2.0 Descriptor Set: 178 bytes
+
+    0x0A, 0x00,              // wLength
+    0x00, 0x00,              // MS OS 2.0 descriptor set header
+    0x00, 0x00, 0x03, 0x06,  // Windows 8.1
+    0xB2, 0x00,              // Size, MS OS 2.0 descriptor set
+
+    // Configuration subset header
+    0x08, 0x00,  // wLength
+    0x01, 0x00,  // wDescriptorType
+    0x00,        // bConfigurationValue
+    0x00,        // bReserved
+    0xA8, 0x00,  // wTotalLength of this subset header
+
+    // Function subset header
+    0x08, 0x00,  // wLength
+    0x02, 0x00,  // wDescriptorType
+    0x00,        // bFirstInterface
+    0x00,        // bReserved
+    0xA0, 0x00,  // wTotalLength of this subset header
+
+    // Compatible ID descriptor
+    0x14, 0x00,                                      // wLength
+    0x03, 0x00,                                      // wDescriptorType
+    'W', 'I', 'N', 'U', 'S', 'B', 0x00, 0x00,        // compatible ID
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // subCompatibleID
+
+    // Extended properties descriptor with interface GUID
+    0x84, 0x00,  // wLength
+    0x04, 0x00,  // wDescriptorType
+    0x07, 0x00,  // wPropertyDataType
+    0x2A, 0x00,  // wPropertyNameLength
+    // Property name : DeviceInterfaceGUIDs
+    'D', 0x00, 'e', 0x00, 'v', 0x00, 'i', 0x00, 'c', 0x00, 'e', 0x00,
+    'I', 0x00, 'n', 0x00, 't', 0x00, 'e', 0x00, 'r', 0x00, 'f', 0x00,
+    'a', 0x00, 'c', 0x00, 'e', 0x00, 'G', 0x00, 'U', 0x00, 'I', 0x00,
+    'D', 0x00, 's', 0x00, 0x00, 0x00,
+    0x50, 0x00,  // wPropertyDataLength
+    // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA336}
+    '{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
+    '8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
+    'B', 0x00, '2', 0x00, '-', 0x00, '4', 0x00, '4', 0x00, '8', 0x00,
+    '6', 0x00, '-', 0x00, '8', 0x00, '5', 0x00, '0', 0x00, '1', 0x00,
+    '-', 0x00, 'B', 0x00, '6', 0x00, '1', 0x00, '4', 0x00, '5', 0x00,
+    'B', 0x00, '5', 0x00, 'B', 0x00, 'A', 0x00, '3', 0x00, '3', 0x00,
+    '6', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+#endif  //  NOTUSED
