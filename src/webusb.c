@@ -17,6 +17,7 @@
  */
 
 //  Test WebUSB in Chrome console:
+//  navigator.usb.requestDevice({ filters: [] }).then(console.log)
 //  navigator.usb.getDevices().then(console.log)
 
 #include <string.h>
