@@ -171,7 +171,7 @@ const struct microsoft_platform_descriptor microsoft_platform_capability_descrip
 	.bDescriptorType = USB_DT_DEVICE_CAPABILITY,
 	.bDevCapabilityType = USB_DC_PLATFORM,
 	.bReserved = 0,
-	.platformCapabilityUUID = WEBUSB_UUID,
+	.platformCapabilityUUID = MICROSOFT_PLATFORM_UUID,
 	//  Windows version e.g. 0x00, 0x00, 0x03, 0x06
 	.dwWindowsVersion = MICROSOFT_WINDOWS_VERSION,
 	//  Descriptor set length e.g. 0xaa
