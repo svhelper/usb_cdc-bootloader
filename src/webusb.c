@@ -20,6 +20,7 @@
 #include <logger.h>
 #include "usb_conf.h"
 #include "webusb.h"
+#include "winusb.h"  //  For WINUSB_MS_VENDOR_CODE
 #include "usb21_standard.h"
 
 #define CONTROL_CALLBACK_TYPE (USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_DEVICE)
@@ -176,8 +177,8 @@ const struct microsoft_platform_descriptor microsoft_platform_capability_descrip
 	.dwWindowsVersion = MICROSOFT_WINDOWS_VERSION,
 	//  Descriptor set length e.g. 0xaa
 	.wMSOSDescriptorSetTotalLength = 0xaa,
-	//  Vendor code e.g. 0x20
-	.bMS_VendorCode = 0x20,
+	//  Vendor code e.g. 0x21
+	.bMS_VendorCode = WINUSB_MS_VENDOR_CODE,
 	//  Alternate enumeration code e.g. 0x00
 	.bAltEnumCode = 0
 };
