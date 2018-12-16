@@ -197,6 +197,10 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		(usb_descriptor_index(req->wValue) == winusb_wcid.functions[0].bInterfaceNumber)) {
 		//  Request for the MS OS 1.0 Extended Properties, which includes the Compatible ID feature e.g.
 		//  >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
+		//  From http://searchingforbit.blogspot.com/2014/05/winusb-communication-with-stm32-round-2.html:
+		//  Note that Windows queries this descriptor only once. It can be a hassle during development. Information that OS descriptors have been queried for some device is stored in registry under
+		//  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\VVVVPPPPRRRR (VVVV - vendor ID; PPPP - product ID; RRRR - revision).
+		//  Delete VVVVPPPPRRRR key and also uninstall the device with utility like USDDeview to always get fresh device plug in behavior.
 		dump_usb_request("winprp", req); debug_flush(); ////
 		*buf = (uint8_t*)(&guid);
 		*len = MIN(*len, guid.header.dwLength);
