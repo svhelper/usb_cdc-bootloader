@@ -27,14 +27,67 @@
 #define DESCRIPTOR_CALLBACK_MASK USB_REQ_TYPE_RECIPIENT
 
 #define MIN(a, b) ({ typeof(a) _a = (a); typeof(b) _b = (b); _a < _b ? _a : _b; })
+static int usb_descriptor_type(uint16_t wValue) { return wValue >> 8; }
+static int usb_descriptor_index(uint16_t wValue) { return wValue & 0xFF; }
 
-static int usb_descriptor_type(uint16_t wValue) {
-	return wValue >> 8;
-}
+//  Microsoft OS 2.0 Descriptor Set. Values from https://github.com/intel/zephyr.js/blob/master/src/zjs_webusb.c
+//  See http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
 
-static int usb_descriptor_index(uint16_t wValue) {
-	return wValue & 0xFF;
-}
+static struct msos20_descriptor_set_struct msos20_descriptor_set = {
+	//  Descriptor set header
+	.set_header_descriptor = {
+		.wLength          = MSOS20_SET_HEADER_DESCRIPTOR_SIZE,     //  Should be 10
+		.wDescriptorType  = MSOS20_SET_HEADER_DESCRIPTOR,  //  MS OS 2.0 descriptor set header
+		.dwWindowsVersion = MSOS20_WINDOWS_VERSION,       //  Windows version
+		.wTotalLength     = MSOS20_DESCRIPTOR_SET_SIZE,       //  Size of entire MS OS 2.0 descriptor set
+	},
+	//  Configuration subset header: Which USB Configuration this descriptor will apply.
+	.subset_header_configuration = {
+		.wLength             = MSOS20_SUBSET_HEADER_CONFIGURATION_SIZE,  //  Should be 8
+		.wDescriptorType     = MSOS20_SUBSET_HEADER_CONFIGURATION,
+		.bConfigurationValue = 0,  //  Configuration ID = 0
+		.bReserved           = 0,
+		.wTotalLength        = MSOS20_SUBSET_CONFIGURATION_SIZE,  //  Should be 0xA8 (168).  Size of entire configuration subset including this header.
+	},
+	//  Function subset header: Which USB Interface this descriptor will apply.
+	.subset_header_function = {
+		.wLength         = MSOS20_SUBSET_HEADER_FUNCTION_SIZE,  //  Should be 8
+		.wDescriptorType = MSOS20_SUBSET_HEADER_FUNCTION,
+		.bFirstInterface = 0,  //  Note - this is rewritten in winusb_setup with the correct interface number
+		.bReserved       = 0,
+		.wSubsetLength   = MSOS20_SUBSET_FUNCTION_SIZE,  //  Should be 0xA0 (160).  Size of entire function subset including this header.
+	},
+	//  Compatible ID descriptor
+	.feature_compatible_id = {
+		.wLength         = MSOS20_FEATURE_COMPATIBLE_ID_SIZE,  //  Should be 20
+		.wDescriptorType = MSOS20_FEATURE_COMPATIBLE_ID,
+		.CompatibleID    = { 'W', 'I', 'N', 'U', 'S', 'B', 0, 0 },  // Compatible ID
+		.SubCompatibleID = { 0, 0, 0, 0, 0, 0, 0, 0 },           // SubCompatible ID
+	},
+	//  Registry property descriptor: The properties that will be written to Windows registry.
+	.feature_reg_property = {
+		.wLength             = MSOS20_FEATURE_REG_PROPERTY_SIZE,  //  e.g. 0x84
+		.wDescriptorType     = MSOS20_FEATURE_REG_PROPERTY,
+		.wPropertyDataType   = WINUSB_EXTENDED_PROPERTIES_MULTISZ_DATA_TYPE,  //  Type of registry property
+		.wPropertyNameLength = MSOS20_PROPERTY_NAME_LENGTH,  //  Length of property name
+		.propertyName = {  // Property name: DeviceInterfaceGUIDs
+			'D', 0x00, 'e', 0x00, 'v', 0x00, 'i', 0x00, 'c', 0x00, 'e', 0x00,
+			'I', 0x00, 'n', 0x00, 't', 0x00, 'e', 0x00, 'r', 0x00, 'f', 0x00,
+			'a', 0x00, 'c', 0x00, 'e', 0x00, 'G', 0x00, 'U', 0x00, 'I', 0x00,
+			'D', 0x00, 's', 0x00, 0x00, 0x00
+		},
+		.wPropertyDataLength = MSOS20_PROPERTY_DATA_LENGTH,  //  Length of property data		
+		.propertyData = {  // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA336}
+			'{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
+			'8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
+			'B', 0x00, '2', 0x00, '-', 0x00, '4', 0x00, '4', 0x00, '8', 0x00,
+			'6', 0x00, '-', 0x00, '8', 0x00, '5', 0x00, '0', 0x00, '1', 0x00,
+			'-', 0x00, 'B', 0x00, '6', 0x00, '1', 0x00, '4', 0x00, '5', 0x00,
+			'B', 0x00, '5', 0x00, 'B', 0x00, 'A', 0x00, '3', 0x00, '3', 0x00,
+			'6', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
+		}
+	}
+};
 
 static struct winusb_compatible_id_descriptor winusb_wcid = {
 	.header = {
@@ -89,12 +142,11 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 					usbd_control_complete_callback* complete) {
 	(void)complete;
 	(void)usbd_dev;
-	if ((req->bmRequestType & USB_REQ_TYPE_TYPE) != USB_REQ_TYPE_STANDARD) {
-		return USBD_REQ_NEXT_CALLBACK;
-	}
+	//  Skip non-standard requests not meant for me.
+	if ((req->bmRequestType & USB_REQ_TYPE_TYPE) != USB_REQ_TYPE_STANDARD) { return USBD_REQ_NEXT_CALLBACK; }
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR && usb_descriptor_type(req->wValue) == USB_DT_STRING) {
 		if (usb_descriptor_index(req->wValue) == WINUSB_EXTRA_STRING_INDEX) {
-			dump_usb_request("windes", req); debug_flush(); ////
+			dump_usb_request("winee", req); debug_flush(); ////
 			*buf = (uint8_t*) &winusb_string_descriptor;
 			*len = MIN(*len, winusb_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
@@ -112,15 +164,24 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	//  >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
 	(void)complete;
 	(void)usbd_dev;
-	//  For WinUSB, only request types C0 and C1 are allowed.
+	//  For WinUSB, only request types C0 and C1 are allowed.  Request code must be the MS vendor code (0x21).
 	if (req->bmRequestType != 0xc0 && req->bmRequestType != 0xc1) { return USBD_REQ_NEXT_CALLBACK; }
 	if (req->bRequest != WINUSB_MS_VENDOR_CODE) { return USBD_REQ_NEXT_CALLBACK; }
 
 	int status = USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
 	if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
-		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
-		dump_usb_request("winid", req); debug_flush(); ////
+		(req->wIndex == MSOS20_REQ_GET_DESCRIPTOR)) {
+		//  Request for the MS OS 2.0 Descriptor referenced by the BOS.
+		//  See http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
+		dump_usb_request("windes", req); debug_flush(); ////
+		*buf = (uint8_t*) &msos20_descriptor_set;
+		*len = MIN(*len, MSOS20_DESCRIPTOR_SET_SIZE);
+		status = USBD_REQ_HANDLED;
 
+	} else if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
+		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
+		//  Request for the MS OS 1.0 Compatible ID feature ("WINUSB"), referenced by the Extended Properties.
+		dump_usb_request("winid", req); debug_flush(); ////
 		*buf = (uint8_t*)(&winusb_wcid);
 		*len = MIN(*len, winusb_wcid.header.dwLength);
 		status = USBD_REQ_HANDLED;
@@ -128,8 +189,8 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	} else if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_INTERFACE) &&
 		(req->wIndex == WINUSB_REQ_GET_EXTENDED_PROPERTIES_OS_FEATURE_DESCRIPTOR) &&
 		(usb_descriptor_index(req->wValue) == winusb_wcid.functions[0].bInterfaceNumber)) {
+		//  Request for the MS OS 1.0 Extended Properties, which includes the Compatible ID feature.
 		dump_usb_request("winprp", req); debug_flush(); ////
-
 		*buf = (uint8_t*)(&guid);
 		*len = MIN(*len, guid.header.dwLength);
 		status = USBD_REQ_HANDLED;
@@ -137,7 +198,6 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	} else {
 		status = USBD_REQ_NEXT_CALLBACK;  //  Previously USBD_REQ_NOTSUPP
 	}
-
 	return status;
 }
 
@@ -155,25 +215,22 @@ static void winusb_set_config(usbd_device* usbd_dev, uint16_t wValue) {
 }
 
 void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
-	// debug_println("winusb_setup"); // debug_flush(); ////
+	//  debug_println("winusb_setup"); // debug_flush(); ////
+	//  Send to host the USB Interface ID for the DFU Interface, which will support WinUSB.
 	winusb_wcid.functions[0].bInterfaceNumber = interface;
-
+	msos20_descriptor_set.subset_header_function.bFirstInterface = interface;
 	int status = aggregate_register_config_callback(usbd_dev, winusb_set_config);
 
-	/* Windows probes the compatible ID before setting the configuration,
-	   so also register the callback now */
-
+	//  Windows probes the compatible ID before setting the configuration, so also register the callback now.
 	int status1 = aggregate_register_callback(
 		usbd_dev,
 		CONTROL_CALLBACK_TYPE,
 		CONTROL_CALLBACK_MASK,
 		winusb_control_vendor_request);
-
 	int status2 = aggregate_register_callback(
 		usbd_dev,
 		DESCRIPTOR_CALLBACK_TYPE,
 		DESCRIPTOR_CALLBACK_MASK,
 		winusb_descriptor_request);
-
 	if (status < 0 || status1 < 0 || status2 < 0) { debug_println("*** winusb_setup failed"); debug_flush(); }
 }
