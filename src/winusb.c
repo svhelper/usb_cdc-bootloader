@@ -178,9 +178,14 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		*len = MIN(*len, MSOS20_DESCRIPTOR_SET_SIZE);
 		status = USBD_REQ_HANDLED;
 
+		uint8_t *b = (uint8_t*) &msos20_descriptor_set; int i;
+		debug_print_unsigned(MSOS20_DESCRIPTOR_SET_SIZE); debug_print(" / ");
+		for (i = 0; i < MSOS20_DESCRIPTOR_SET_SIZE; i++) { debug_printhex(b[i]); debug_print(" "); } debug_flush(); ////
+
 	} else if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
 		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
-		//  Request for the MS OS 1.0 Compatible ID feature ("WINUSB"), referenced by the Extended Properties.
+		//  Request for the MS OS 1.0 Compatible ID feature ("WINUSB"), referenced by the Extended Properties e.g.
+		//  >>  type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
 		dump_usb_request("winid", req); debug_flush(); ////
 		*buf = (uint8_t*)(&winusb_wcid);
 		*len = MIN(*len, winusb_wcid.header.dwLength);
@@ -189,7 +194,8 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 	} else if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_INTERFACE) &&
 		(req->wIndex == WINUSB_REQ_GET_EXTENDED_PROPERTIES_OS_FEATURE_DESCRIPTOR) &&
 		(usb_descriptor_index(req->wValue) == winusb_wcid.functions[0].bInterfaceNumber)) {
-		//  Request for the MS OS 1.0 Extended Properties, which includes the Compatible ID feature.
+		//  Request for the MS OS 1.0 Extended Properties, which includes the Compatible ID feature e.g.
+		//  >>  type 0xc1, req 0x21, val 0, idx 5, len 10, type 0x00, index 0x00
 		dump_usb_request("winprp", req); debug_flush(); ////
 		*buf = (uint8_t*)(&guid);
 		*len = MIN(*len, guid.header.dwLength);

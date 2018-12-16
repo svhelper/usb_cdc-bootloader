@@ -127,7 +127,7 @@ struct msos20_descriptor_set_struct {
 	//  Registry property descriptor: The properties that will be written to Windows registry.
 	struct msos20_feature_reg_property_struct        feature_reg_property;
 } __attribute__((packed));
-#define MSOS20_DESCRIPTOR_SET_SIZE sizeof(struct msos20_descriptor_set_struct)  //  Should be 0xBC (188)
+#define MSOS20_DESCRIPTOR_SET_SIZE sizeof(struct msos20_descriptor_set_struct)  //  Should be 0xB2 (178)
 
 //  Microsoft OS 1.0 descriptors
 
