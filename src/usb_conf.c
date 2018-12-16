@@ -491,20 +491,9 @@ static int aggregate_callback(
             }
         }
     }
-#ifdef NOTUSED
-    if (req->bmRequestType == 0x00 && req->bRequest == 0x05) {
-        if (device_address == (uint16_t) -1 || device_address == req->wValue) {
-            device_address = req->wValue;
-	        dump_usb_request(">> ", req); // debug_flush(); ////
-        } else {
-	        dump_usb_request("notsup ", req); // debug_flush(); ////
-            return USBD_REQ_NOTSUPP;
-        }
-    } else 
-#endif  //  NOTUSED    
     if (!(req->bmRequestType == 0x80 && req->bRequest == 0x06)) {
         //  Dump the packet if not GET_DESCRIPTOR.
-	    dump_usb_request(">> ", req); // debug_flush(); ////
+	    dump_usb_request(">> ", req); debug_flush(); ////
     } 
 	return USBD_REQ_NEXT_CALLBACK;
 }
@@ -563,6 +552,8 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
                 case 15: debug_print("_BOS"); break;
             }
         } else if (req->bmRequestType == 0x00 && req->bRequest == 0x05) {
+            //  Note: We should see SET_ADDRESS only once per session.  If we see this again, it means
+            //  we have previously returned invalid data to the host and the host is attempting to reset our connection.
             debug_print(", SET_ADR    ");
         } else if (req->bmRequestType == 0x00 && req->bRequest == 0x09) {
             debug_print(", SET_CFG    ");
