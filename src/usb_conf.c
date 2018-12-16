@@ -457,6 +457,14 @@ int aggregate_register_callback(
 	return -1;
 }
 
+static uint8_t usb_descriptor_type(uint16_t wValue) {
+	return wValue >> 8;
+}
+
+static uint8_t usb_descriptor_index(uint16_t wValue) {
+	return wValue & 0xFF;
+}
+
 static int aggregate_callback(
     usbd_device *usbd_dev,
 	struct usb_setup_data *req, 
@@ -481,7 +489,10 @@ static int aggregate_callback(
             }
         }
     }
-	dump_usb_request(">", req); // debug_flush(); ////
+    if (!(req->bmRequestType == 0x80 && req->bRequest == 0x06)) {
+        //  Dump the packet if not GET_DESCRIPTOR.
+	    dump_usb_request(">", req); // debug_flush(); ////
+    } 
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
@@ -516,14 +527,6 @@ void usb_set_serial_number(const char* serial) {
     }
 }
 
-static uint8_t usb_descriptor_type(uint16_t wValue) {
-	return wValue >> 8;
-}
-
-static uint8_t usb_descriptor_index(uint16_t wValue) {
-	return wValue & 0xFF;
-}
-
 void dump_usb_request(const char *msg, struct usb_setup_data *req) {
     uint8_t desc_type = usb_descriptor_type(req->wValue);
     uint8_t desc_index = usb_descriptor_index(req->wValue);
@@ -549,6 +552,8 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
         } else if (req->bmRequestType == 0x00 && req->bRequest == 0x05) {
             debug_print(", SET_ADR    ");
         } else if (req->bmRequestType == 0x00 && req->bRequest == 0x09) {
+            debug_print(", SET_CFG    ");
+        } else if (req->bmRequestType == 0x80 && req->bRequest == 0x09) {
             debug_print(", SET_CFG    ");
         } else {
             debug_print(",");
