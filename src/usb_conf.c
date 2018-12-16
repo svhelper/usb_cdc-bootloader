@@ -60,9 +60,9 @@ static const char *usb_strings[] = {
     "Blue Pill DATA",          //  DATA
 };
 
-#define MSC_VENDOR_ID "BluePill"
-#define MSC_PRODUCT_ID "UF2 Bootloader"
-#define MSC_PRODUCT_REVISION_LEVEL "42.00"
+#define MSC_VENDOR_ID "BluePill"  //  Max 8 chars
+#define MSC_PRODUCT_ID "UF2 Bootloader"  //  Max 16 chars
+#define MSC_PRODUCT_REVISION_LEVEL "2.1"  //  Max 4 chars
 #define USB_CLASS_MISCELLANEOUS 0xef  //  Copy from microbit.
 
 enum usb_strings_index {  //  Index of USB strings.  Must sync with above, starts from 1.

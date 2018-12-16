@@ -469,6 +469,7 @@ static void scsi_inquiry(usbd_mass_storage *ms,
 		} else {
 			/* TODO: Add VPD 0x83 support */
 			/* TODO: Add VPD 0x00 support */
+			debug_print("scsi_inquiry notsup "); debug_printhex(evpd); debug_println(""); debug_flush(); ////
 		}
 	}
 }
