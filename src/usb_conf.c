@@ -576,6 +576,48 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
 GNU MCU Eclipse 64-bits Open On-Chip Debugger 0.10.0+dev-00487-gaf359c18 (2018-05-12-19:30)
 Licensed under GNU GPL v2
 For bug reports, read
+                                                                                                            http://openocd.org/doc/doxygen/bugs.html
+WARNING: interface/stlink-v2.cfg is deprecated, please switch to interface/stlink.cfg
+Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
+Info : The selected transport took over low-level target control. The results might differ compared to plain
+JTAG/SWD
+adapter speed: 1000 kHz
+adapter_nsrst_delay: 100
+none separate
+debug_level: 0
+semihosting is enabled
+NOTE: Trash this window before uploading a program to the Blue Pill
+Restarting the Blue Pill...
+----platform_setup
+----bootloader
+target_get_force_bootloader
+target_get_serial_number
+usb_set_serial_number
+usb_setup
+usbd polling...
+>>  typ 00, req 05, val 0005, idx 0000, len 0000, SET_ADR     t 00 i 05
+bos typ 80, req 06, val 0f00, idx 0000, len 0005, GET_DES_BOS t 0f i 00
+5 / 05 0f 39 00 02
+bos typ 80, req 06, val 0f00, idx 0000, len 0039, GET_DES_BOS t 0f i 00
+57 / 05 0f 39 00 02 18 10 05 00 38 b6 08 34 a9 09 a0 47 8b fd a0 76 88 15 b6 65 00 01 22 01 1c 10 05 00 df 60 dd d8 89 45 c7 4c 9c d2 65 9d 9e 64 8a 9f 00 00 03 06 b2 00 21 00
+windes typ c0, req 21, val 0000, idx 0007, len 00b2
+178 / 0a 00 00 00 00 00 03 06 b2 00 08 00 01 00 00 00 a8 00 08 00 02 00 00 00 a0 00 14 00 03 00 57 49 4e 55 53 42 00 00 00 00 00 00 00 00 00 00 84 00 04 00 07 00 2a 00 44 00 65 00 76 00 69 00 63 00 65 00 49 00 6e 00 74 00 65 00 72 00 66 00 61 00 63 00 65 00 47 00 55 00 49 00 44 00 73 00 00 00 50 00 7b 00 39 00 44 00 33 00 32
+00 46 00 38 00 32 00 43 00 2d 00 31 00 46 00 42 00 32 00 2d 00 34 00 34 00 38 00 36 00 2d 00 38 00 35 00 30 00 31 00 2d 00 42 00 36 00 31 00 34 00 35 00 42 00 35 00 42 00 41 00 33 00 33 00 36 00 7d 00 00 00 00 00
+>>  typ 00, req 09, val 0001, idx 0000, len 0000, SET_CFG     t 00 i 01
+set_aggregate_callback
+>>  typ 80, req 00, val 0000, idx 0000, len 0002, t 00 i 00
+bos typ 80, req 06, val 0f00, idx 0000, len 0005, GET_DES_BOS t 0f i 00
+5 / 05 0f 39 00 02
+bos typ 80, req 06, val 0f00, idx 0000, len 0039, GET_DES_BOS t 0f i 00
+57 / 05 0f 39 00 02 18 10 05 00 38 b6 08 34 a9 09 a0 47 8b fd a0 76 88 15 b6 65 00 01 22 01 1c 10 05 00 df 60 dd d8 89 45 c7 4c 9c d2 65 9d 9e 64 8a 9f 00 00 03 06 b2 00 21 00
+weburl typ c0, req 22, val 0001, idx 0002, len 00ff
+
+
+> Executing task in folder bluepill-bootloader: c:\openocd\bin\openocd -f interface/stlink-v2.cfg -f target/stm32f1x.cfg -f scripts/connect.ocd <
+
+GNU MCU Eclipse 64-bits Open On-Chip Debugger 0.10.0+dev-00487-gaf359c18 (2018-05-12-19:30)
+Licensed under GNU GPL v2
+For bug reports, read
                                                                                                         http://openocd.org/doc/doxygen/bugs.html
 WARNING: interface/stlink-v2.cfg is deprecated, please switch to interface/stlink.cfg
 Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.

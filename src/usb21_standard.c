@@ -108,8 +108,20 @@ void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_
 }
 
 #ifdef NOTUSED
-Test WebUSB in Chrome console:
-navigator.usb.getDevices().then(console.log)
+
+Captured BOS from Blue Pill: (57 bytes)
+
+05 0f 39 00 02 
+18 10 05 00 
+38 b6 08 34 a9 09 a0 47 8b fd a0 76 88 15 b6 65 
+00 01 
+22 
+01 
+
+1c 10 05 00 
+df 60 dd d8 89 45 c7 4c 9c d2 65 9d 9e 64 8a 9f 
+00 00 03 06 
+b2 00 21 00
 
 Captured BOS from microbit:
 

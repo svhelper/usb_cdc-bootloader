@@ -16,6 +16,9 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+//  Test WebUSB in Chrome console:
+//  navigator.usb.getDevices().then(console.log)
+
 #include <string.h>
 #include <logger.h>
 #include "usb_conf.h"
