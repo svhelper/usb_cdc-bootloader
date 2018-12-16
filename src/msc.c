@@ -435,6 +435,19 @@ static void scsi_mode_sense_6(usbd_mass_storage *ms,
 	}
 }
 
+#define LENGTH_INQUIRY_PAGE00     7
+
+// USB mass storage page 0 inquiry data
+static const uint8_t MSC_Page00_Inquiry_Data[] = {
+		0x00,  //  PERIPHERAL QUALIFIER and PERIPHERAL DEVICE TYPE
+		0x00,  //  Page Code
+		0x00,  //  Reserved
+		(LENGTH_INQUIRY_PAGE00 - 4),  //  Page Length
+		0x00,  //  Supported: Page 0
+		0x80,  //  Supported: Page 0x80
+		0x83   //  Supported: Page 0x83
+};
+
 static void scsi_inquiry(usbd_mass_storage *ms,
 			 struct usb_msc_trans *trans,
 			 enum trans_event event)
@@ -467,9 +480,23 @@ static void scsi_inquiry(usbd_mass_storage *ms,
 
 			set_sbc_status_good(ms);
 		} else {
-			/* TODO: Add VPD 0x83 support */
-			/* TODO: Add VPD 0x00 support */
-			debug_print("scsi_inquiry notsup "); debug_printhex(evpd); debug_println(""); debug_flush(); ////
+			/*  TODO: Add VPD 0x00, 0x83 support */
+			//  According to SCSI specs: When the EVPD bit is set to one, the PAGE CODE field specifies which page of vital product data information the device server s hall return (see 5.4).
+			//  Page Code = 00h: Supported VPD Pages
+			//  Page Code = 83h: Device Identification
+			//  From https://github.com/LonelyWolf/stm32/blob/master/cube-usb-msc/msc/usbd_msc_scsi.c
+			const uint8_t page_code = buf[2];
+			if (page_code == 0x0) {
+				uint8_t *pPage = (uint8_t *)MSC_Page00_Inquiry_Data;
+				size_t len = LENGTH_INQUIRY_PAGE00;
+
+				trans->bytes_to_write = len;
+				memcpy(trans->msd_buf, pPage, len);
+				trans->csw.csw.dCSWDataResidue = len;
+				set_sbc_status_good(ms);
+			} else {
+				debug_print("scsi_inquiry notsup "); debug_printhex(page_code); debug_println(""); debug_flush(); ////
+			}
 		}
 	}
 }
