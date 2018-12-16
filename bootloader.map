@@ -642,7 +642,7 @@ LOAD /Users/Luppy/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/a
 LOAD .pioenvs/bluepill_f103c8_bootloader/libFrameworkLibOpenCM3.a
 END GROUP
 
-.text           0x0000000008000000     0x3f38
+.text           0x0000000008000000     0x3f3c
  *(SORT_BY_ALIGNMENT(.vectors))
  .vectors       0x0000000008000000      0x150 .pioenvs/bluepill_f103c8_bootloader/libFrameworkLibOpenCM3.a(vector.o)
                 0x0000000008000000                vector_table
@@ -1228,126 +1228,126 @@ END GROUP
  .rodata.usb21_standard_get_descriptor.str1.1
                 0x0000000008003ae6       0x21 .pioenvs/bluepill_f103c8_bootloader/src/usb21_standard.o
  .rodata.aggregate_callback.str1.1
-                0x0000000008003b07        0x2 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b07        0x4 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.aggregate_register_callback.str1.1
-                0x0000000008003b09       0x26 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b0b       0x26 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.aggregate_register_config_callback.str1.1
-                0x0000000008003b2f       0x25 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b31       0x25 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.bos_descriptor
-                0x0000000008003b54        0x9 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b56        0x9 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.cdc_iface_assoc
-                0x0000000008003b5d        0x8 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b5f        0x8 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.cdcacm_functional_descriptors
-                0x0000000008003b65       0x13 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b67       0x13 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.comm_endp
-                0x0000000008003b78        0xf .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b7a        0xf .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.comm_iface
-                0x0000000008003b87       0x15 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b89       0x15 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.config
-                0x0000000008003b9c        0xd .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003b9e        0xd .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.data_endp
-                0x0000000008003ba9       0x1e .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003bab       0x1e .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.data_iface
-                0x0000000008003bc7       0x15 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
- .rodata.dev    0x0000000008003bdc       0x12 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003bc9       0x15 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+ .rodata.dev    0x0000000008003bde       0x12 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.dfu_iface
-                0x0000000008003bee       0x15 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003bf0       0x15 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.dump_usb_request.str1.1
-                0x0000000008003c03       0x69 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003c05       0x69 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
                                          0x71 (size before relaxing)
  .rodata.msc_endp
-                0x0000000008003c6c       0x1e .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003c6e       0x1e .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.msc_iface
-                0x0000000008003c8a       0x15 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003c8c       0x15 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.msc_setup.str1.1
-                0x0000000008003c9f       0x1e .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003ca1       0x1e .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.set_aggregate_callback.str1.1
-                0x0000000008003cbd       0x40 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003cbf       0x40 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.str1.1
-                0x0000000008003cfd       0x70 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003cff       0x70 .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.usb_setup.str1.1
-                0x0000000008003d6d       0x2e .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
+                0x0000000008003d6f       0x2e .pioenvs/bluepill_f103c8_bootloader/src/usb_conf.o
  .rodata.webusb_control_vendor_request.str1.1
-                0x0000000008003d9b       0x39 .pioenvs/bluepill_f103c8_bootloader/src/webusb.o
+                0x0000000008003d9d       0x39 .pioenvs/bluepill_f103c8_bootloader/src/webusb.o
                                          0x3a (size before relaxing)
  .rodata.webusb_platform_capability_descriptor
-                0x0000000008003dd4       0x18 .pioenvs/bluepill_f103c8_bootloader/src/webusb.o
-                0x0000000008003dd4                webusb_platform_capability_descriptor
+                0x0000000008003dd6       0x18 .pioenvs/bluepill_f103c8_bootloader/src/webusb.o
+                0x0000000008003dd6                webusb_platform_capability_descriptor
  .rodata.webusb_set_config.str1.1
-                0x0000000008003dec       0x1d .pioenvs/bluepill_f103c8_bootloader/src/webusb.o
+                0x0000000008003dee       0x1d .pioenvs/bluepill_f103c8_bootloader/src/webusb.o
  .rodata.webusb_setup.str1.1
-                0x0000000008003e09       0x18 .pioenvs/bluepill_f103c8_bootloader/src/webusb.o
- .rodata.guid   0x0000000008003e21       0x92 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
+                0x0000000008003e0b       0x18 .pioenvs/bluepill_f103c8_bootloader/src/webusb.o
+ .rodata.guid   0x0000000008003e23       0x92 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
  .rodata.winusb_control_vendor_request.str1.1
-                0x0000000008003eb3        0x7 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
+                0x0000000008003eb5        0x7 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
  .rodata.winusb_descriptor_request.str1.1
-                0x0000000008003eba        0x7 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
+                0x0000000008003ebc        0x7 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
  .rodata.winusb_set_config.str1.1
-                0x0000000008003ec1       0x1d .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
+                0x0000000008003ec3       0x1d .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
  .rodata.winusb_setup.str1.1
-                0x0000000008003ede       0x18 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
+                0x0000000008003ee0       0x18 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
  .rodata.winusb_string_descriptor
-                0x0000000008003ef6       0x12 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
+                0x0000000008003ef8       0x12 .pioenvs/bluepill_f103c8_bootloader/src/winusb.o
  .rodata._Z11debug_printj.str1.1
-                0x0000000008003f08        0xb .pioenvs/bluepill_f103c8_bootloader/libd29/liblogger.a(logger.o)
+                0x0000000008003f0a        0xb .pioenvs/bluepill_f103c8_bootloader/libd29/liblogger.a(logger.o)
  .rodata.debug_println.str1.1
-                0x0000000008003f13        0x2 .pioenvs/bluepill_f103c8_bootloader/libd29/liblogger.a(logger.o)
+                0x0000000008003f15        0x2 .pioenvs/bluepill_f103c8_bootloader/libd29/liblogger.a(logger.o)
  .rodata.platform_setup.str1.1
-                0x0000000008003f13       0x13 .pioenvs/bluepill_f103c8_bootloader/lib52f/libbluepill.a(bluepill.o)
+                0x0000000008003f15       0x13 .pioenvs/bluepill_f103c8_bootloader/lib52f/libbluepill.a(bluepill.o)
  .rodata.chars.4166
-                0x0000000008003f26       0x11 .pioenvs/bluepill_f103c8_bootloader/libFrameworkLibOpenCM3.a(desig.o)
-                0x0000000008003f38                . = ALIGN (0x4)
- *fill*         0x0000000008003f37        0x1 
+                0x0000000008003f28       0x11 .pioenvs/bluepill_f103c8_bootloader/libFrameworkLibOpenCM3.a(desig.o)
+                0x0000000008003f3c                . = ALIGN (0x4)
+ *fill*         0x0000000008003f39        0x3 
 
-.glue_7         0x0000000008003f38        0x0
- .glue_7        0x0000000008003f38        0x0 linker stubs
+.glue_7         0x0000000008003f3c        0x0
+ .glue_7        0x0000000008003f3c        0x0 linker stubs
 
-.glue_7t        0x0000000008003f38        0x0
- .glue_7t       0x0000000008003f38        0x0 linker stubs
+.glue_7t        0x0000000008003f3c        0x0
+ .glue_7t       0x0000000008003f3c        0x0 linker stubs
 
-.vfp11_veneer   0x0000000008003f38        0x0
- .vfp11_veneer  0x0000000008003f38        0x0 linker stubs
+.vfp11_veneer   0x0000000008003f3c        0x0
+ .vfp11_veneer  0x0000000008003f3c        0x0 linker stubs
 
-.v4_bx          0x0000000008003f38        0x0
- .v4_bx         0x0000000008003f38        0x0 linker stubs
+.v4_bx          0x0000000008003f3c        0x0
+ .v4_bx         0x0000000008003f3c        0x0 linker stubs
 
-.iplt           0x0000000008003f38        0x0
- .iplt          0x0000000008003f38        0x0 .pioenvs/bluepill_f103c8_bootloader/src/cdc.o
+.iplt           0x0000000008003f3c        0x0
+ .iplt          0x0000000008003f3c        0x0 .pioenvs/bluepill_f103c8_bootloader/src/cdc.o
 
-.rel.dyn        0x0000000008003f38        0x0
- .rel.iplt      0x0000000008003f38        0x0 .pioenvs/bluepill_f103c8_bootloader/src/cdc.o
+.rel.dyn        0x0000000008003f3c        0x0
+ .rel.iplt      0x0000000008003f3c        0x0 .pioenvs/bluepill_f103c8_bootloader/src/cdc.o
 
-.preinit_array  0x0000000008003f38        0x0
-                0x0000000008003f38                . = ALIGN (0x4)
-                0x0000000008003f38                __preinit_array_start = .
+.preinit_array  0x0000000008003f3c        0x0
+                0x0000000008003f3c                . = ALIGN (0x4)
+                0x0000000008003f3c                __preinit_array_start = .
  *(SORT_BY_ALIGNMENT(.preinit_array))
-                0x0000000008003f38                __preinit_array_end = .
+                0x0000000008003f3c                __preinit_array_end = .
 
-.init_array     0x0000000008003f38        0x0
-                0x0000000008003f38                . = ALIGN (0x4)
-                0x0000000008003f38                __init_array_start = .
+.init_array     0x0000000008003f3c        0x0
+                0x0000000008003f3c                . = ALIGN (0x4)
+                0x0000000008003f3c                __init_array_start = .
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(.init_array.*)))
  *(SORT_BY_ALIGNMENT(.init_array))
-                0x0000000008003f38                __init_array_end = .
+                0x0000000008003f3c                __init_array_end = .
 
-.fini_array     0x0000000008003f38        0x0
-                0x0000000008003f38                . = ALIGN (0x4)
-                0x0000000008003f38                __fini_array_start = .
+.fini_array     0x0000000008003f3c        0x0
+                0x0000000008003f3c                . = ALIGN (0x4)
+                0x0000000008003f3c                __fini_array_start = .
  *(SORT_BY_ALIGNMENT(.fini_array))
  *(SORT_BY_NAME(SORT_BY_ALIGNMENT(.fini_array.*)))
-                0x0000000008003f38                __fini_array_end = .
+                0x0000000008003f3c                __fini_array_end = .
 
 .ARM.extab
  *(SORT_BY_ALIGNMENT(.ARM.extab*))
 
-.ARM.exidx      0x0000000008003f38        0x0
-                0x0000000008003f38                __exidx_start = .
+.ARM.exidx      0x0000000008003f3c        0x0
+                0x0000000008003f3c                __exidx_start = .
  *(SORT_BY_ALIGNMENT(.ARM.exidx*))
-                0x0000000008003f38                __exidx_end = .
-                0x0000000008003f38                . = ALIGN (0x4)
-                0x0000000008003f38                _etext = .
+                0x0000000008003f3c                __exidx_end = .
+                0x0000000008003f3c                . = ALIGN (0x4)
+                0x0000000008003f3c                _etext = .
 
-.data           0x0000000020000000       0x60 load address 0x0000000008003f38
+.data           0x0000000020000000       0x60 load address 0x0000000008003f3c
                 0x0000000020000000                _data = .
  *(SORT_BY_ALIGNMENT(.data*))
  .data.flashAddr
@@ -1372,12 +1372,12 @@ END GROUP
                 0x0000000020000060                . = ALIGN (0x4)
  *fill*         0x000000002000005d        0x3 
                 0x0000000020000060                _edata = .
-                0x0000000008003f38                _data_loadaddr = LOADADDR (.data)
+                0x0000000008003f3c                _data_loadaddr = LOADADDR (.data)
 
-.igot.plt       0x0000000020000060        0x0 load address 0x0000000008003f98
+.igot.plt       0x0000000020000060        0x0 load address 0x0000000008003f9c
  .igot.plt      0x0000000020000060        0x0 .pioenvs/bluepill_f103c8_bootloader/src/cdc.o
 
-.bss            0x0000000020000060      0xf10 load address 0x0000000008003f98
+.bss            0x0000000020000060      0xf10 load address 0x0000000008003f9c
  *(SORT_BY_ALIGNMENT(.bss*))
  .bss.current_dfu_offset
                 0x0000000020000060        0x4 .pioenvs/bluepill_f103c8_bootloader/src/dfu.o
