@@ -65,7 +65,7 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 	(void)complete;
 	(void)usbd_dev;
 	int descr_type = req->wValue >> 8;
-	//  If not BOS request.  Hand off to next interface.
+	//  If not BOS request, hand off to next interface.
     if (descr_type != USB_DT_BOS) { return USBD_REQ_NEXT_CALLBACK; }
 	if (!usb21_bos) {
 		debug_println("*** usb21_descriptor no bos "); debug_flush(); ////

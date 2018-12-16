@@ -34,7 +34,7 @@ navigator.usb.getDevices().then(console.log)
 Captured BOS from Blue Pill:
 
 Binary Object Store descriptor
-05:0f:1d:00:01:
+05:0f:39:00:02:
 
 WebUSB Platform Capability Descriptor: https://wicg.github.io/webusb/#webusb-platform-capability-descriptor
 bLength: 18:
@@ -47,6 +47,17 @@ bcdVersion: 00:01:
 bVendorCode: 22:
 iLandingPage: 01:
 
+Microsoft OS 2.0 Platform Capability Descriptor:
+bLength: 1c:
+bDescriptorType: 10:
+bDevCapabilityType: 05:
+bReserved: 00:
+MS OS 2.0 Platform Capability ID:
+platformCapabilityUUID: df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:
+Windows version:
+bcdVersion: 00:00:03:06:
+Descriptor set length, Vendor code, Alternate enumeration code:
+aa:00:20:00
 
 Captured BOS from microbit:
 
@@ -74,13 +85,7 @@ platformCapabilityUUID: df:60:dd:d8:89:45:c7:4c:9c:d2:65:9d:9e:64:8a:9f:
 Windows version:
 bcdVersion: 00:00:03:06:
 Descriptor set length, Vendor code, Alternate enumeration code:
-aa:00:20:00
-
-0000   05 0f 39 00 02 18 10 05 00 38 b6 08 34 a9 09 a0   ..9......8¶.4©. 
-0010   47 8b fd a0 76 88 15 b6 65 00 01 21 00 1c 10 05   G.ý v..¶e..!....
-0020   00 df 60 dd d8 89 45 c7 4c 9c d2 65 9d 9e 64 8a   .ß`ÝØ.EÇL.Òe..d.
-0030   9f 00 00 03 06 aa 00 20 00                        .....ª. .
-*/
+aa:00:20:00 */
 
 #ifdef NOTUSED
 //  From https://github.com/intel/zephyr.js/blob/master/src/zjs_webusb.c
