@@ -435,18 +435,41 @@ static void scsi_mode_sense_6(usbd_mass_storage *ms,
 	}
 }
 
-#define LENGTH_INQUIRY_PAGE00     7
-
-// USB mass storage page 0 inquiry data
-static const uint8_t MSC_Page00_Inquiry_Data[] = {
+//  Inquiry Page 0x00 - Supported VPD Pages (Section 5.4.18). From https://github.com/LonelyWolf/stm32/blob/master/cube-usb-msc/msc/usbd_msc_scsi.c
+#define LENGTH_INQUIRY_PAGE00     6  //  Previously 7
+static const uint8_t MSC_Page00_Inquiry_Data[LENGTH_INQUIRY_PAGE00] = {
 		0x00,  //  PERIPHERAL QUALIFIER and PERIPHERAL DEVICE TYPE
 		0x00,  //  Page Code
 		0x00,  //  Reserved
 		(LENGTH_INQUIRY_PAGE00 - 4),  //  Page Length
-		0x00,  //  Supported: Page 0
-		0x80,  //  Supported: Page 0x80
-		0x83   //  Supported: Page 0x83
+		0x00,  //  Supported: Page 0x00 - Supported VPD Pages (Section 5.4.18)
+		0x80,  //  Supported: Page 0x80 - Unit Serial Number (Section 5.4.19)
+		// 0x83   //  Supported: Page 0x83 - Device Identification (Section 5.4.11)
 };
+
+//  Inquiry Page 0x80 - Unit Serial Number (Section 5.4.19)
+#define LENGTH_INQUIRY_PAGE80     0x0c  //  Predefined.
+#define LENGTH_SERIAL_NUMBER      0x08  //  Predefined.
+static const uint8_t MSC_Page80_Inquiry_Data[LENGTH_INQUIRY_PAGE80] = {
+		0x00,  //  PERIPHERAL QUALIFIER and PERIPHERAL DEVICE TYPE
+		0x80,  //  Page Code
+		0x00,  //  Reserved
+		(LENGTH_INQUIRY_PAGE80 - 4),  //  Page Length: 8 bytes
+		//  Serial number in ASCII (8 bytes) starts here.  Padded with spaces.
+		'1', '2', '3', '4', 
+		'5', '6', '7', '8',
+};
+
+#ifdef NOTUSED
+//  Inquiry Page 0x83 - Device Identification (Section 5.4.11)
+#define LENGTH_INQUIRY_PAGE83     7
+static const uint8_t MSC_Page83_Inquiry_Data[LENGTH_INQUIRY_PAGE83] = {
+		0x00,  //  PERIPHERAL QUALIFIER and PERIPHERAL DEVICE TYPE
+		0x83,  //  Page Code
+		0x00,  //  Reserved
+		(LENGTH_INQUIRY_PAGE83 - 4),  //  Page Length
+};
+#endif  //  NOTUSED
 
 static void scsi_inquiry(usbd_mass_storage *ms,
 			 struct usb_msc_trans *trans,
@@ -480,22 +503,46 @@ static void scsi_inquiry(usbd_mass_storage *ms,
 
 			set_sbc_status_good(ms);
 		} else {
-			/*  TODO: Add VPD 0x00, 0x83 support */
-			//  According to SCSI specs: When the EVPD bit is set to one, the PAGE CODE field specifies which page of vital product data information the device server s hall return (see 5.4).
-			//  Page Code = 00h: Supported VPD Pages
-			//  Page Code = 83h: Device Identification
-			//  From https://github.com/LonelyWolf/stm32/blob/master/cube-usb-msc/msc/usbd_msc_scsi.c
+			//  According to SCSI specs: When the EVPD bit is set to one, the PAGE CODE field specifies which page of vital product data information the device servers hall return (see 5.4).
+			//  Page 0x00 - Supported VPD Pages (Section 5.4.18)
+			//  Page 0x80 - Unit Serial Number (Section 5.4.19)
+			//  TODO: Page 0x83 - Device Identification (Section 5.4.11)
 			const uint8_t page_code = buf[2];
-			if (page_code == 0x0) {
-				uint8_t *pPage = (uint8_t *)MSC_Page00_Inquiry_Data;
-				size_t len = LENGTH_INQUIRY_PAGE00;
+			switch (page_code) {
+				case 0x0: {  //  Page 0x00 - Supported VPD Pages (Section 5.4.18)
+					uint8_t *pPage = (uint8_t *)MSC_Page00_Inquiry_Data;
+					size_t len = LENGTH_INQUIRY_PAGE00;
 
-				trans->bytes_to_write = len;
-				memcpy(trans->msd_buf, pPage, len);
-				trans->csw.csw.dCSWDataResidue = len;
-				set_sbc_status_good(ms);
-			} else {
-				debug_print("scsi_inquiry notsup "); debug_printhex(page_code); debug_println(""); debug_flush(); ////
+					trans->bytes_to_write = len;
+					memcpy(trans->msd_buf, pPage, len);
+					trans->csw.csw.dCSWDataResidue = len;
+					set_sbc_status_good(ms);
+					break;
+				}
+				case 0x80: {  //  Page 0x80 - Unit Serial Number (Section 5.4.19)
+					uint8_t *pPage = (uint8_t *)MSC_Page80_Inquiry_Data;
+					size_t len = LENGTH_INQUIRY_PAGE80;
+
+					trans->bytes_to_write = len;
+					memcpy(trans->msd_buf, pPage, len);
+					trans->csw.csw.dCSWDataResidue = len;
+					set_sbc_status_good(ms);
+					break;
+				}
+#ifdef NOTUSED				
+				case 0x83: {  //  Page 0x83 - Device Identification (Section 5.4.11)
+					uint8_t *pPage = (uint8_t *)MSC_Page83_Inquiry_Data;
+					size_t len = LENGTH_INQUIRY_PAGE83;
+
+					trans->bytes_to_write = len;
+					memcpy(trans->msd_buf, pPage, len);
+					trans->csw.csw.dCSWDataResidue = len;
+					set_sbc_status_good(ms);
+					break;
+				}
+#endif  //  NOTUSED				
+				default:
+					debug_print("scsi_inquiry notsup "); debug_printhex(page_code); debug_println(""); debug_flush(); ////
 			}
 		}
 	}
