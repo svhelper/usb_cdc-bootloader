@@ -465,6 +465,8 @@ static uint8_t usb_descriptor_index(uint16_t wValue) {
 	return wValue & 0xFF;
 }
 
+uint16_t device_address = (uint16_t) -1;
+
 static int aggregate_callback(
     usbd_device *usbd_dev,
 	struct usb_setup_data *req, 
@@ -489,6 +491,17 @@ static int aggregate_callback(
             }
         }
     }
+#ifdef NOTUSED
+    if (req->bmRequestType == 0x00 && req->bRequest == 0x05) {
+        if (device_address == (uint16_t) -1 || device_address == req->wValue) {
+            device_address = req->wValue;
+	        dump_usb_request(">> ", req); // debug_flush(); ////
+        } else {
+	        dump_usb_request("notsup ", req); // debug_flush(); ////
+            return USBD_REQ_NOTSUPP;
+        }
+    } else 
+#endif  //  NOTUSED    
     if (!(req->bmRequestType == 0x80 && req->bRequest == 0x06)) {
         //  Dump the packet if not GET_DESCRIPTOR.
 	    dump_usb_request(">> ", req); // debug_flush(); ////

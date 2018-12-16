@@ -490,7 +490,7 @@ static void scsi_read_format_capacities(usbd_mass_storage *ms, struct usb_msc_tr
 		trans->msd_buf[9] = 0;
 		trans->msd_buf[10] = 0x02;
 		trans->msd_buf[11] = 0;
-		trans->bytes_to_write = 9;
+		trans->bytes_to_write = 12;  //  Was 9.
 		set_sbc_status_good(ms);
 	}
 }
