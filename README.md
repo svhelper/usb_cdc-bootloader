@@ -1,7 +1,9 @@
 # bluepill-bootloader
 bluepill-bootloader is an open-source MakeCode UF2 USB bootloader for STM32 Blue Pill devices.
 
-See https://medium.com/@ly.lee/work-in-progress-stm32-blue-pill-visual-programming-with-makecode-codal-and-libopencm3-422d308f252e
+See https://medium.com/@ly.lee/stm32-blue-pill-usb-bootloader-how-i-fixed-the-usb-storage-serial-dfu-and-webusb-interfaces-36d7fe245b5c
+
+https://medium.com/@ly.lee/work-in-progress-stm32-blue-pill-visual-programming-with-makecode-codal-and-libopencm3-422d308f252e
 
 WebUSB and WinUSB implementation from https://github.com/trezor/trezor-mcu
 
