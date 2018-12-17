@@ -10,7 +10,7 @@ GTAGS
 # ignore build artifacts
 *.d
 *.o
-*.bin
+# *.bin
 *.hex
 *.elf
 *.axf
