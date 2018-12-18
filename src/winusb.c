@@ -77,7 +77,7 @@ static struct msos20_descriptor_set_struct msos20_descriptor_set = {
 		},
 		//  Function subsets: One interface is linked to one function
 		.subset_functions = {
-	#ifdef INTF_DFU
+	#ifdef NOTUSED_INTF_DFU ////
 		//  DFU Interface Function subset header: Which USB Interface this descriptor will apply.
 		{
 			.subset_header_function = {
@@ -115,7 +115,7 @@ static struct msos20_descriptor_set_struct msos20_descriptor_set = {
 		},
 	#endif  //  INTF_DFU
 	#ifdef INTF_HF2
-		//  DFU Interface Function subset header: Which USB Interface this descriptor will apply.
+		//  HF2 Interface Function subset header: Which USB Interface this descriptor will apply.
 		{
 			.subset_header_function = {
 				.wLength         = MSOS20_SUBSET_HEADER_FUNCTION_SIZE,  //  Should be 8
@@ -309,18 +309,25 @@ void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
 }
 
 #ifdef NOTUSED
+
 338 bytes
+
+---- 10
 
 0a 00 
 00 00 
 00 00 03 06 
-52 01 (336)
+52 01 (338)
+
+---- 8
 
 08 00 
 01 00 
 00 
 00 
-a8 00 ***
+48 01 (328)
+
+---- 160
 
 08 00 
 02 00 
@@ -332,11 +339,18 @@ a0 00
 03 00 
 57 49 4e 55
 53 42 00 00 00 00 00 00 00 00 00 00 
-
-84 00 04 00 07 00 2a 00 44 00 65 00 76 00 69 00 63 00 65 00 49 00 6e 00
-74 00 65 00 72 00 66 00 61 00 63 00 65 00 47 00 55 00 49 00 44 00 73 00 00 00 50 00 7b 00 39 00 44 00 33 00
+84 00 
+04 00 
+07 00 
+2a 00 
+44 00 65 00 76 00 69 00 63 00 65 00 49 00 6e 00
+74 00 65 00 72 00 66 00 61 00 63 00 65 00 47 00 55 00 49 00 44 00 73 00 00 00 
+50 00 
+7b 00 39 00 44 00 33 00
 32 00 46 00 38 00 32 00 43 00 2d 00 31 00 46 00 42 00 32 00 2d 00 34 00 34 00 38 00 36 00 2d 00 38 00 35 00
 30 00 31 00 2d 00 42 00 36 00 31 00 34 00 35 00 42 00 35 00 42 00 41 00 32 00 32 00 36 00 7d 00 00 00 00 00
+
+---- 160
 
 08 00 
 02 00 
@@ -346,12 +360,15 @@ a0 00
 
 14 00 
 03 00 
-57 49 4e 55 
-53 42 00 00 00 00 00 00 00 00 00 00 
-
-84 00 04 00 07 00 2a 00
+57 49 4e 55 53 42 00 00 00 00 00 00 00 00 00 00 
+84 00 
+04 00 
+07 00 
+2a 00
 44 00 65 00 76 00 69 00 63 00 65 00 49 00 6e 00 74 00 65 00 72 00 66 00 61 00 63 00 65 00 47 00 55 00 49 00
-44 00 73 00 00 00 50 00 7b 00 39 00 44 00 33 00 32 00 46 00 38 00 32 00 43 00 2d 00 31 00 46 00 42 00 32 00
+44 00 73 00 00 00 
+50 00 
+7b 00 39 00 44 00 33 00 32 00 46 00 38 00 32 00 43 00 2d 00 31 00 46 00 42 00 32 00
 2d 00 34 00 34 00 38 00 36 00 2d 00 38 00 35 00 30 00 31 00 2d 00 42 00 36 00 31 00 34 00 35 00 42 00 35 00
 42 00 41 00 32 00 32 00 37 00 7d 00 00 00 00 00
 

@@ -125,7 +125,7 @@ struct msos20_subset_configuration_struct {
 	struct msos20_subset_header_configuration_struct subset_header_configuration;
 
 	//  Function sets: One interface is linked to one function
-	struct msos20_subset_function_struct             subset_functions[MSOS20_FUNCTION_COUNT];
+	struct msos20_subset_function_struct             subset_functions[1 /* MSOS20_FUNCTION_COUNT */];
 } __attribute__((packed));
 //  Should be 0xA8 (168). Size of entire configuration subset including header.
 #define MSOS20_SUBSET_CONFIGURATION_SIZE sizeof(struct msos20_subset_configuration_struct)
