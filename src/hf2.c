@@ -10,7 +10,8 @@
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/usb/usbd.h>
-#include "bl.h"
+#include "usb_conf.h"
+// #include "bl.h"
 #include "uf2hid.h"
 #include "hf2.h"
 
@@ -64,7 +65,7 @@ static void pokeSend() {
     cm_enable_interrupts();
 
     if (sendIt)
-        usbd_ep_write_packet(_usbd_dev, HF2_EP_IN, buf, sizeof(buf));
+        usbd_ep_write_packet(_usbd_dev, HID_IN, buf, sizeof(buf));
 }
 
 static void send_hf2_response(int size) {
@@ -218,8 +219,8 @@ static void hf2_set_config(usbd_device *usbd_dev, uint16_t wValue) {
 
     (void)wValue;
 
-    usbd_ep_setup(usbd_dev, HF2_EP_IN, USB_ENDPOINT_ATTR_BULK, 64, hf2_data_tx_cb);
-    usbd_ep_setup(usbd_dev, HF2_EP_OUT, USB_ENDPOINT_ATTR_BULK, 64, hf2_data_rx_cb);
+    usbd_ep_setup(usbd_dev, HID_IN, USB_ENDPOINT_ATTR_BULK, 64, hf2_data_tx_cb);
+    usbd_ep_setup(usbd_dev, HID_OUT, USB_ENDPOINT_ATTR_BULK, 64, hf2_data_rx_cb);
 }
 
 void hf2_setup(usbd_device *usbd_dev) {
