@@ -17,6 +17,9 @@
 #include "uf2cfg.h"
 #include "hf2.h"
 
+#define CONTROL_CALLBACK_TYPE (USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE)
+#define CONTROL_CALLBACK_MASK (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
+
 #define VALID_FLASH_ADDR(addr, sz) (USER_FLASH_START <= (addr) && (addr) + (sz) <= USER_FLASH_END)
 #define HF2_BUF_SIZE 1024 + 16
 #define usb_assert assert
@@ -230,18 +233,43 @@ static void hf2_data_tx_cb(usbd_device *usbd_dev, uint8_t ep) {
     pokeSend();
 }
 
+static uint8_t *hid_report_descriptor;
+static uint16_t hid_report_descriptor_size;
+
+static enum usbd_request_return_codes hid_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
+			void (**complete)(usbd_device *dev, struct usb_setup_data *req)) {
+	(void)complete;
+	(void)dev;
+
+	if((req->bmRequestType != 0x81) ||
+	   (req->bRequest != USB_REQ_GET_DESCRIPTOR) ||
+	   (req->wValue != 0x2200))
+		return USBD_REQ_NEXT_CALLBACK;
+
+	/* Handle the HID report descriptor. */
+	*buf = hid_report_descriptor;
+	*len = hid_report_descriptor_size;
+	return USBD_REQ_HANDLED;
+}
+
 /** @brief Setup the endpoints to be bulk & register the callbacks. */
 static void hf2_set_config(usbd_device *usbd_dev, uint16_t wValue) {
     LOG("HF2 config");
-
     (void)wValue;
-
     usbd_ep_setup(usbd_dev, HID_IN, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, hf2_data_tx_cb);
     usbd_ep_setup(usbd_dev, HID_OUT, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, hf2_data_rx_cb);
+    int status = aggregate_register_callback(
+        usbd_dev,
+        CONTROL_CALLBACK_TYPE,
+        CONTROL_CALLBACK_MASK,
+        hid_control_request);        
+	if (status < 0) { debug_println("*** hf2_set_config failed"); debug_flush(); }
 }
 
-void hf2_setup(usbd_device *usbd_dev) {
+void hf2_setup(usbd_device *usbd_dev, uint8_t *hid_report_descriptor0, uint16_t hid_report_descriptor_size0) {
     _usbd_dev = usbd_dev;
+    hid_report_descriptor = hid_report_descriptor0;
+    hid_report_descriptor_size = hid_report_descriptor_size0;
     int status = aggregate_register_config_callback(usbd_dev, hf2_set_config);
     if (status < 0) { debug_println("*** hf2_setup failed"); debug_flush(); }
 }
