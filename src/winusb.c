@@ -241,11 +241,11 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		*buf = (uint8_t*) &msos20_descriptor_set;
 		*len = MIN(*len, MSOS20_DESCRIPTOR_SET_SIZE);
 		status = USBD_REQ_HANDLED;
-//#ifdef NOTUSED
+#ifdef NOTUSED
 		uint8_t *b = (uint8_t*) &msos20_descriptor_set; int i;
 		debug_print_unsigned(MSOS20_DESCRIPTOR_SET_SIZE); debug_print(" / ");
 		for (i = 0; i < MSOS20_DESCRIPTOR_SET_SIZE; i++) { debug_printhex(b[i]); debug_print(" "); } debug_println(""); debug_flush(); ////
-//#endif  //  NOTUSED
+#endif  //  NOTUSED
 	} else if (((req->bmRequestType & USB_REQ_TYPE_RECIPIENT) == USB_REQ_TYPE_DEVICE) &&
 		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
 		//  Request for the MS OS 1.0 Compatible ID feature ("WINUSB"), referenced by the Extended Properties e.g.
