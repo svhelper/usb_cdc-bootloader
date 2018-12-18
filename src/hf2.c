@@ -47,7 +47,7 @@ uint8_t dataToSendFlag;
 static usbd_device *_usbd_dev;
 
 static void pokeSend() {
-    uint8_t buf[64];
+    static uint8_t buf[64];
     bool sendIt = false;
 
     memset(buf, 0, sizeof(buf));
@@ -203,9 +203,9 @@ static void handle_command() {
 
 static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
     int len;
-    uint8_t buf[64];
+    static uint8_t buf[64];
 
-    len = usbd_ep_read_packet(usbd_dev, ep, buf, 64);
+    len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
 
     // DMESG("HF2 read: %d", len);
     debug_print("hid << "); debug_print_unsigned(len); debug_println(""); debug_flush(); ////
