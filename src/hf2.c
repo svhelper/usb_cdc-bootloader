@@ -259,7 +259,8 @@ static enum usbd_request_return_codes hid_control_request(usbd_device *dev, stru
         *len = hid_report_descriptor_size;
         return USBD_REQ_HANDLED;
 
-    } else if ((req->bmRequestType & CONTROL_CALLBACK_MASK_CLASS) == CONTROL_CALLBACK_TYPE_CLASS  //  Is this a class callback?
+    //  Is this a class callback?
+    } else if ((req->bmRequestType & CONTROL_CALLBACK_MASK_CLASS) == CONTROL_CALLBACK_TYPE_CLASS
         && req->bRequest == 0x0a  //  SET_IDLE
         && req->wIndex == INTF_HID
         && req->wValue == 0) {
