@@ -242,9 +242,8 @@ static uint16_t hid_report_descriptor_size;
 static enum usbd_request_return_codes hid_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 	void (**complete)(usbd_device *dev, struct usb_setup_data *req)) { (void)complete; (void)dev;
     //  Handle HID requests like:
-    //  >> typ 21, req 0a, val 0000, idx 0004, len 0000
-    //  >> typ 81, req 06, val 2200, idx 0004, len 008a
-    dump_usb_request("hid", req); ////
+    //  >> typ 21, req 0a, val 0000, idx 0004, len 0000 (HID report)
+    //  >> typ 81, req 06, val 2200, idx 0004, len 008a (Set Idle)
     uint8_t desc_type = USB_DESCRIPTOR_TYPE(req->wValue);
     uint8_t desc_index = USB_DESCRIPTOR_INDEX(req->wValue);
     //  Is this a standard callback?
@@ -254,17 +253,17 @@ static enum usbd_request_return_codes hid_control_request(usbd_device *dev, stru
         && desc_index == 0) {
         //  Handle the HID report descriptor:
         //  >> typ 81, req 06, val 2200, idx 0004, len 008a
-        dump_usb_request("hidrep", req); ////
+        dump_usb_request("hidrep", req); debug_flush(); ////
         *buf = (uint8_t *) hid_report_descriptor;
         *len = hid_report_descriptor_size;
         return USBD_REQ_HANDLED;
-        
+
     } else if ((req->bmRequestType & CONTROL_CALLBACK_MASK_CLASS) == CONTROL_CALLBACK_TYPE_CLASS  //  Is this a class callback?
         && req->bRequest == 0x0a  //  SET_IDLE
         && req->wValue == 0) {
         //  Handle the SET_IDLE request:
         //  >> typ 21, req 0a, val 0000, idx 0004, len 0000
-        dump_usb_request("hididle", req); ////
+        dump_usb_request("hididle", req); debug_flush(); ////
         *len = 0;
         return USBD_REQ_HANDLED;
     }
