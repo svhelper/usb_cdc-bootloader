@@ -5,11 +5,11 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/flash.h>
-#include <libopencm3/stm32/otg_fs.h>
 #include <libopencm3/cm3/cortex.h>
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/usb/usbd.h>
+#include <libopencm3/usb/hid.h>
 #include <logger.h>
 #include "usb_conf.h"
 #include "ghostfat.h"
@@ -233,23 +233,35 @@ static void hf2_data_tx_cb(usbd_device *usbd_dev, uint8_t ep) {
     pokeSend();
 }
 
-static uint8_t *hid_report_descriptor;
+static const uint8_t *hid_report_descriptor;
 static uint16_t hid_report_descriptor_size;
 
 static enum usbd_request_return_codes hid_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 			void (**complete)(usbd_device *dev, struct usb_setup_data *req)) {
 	(void)complete;
 	(void)dev;
+    dump_usb_request("hid", req); ////
 
-	if((req->bmRequestType != 0x81) ||
-	   (req->bRequest != USB_REQ_GET_DESCRIPTOR) ||
-	   (req->wValue != 0x2200))
-		return USBD_REQ_NEXT_CALLBACK;
-
-	/* Handle the HID report descriptor. */
-	*buf = hid_report_descriptor;
-	*len = hid_report_descriptor_size;
-	return USBD_REQ_HANDLED;
+    uint8_t desc_type = USB_DESCRIPTOR_TYPE(req->wValue);
+    uint8_t desc_index = USB_DESCRIPTOR_INDEX(req->wValue);
+	if (req->bmRequestType == 0x81
+        && req->bRequest == USB_REQ_GET_DESCRIPTOR
+        && desc_type == USB_DT_REPORT
+        && desc_index == 0) {
+        /* Handle the HID report descriptor. */
+        dump_usb_request("hidrep", req); ////
+        *buf = (uint8_t *) hid_report_descriptor;
+        *len = hid_report_descriptor_size;
+        return USBD_REQ_HANDLED;
+    } else if (req->bmRequestType == 0x21
+        && req->bRequest == 0x0a
+        && req->wValue == 0) {
+        //  Handle the SET_IDLE request.
+        dump_usb_request("hididle", req); ////
+        *len = 0;
+        return USBD_REQ_HANDLED;
+    }
+	return USBD_REQ_NEXT_CALLBACK;
 }
 
 /** @brief Setup the endpoints to be bulk & register the callbacks. */
@@ -266,10 +278,17 @@ static void hf2_set_config(usbd_device *usbd_dev, uint16_t wValue) {
 	if (status < 0) { debug_println("*** hf2_set_config failed"); debug_flush(); }
 }
 
-void hf2_setup(usbd_device *usbd_dev, uint8_t *hid_report_descriptor0, uint16_t hid_report_descriptor_size0) {
+void hf2_setup(usbd_device *usbd_dev, const uint8_t *hid_report_descriptor0, uint16_t hid_report_descriptor_size0) {
     _usbd_dev = usbd_dev;
     hid_report_descriptor = hid_report_descriptor0;
     hid_report_descriptor_size = hid_report_descriptor_size0;
-    int status = aggregate_register_config_callback(usbd_dev, hf2_set_config);
+    //// TODO
+    int status = aggregate_register_callback(
+        usbd_dev,
+        CONTROL_CALLBACK_TYPE,
+        CONTROL_CALLBACK_MASK,
+        hid_control_request);        
+    if (status < 0) { debug_println("*** hf2_setup failed"); debug_flush(); }
+    status = aggregate_register_config_callback(usbd_dev, hf2_set_config);
     if (status < 0) { debug_println("*** hf2_setup failed"); debug_flush(); }
 }

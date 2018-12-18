@@ -3,6 +3,6 @@
 
 #include <libopencm3/usb/usbd.h>
 
-extern void hf2_setup(usbd_device *usbd_dev, uint8_t *hid_report_descriptor0, uint16_t hid_report_descriptor_size0);
+extern void hf2_setup(usbd_device *usbd_dev, const uint8_t *hid_report_descriptor0, uint16_t hid_report_descriptor_size0);
 
 #endif  //  HF2_H_INCLUDED

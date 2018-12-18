@@ -76,11 +76,11 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
 		dump_usb_request("bos", req); debug_flush(); ////
 		*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));
-
+#ifdef NOTUSED
 		uint8_t *b = *buf; int i;
 		debug_print_unsigned(*len); debug_print(" / ");
 		for (i = 0; i < *len; i++) { debug_printhex(b[i]); debug_print(" "); } debug_println(""); debug_flush(); ////
-
+#endif  //  NOTUSED
 		return USBD_REQ_HANDLED;
 	}
 	return USBD_REQ_NEXT_CALLBACK;

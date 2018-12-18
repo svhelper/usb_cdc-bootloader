@@ -62,6 +62,9 @@
 #define DATA_IN                 0x83
 #define COMM_IN                 0x84
 
+#define USB_DESCRIPTOR_TYPE(w)  (w >> 8)
+#define USB_DESCRIPTOR_INDEX(w) (w & 0xFF)
+
 extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);
 extern void msc_setup(usbd_device* usbd_dev0);
