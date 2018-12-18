@@ -238,6 +238,7 @@ static void hf2_data_tx_cb(usbd_device *usbd_dev, uint8_t ep) {
 
 static const uint8_t *hid_report_descriptor;
 static uint16_t hid_report_descriptor_size;
+static const uint8_t set_idle_response[] = { 0, 0 };  //  From microbit
 
 static enum usbd_request_return_codes hid_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 	void (**complete)(usbd_device *dev, struct usb_setup_data *req)) { (void)complete; (void)dev;
@@ -260,11 +261,13 @@ static enum usbd_request_return_codes hid_control_request(usbd_device *dev, stru
 
     } else if ((req->bmRequestType & CONTROL_CALLBACK_MASK_CLASS) == CONTROL_CALLBACK_TYPE_CLASS  //  Is this a class callback?
         && req->bRequest == 0x0a  //  SET_IDLE
+        && req->wIndex == INTF_HID
         && req->wValue == 0) {
         //  Handle the SET_IDLE request:
         //  >> typ 21, req 0a, val 0000, idx 0004, len 0000
         dump_usb_request("hididle", req); debug_flush(); ////
-        *len = 0;
+        *buf = (uint8_t *) set_idle_response;
+        *len = sizeof(set_idle_response);
         return USBD_REQ_HANDLED;
     }
 	return USBD_REQ_NEXT_CALLBACK;
