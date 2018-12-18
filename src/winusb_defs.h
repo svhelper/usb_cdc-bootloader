@@ -105,7 +105,7 @@ struct msos20_feature_reg_property_struct {
 } __attribute__((packed));
 #define MSOS20_FEATURE_REG_PROPERTY_SIZE sizeof(struct msos20_feature_reg_property_struct)  //  Should be 0x84 (132)
 
-//  Function set: One interface is linked to one function
+//  Function subset: One interface is linked to one function
 struct msos20_subset_function_struct {
 	//  Function subset header: Which USB Interface this descriptor will apply.
 	struct msos20_subset_header_function_struct      subset_header_function;
@@ -116,23 +116,27 @@ struct msos20_subset_function_struct {
 	//  Registry property descriptor: The properties that will be written to Windows registry.
 	struct msos20_feature_reg_property_struct        feature_reg_property;
 } __attribute__((packed));
-
 //  Should be 0xA0 (160). Size of entire function subset including header.
 #define MSOS20_SUBSET_FUNCTION_SIZE sizeof(struct msos20_subset_function_struct)
 
+//  Configuration subset
+struct msos20_subset_configuration_struct {
+	//  Configuration subset header: Which USB Configuration this descriptor will apply.
+	struct msos20_subset_header_configuration_struct subset_header_configuration;
+
+	//  Function sets: One interface is linked to one function
+	struct msos20_subset_function_struct             subset_functions[MSOS20_FUNCTION_COUNT];
+} __attribute__((packed));
 //  Should be 0xA8 (168). Size of entire configuration subset including header.
-#define MSOS20_SUBSET_CONFIGURATION_SIZE (MSOS20_SUBSET_FUNCTION_SIZE + MSOS20_SUBSET_HEADER_CONFIGURATION_SIZE)
+#define MSOS20_SUBSET_CONFIGURATION_SIZE sizeof(struct msos20_subset_configuration_struct)
 
 //  Descriptor set
 struct msos20_descriptor_set_struct {
 	//  Descriptor set header
 	struct msos20_set_header_descriptor_struct       set_header_descriptor;
 
-	//  Configuration subset header: Which USB Configuration this descriptor will apply.
-	struct msos20_subset_header_configuration_struct subset_header_configuration;
-
-	//  Function sets: One interface is linked to one function
-	struct msos20_subset_function_struct             subset_functions[MSOS20_FUNCTION_COUNT];
+	//  Configuration subset
+	struct msos20_subset_configuration_struct        subset_configuration;
 } __attribute__((packed));
 #define MSOS20_DESCRIPTOR_SET_SIZE sizeof(struct msos20_descriptor_set_struct)  //  Should be 0xB2 (178)
 

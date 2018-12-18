@@ -65,90 +65,93 @@ static struct msos20_descriptor_set_struct msos20_descriptor_set = {
 		.dwWindowsVersion = MSOS20_WINDOWS_VERSION,       //  Windows version
 		.wTotalLength     = MSOS20_DESCRIPTOR_SET_SIZE,       //  Size of entire MS OS 2.0 descriptor set
 	},
-	//  Configuration subset header: Which USB Configuration this descriptor will apply.
-	.subset_header_configuration = {
-		.wLength             = MSOS20_SUBSET_HEADER_CONFIGURATION_SIZE,  //  Should be 8
-		.wDescriptorType     = MSOS20_SUBSET_HEADER_CONFIGURATION,
-		.bConfigurationValue = 0,  //  Configuration ID = 0
-		.bReserved           = 0,
-		.wTotalLength        = MSOS20_SUBSET_CONFIGURATION_SIZE,  //  Should be 0xA8 (168).  Size of entire configuration subset including this header.
-	},
-	//  Function sets: One interface is linked to one function
-	.subset_functions = {
-#ifdef INTF_DFU
-	//  DFU Interface Function subset header: Which USB Interface this descriptor will apply.
-	{
-		.subset_header_function = {
-			.wLength         = MSOS20_SUBSET_HEADER_FUNCTION_SIZE,  //  Should be 8
-			.wDescriptorType = MSOS20_SUBSET_HEADER_FUNCTION,
-			.bFirstInterface = INTF_DFU,  //  Apply to DFU Interface
-			.bReserved       = 0,
-			.wSubsetLength   = MSOS20_SUBSET_FUNCTION_SIZE,  //  Should be 0xA0 (160).  Size of entire function subset including this header.
+	//  Configuration subset
+	.subset_configuration = {
+		//  Configuration subset header: Which USB Configuration this descriptor will apply.
+		.subset_header_configuration = {
+			.wLength             = MSOS20_SUBSET_HEADER_CONFIGURATION_SIZE,  //  Should be 8
+			.wDescriptorType     = MSOS20_SUBSET_HEADER_CONFIGURATION,
+			.bConfigurationValue = 0,  //  Configuration ID = 0
+			.bReserved           = 0,
+			.wTotalLength        = MSOS20_SUBSET_CONFIGURATION_SIZE,  //  Should be 0xA8 (168).  Size of entire configuration subset including this header.
 		},
-		//  Compatible ID descriptor
-		.feature_compatible_id = {
-			.wLength         = MSOS20_FEATURE_COMPATIBLE_ID_SIZE,  //  Should be 20
-			.wDescriptorType = MSOS20_FEATURE_COMPATIBLE_ID,
-			.CompatibleID    = COMPATIBLE_ID,    // Compatible ID: WINUSB
-			.SubCompatibleID = SUBCOMPATIBLE_ID, // SubCompatible ID
-		},
-		//  Registry property descriptor: The properties that will be written to Windows registry.
-		.feature_reg_property = {
-			.wLength             = MSOS20_FEATURE_REG_PROPERTY_SIZE,  //  e.g. 0x84
-			.wDescriptorType     = MSOS20_FEATURE_REG_PROPERTY,
-			.wPropertyDataType   = WINUSB_EXTENDED_PROPERTIES_MULTISZ_DATA_TYPE,  //  Type of registry property
-			.wPropertyNameLength = MSOS20_PROPERTY_NAME_LENGTH,  //  Length of property name
-			.propertyName        = PROPERTY_NAME,                //  Property name: DeviceInterfaceGUIDs
-			.wPropertyDataLength = MSOS20_PROPERTY_DATA_LENGTH,  //  Length of property data		
-			.propertyData = {  // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA226}
-				'{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
-				'8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
-				'B', 0x00, '2', 0x00, '-', 0x00, '4', 0x00, '4', 0x00, '8', 0x00,
-				'6', 0x00, '-', 0x00, '8', 0x00, '5', 0x00, '0', 0x00, '1', 0x00,
-				'-', 0x00, 'B', 0x00, '6', 0x00, '1', 0x00, '4', 0x00, '5', 0x00,
-				'B', 0x00, '5', 0x00, 'B', 0x00, 'A', 0x00, '2', 0x00, '2', 0x00,
-				'6', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
+		//  Function subsets: One interface is linked to one function
+		.subset_functions = {
+	#ifdef INTF_DFU
+		//  DFU Interface Function subset header: Which USB Interface this descriptor will apply.
+		{
+			.subset_header_function = {
+				.wLength         = MSOS20_SUBSET_HEADER_FUNCTION_SIZE,  //  Should be 8
+				.wDescriptorType = MSOS20_SUBSET_HEADER_FUNCTION,
+				.bFirstInterface = INTF_DFU,  //  Apply to DFU Interface
+				.bReserved       = 0,
+				.wSubsetLength   = MSOS20_SUBSET_FUNCTION_SIZE,  //  Should be 0xA0 (160).  Size of entire function subset including this header.
+			},
+			//  Compatible ID descriptor
+			.feature_compatible_id = {
+				.wLength         = MSOS20_FEATURE_COMPATIBLE_ID_SIZE,  //  Should be 20
+				.wDescriptorType = MSOS20_FEATURE_COMPATIBLE_ID,
+				.CompatibleID    = COMPATIBLE_ID,    // Compatible ID: WINUSB
+				.SubCompatibleID = SUBCOMPATIBLE_ID, // SubCompatible ID
+			},
+			//  Registry property descriptor: The properties that will be written to Windows registry.
+			.feature_reg_property = {
+				.wLength             = MSOS20_FEATURE_REG_PROPERTY_SIZE,  //  e.g. 0x84
+				.wDescriptorType     = MSOS20_FEATURE_REG_PROPERTY,
+				.wPropertyDataType   = WINUSB_EXTENDED_PROPERTIES_MULTISZ_DATA_TYPE,  //  Type of registry property
+				.wPropertyNameLength = MSOS20_PROPERTY_NAME_LENGTH,  //  Length of property name
+				.propertyName        = PROPERTY_NAME,                //  Property name: DeviceInterfaceGUIDs
+				.wPropertyDataLength = MSOS20_PROPERTY_DATA_LENGTH,  //  Length of property data		
+				.propertyData = {  // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA226}
+					'{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
+					'8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
+					'B', 0x00, '2', 0x00, '-', 0x00, '4', 0x00, '4', 0x00, '8', 0x00,
+					'6', 0x00, '-', 0x00, '8', 0x00, '5', 0x00, '0', 0x00, '1', 0x00,
+					'-', 0x00, 'B', 0x00, '6', 0x00, '1', 0x00, '4', 0x00, '5', 0x00,
+					'B', 0x00, '5', 0x00, 'B', 0x00, 'A', 0x00, '2', 0x00, '2', 0x00,
+					'6', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
+				}
 			}
-		}
-	},
-#endif  //  INTF_DFU
-#ifdef INTF_HF2
-	//  DFU Interface Function subset header: Which USB Interface this descriptor will apply.
-	{
-		.subset_header_function = {
-			.wLength         = MSOS20_SUBSET_HEADER_FUNCTION_SIZE,  //  Should be 8
-			.wDescriptorType = MSOS20_SUBSET_HEADER_FUNCTION,
-			.bFirstInterface = INTF_HF2,  //  Apply to HF2 Interface
-			.bReserved       = 0,
-			.wSubsetLength   = MSOS20_SUBSET_FUNCTION_SIZE,  //  Should be 0xA0 (160).  Size of entire function subset including this header.
 		},
-		//  Compatible ID descriptor
-		.feature_compatible_id = {
-			.wLength         = MSOS20_FEATURE_COMPATIBLE_ID_SIZE,  //  Should be 20
-			.wDescriptorType = MSOS20_FEATURE_COMPATIBLE_ID,
-			.CompatibleID    = COMPATIBLE_ID,    // Compatible ID: WINUSB
-			.SubCompatibleID = SUBCOMPATIBLE_ID, // SubCompatible ID
-		},
-		//  Registry property descriptor: The properties that will be written to Windows registry.
-		.feature_reg_property = {
-			.wLength             = MSOS20_FEATURE_REG_PROPERTY_SIZE,  //  e.g. 0x84
-			.wDescriptorType     = MSOS20_FEATURE_REG_PROPERTY,
-			.wPropertyDataType   = WINUSB_EXTENDED_PROPERTIES_MULTISZ_DATA_TYPE,  //  Type of registry property
-			.wPropertyNameLength = MSOS20_PROPERTY_NAME_LENGTH,  //  Length of property name
-			.propertyName        = PROPERTY_NAME,                //  Property name: DeviceInterfaceGUIDs
-			.wPropertyDataLength = MSOS20_PROPERTY_DATA_LENGTH,  //  Length of property data		
-			.propertyData = {  // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA227}
-				'{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
-				'8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
-				'B', 0x00, '2', 0x00, '-', 0x00, '4', 0x00, '4', 0x00, '8', 0x00,
-				'6', 0x00, '-', 0x00, '8', 0x00, '5', 0x00, '0', 0x00, '1', 0x00,
-				'-', 0x00, 'B', 0x00, '6', 0x00, '1', 0x00, '4', 0x00, '5', 0x00,
-				'B', 0x00, '5', 0x00, 'B', 0x00, 'A', 0x00, '2', 0x00, '2', 0x00,
-				'7', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
+	#endif  //  INTF_DFU
+	#ifdef INTF_HF2
+		//  DFU Interface Function subset header: Which USB Interface this descriptor will apply.
+		{
+			.subset_header_function = {
+				.wLength         = MSOS20_SUBSET_HEADER_FUNCTION_SIZE,  //  Should be 8
+				.wDescriptorType = MSOS20_SUBSET_HEADER_FUNCTION,
+				.bFirstInterface = INTF_HF2,  //  Apply to HF2 Interface
+				.bReserved       = 0,
+				.wSubsetLength   = MSOS20_SUBSET_FUNCTION_SIZE,  //  Should be 0xA0 (160).  Size of entire function subset including this header.
+			},
+			//  Compatible ID descriptor
+			.feature_compatible_id = {
+				.wLength         = MSOS20_FEATURE_COMPATIBLE_ID_SIZE,  //  Should be 20
+				.wDescriptorType = MSOS20_FEATURE_COMPATIBLE_ID,
+				.CompatibleID    = COMPATIBLE_ID,    // Compatible ID: WINUSB
+				.SubCompatibleID = SUBCOMPATIBLE_ID, // SubCompatible ID
+			},
+			//  Registry property descriptor: The properties that will be written to Windows registry.
+			.feature_reg_property = {
+				.wLength             = MSOS20_FEATURE_REG_PROPERTY_SIZE,  //  e.g. 0x84
+				.wDescriptorType     = MSOS20_FEATURE_REG_PROPERTY,
+				.wPropertyDataType   = WINUSB_EXTENDED_PROPERTIES_MULTISZ_DATA_TYPE,  //  Type of registry property
+				.wPropertyNameLength = MSOS20_PROPERTY_NAME_LENGTH,  //  Length of property name
+				.propertyName        = PROPERTY_NAME,                //  Property name: DeviceInterfaceGUIDs
+				.wPropertyDataLength = MSOS20_PROPERTY_DATA_LENGTH,  //  Length of property data		
+				.propertyData = {  // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA227}
+					'{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
+					'8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
+					'B', 0x00, '2', 0x00, '-', 0x00, '4', 0x00, '4', 0x00, '8', 0x00,
+					'6', 0x00, '-', 0x00, '8', 0x00, '5', 0x00, '0', 0x00, '1', 0x00,
+					'-', 0x00, 'B', 0x00, '6', 0x00, '1', 0x00, '4', 0x00, '5', 0x00,
+					'B', 0x00, '5', 0x00, 'B', 0x00, 'A', 0x00, '2', 0x00, '2', 0x00,
+					'7', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
+				}
 			}
-		}
-	},
-#endif  //  INTF_HF2
+		},
+	#endif  //  INTF_HF2
+		},
 	},
 };
 
@@ -306,6 +309,52 @@ void winusb_setup(usbd_device* usbd_dev, uint8_t interface) {
 }
 
 #ifdef NOTUSED
+338 bytes
+
+0a 00 
+00 00 
+00 00 03 06 
+52 01 (336)
+
+08 00 
+01 00 
+00 
+00 
+a8 00 ***
+
+08 00 
+02 00 
+00 
+00 
+a0 00 
+
+14 00 
+03 00 
+57 49 4e 55
+53 42 00 00 00 00 00 00 00 00 00 00 
+
+84 00 04 00 07 00 2a 00 44 00 65 00 76 00 69 00 63 00 65 00 49 00 6e 00
+74 00 65 00 72 00 66 00 61 00 63 00 65 00 47 00 55 00 49 00 44 00 73 00 00 00 50 00 7b 00 39 00 44 00 33 00
+32 00 46 00 38 00 32 00 43 00 2d 00 31 00 46 00 42 00 32 00 2d 00 34 00 34 00 38 00 36 00 2d 00 38 00 35 00
+30 00 31 00 2d 00 42 00 36 00 31 00 34 00 35 00 42 00 35 00 42 00 41 00 32 00 32 00 36 00 7d 00 00 00 00 00
+
+08 00 
+02 00 
+04 
+00 
+a0 00 
+
+14 00 
+03 00 
+57 49 4e 55 
+53 42 00 00 00 00 00 00 00 00 00 00 
+
+84 00 04 00 07 00 2a 00
+44 00 65 00 76 00 69 00 63 00 65 00 49 00 6e 00 74 00 65 00 72 00 66 00 61 00 63 00 65 00 47 00 55 00 49 00
+44 00 73 00 00 00 50 00 7b 00 39 00 44 00 33 00 32 00 46 00 38 00 32 00 43 00 2d 00 31 00 46 00 42 00 32 00
+2d 00 34 00 34 00 38 00 36 00 2d 00 38 00 35 00 30 00 31 00 2d 00 42 00 36 00 31 00 34 00 35 00 42 00 35 00
+42 00 41 00 32 00 32 00 37 00 7d 00 00 00 00 00
+
 Generated MS OS 2.0 Descriptor Set: 178 bytes
 
     0x0A, 0x00,              // wLength
