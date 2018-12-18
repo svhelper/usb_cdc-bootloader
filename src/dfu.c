@@ -295,7 +295,7 @@ void dfu_setup(usbd_device* usbd_dev,
     dfu_state_change_callback = on_state_change;
     dfu_status_change_callback = on_status_change;
 
-	//  Register the callback now because WebUSB requests come earlier.
+	//  Register the callback now because DFU requests come earlier.
     int status = aggregate_register_callback(
         usbd_dev,
         CONTROL_CALLBACK_TYPE,

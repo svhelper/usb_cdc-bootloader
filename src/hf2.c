@@ -233,11 +233,12 @@ static void hf2_set_config(usbd_device *usbd_dev, uint16_t wValue) {
 
     (void)wValue;
 
-    usbd_ep_setup(usbd_dev, HID_IN, USB_ENDPOINT_ATTR_BULK, 64, hf2_data_tx_cb);
-    usbd_ep_setup(usbd_dev, HID_OUT, USB_ENDPOINT_ATTR_BULK, 64, hf2_data_rx_cb);
+    usbd_ep_setup(usbd_dev, HID_IN, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, hf2_data_tx_cb);
+    usbd_ep_setup(usbd_dev, HID_OUT, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, hf2_data_rx_cb);
 }
 
 void hf2_setup(usbd_device *usbd_dev) {
     _usbd_dev = usbd_dev;
-    usbd_register_set_config_callback(usbd_dev, hf2_set_config);
+    int status = aggregate_register_config_callback(usbd_dev, hf2_set_config);
+    if (status < 0) { debug_println("*** hf2_setup failed"); debug_flush(); }
 }
