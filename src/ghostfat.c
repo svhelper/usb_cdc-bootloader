@@ -149,7 +149,7 @@ static void flushFlash(void) {
     flashAddr = NO_CACHE;
 }
 
-static void flash_write(uint32_t dst, const uint8_t *src, int len) {
+void flash_write(uint32_t dst, const uint8_t *src, int len) {
     uint32_t newAddr = dst & ~(FLASH_PAGE_SIZE - 1);
 
     hadWrite = true;

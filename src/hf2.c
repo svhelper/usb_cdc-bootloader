@@ -1,5 +1,5 @@
 //  From https://github.com/mmoskal/uf2-stm32f/blob/master/hf2.c
-//  #include "hw_config.h"
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
 #include <libopencm3/stm32/rcc.h>
@@ -10,16 +10,17 @@
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/usb/usbd.h>
+#include <logger.h>
 #include "usb_conf.h"
-// #include "bl.h"
+#include "ghostfat.h"
 #include "uf2hid.h"
+#include "uf2cfg.h"
 #include "hf2.h"
 
+#define VALID_FLASH_ADDR(addr, sz) (USER_FLASH_START <= (addr) && (addr) + (sz) <= USER_FLASH_END)
 #define HF2_BUF_SIZE 1024 + 16
-
 #define usb_assert assert
-
-#define LOG DMESG
+#define LOG(s) debug_println(s)
 
 typedef struct {
     uint16_t size;
@@ -79,7 +80,12 @@ extern const char infoUf2File[];
 
 #define MURMUR3 0
 
-#define checkDataSize(str, add) assert(sz == 8 + sizeof(cmd->str) + (add))
+#define checkDataSize(str, add) assert(sz == 8 + sizeof(cmd->str) + (add), "*** ERROR: checkDataSize failed")
+
+static void assert(bool assertion, const char *msg) {
+    if (assertion) { return; }
+    debug_println(msg); debug_flush();
+}
 
 #if MURMUR3
 static void murmur3_core_2(const void *data, uint32_t len, uint32_t *dst) {
@@ -132,7 +138,7 @@ static void handle_command() {
     case HF2_CMD_BININFO:
         resp->bininfo.mode = HF2_MODE_BOOTLOADER;
         resp->bininfo.flash_page_size = 128 * 1024;
-        resp->bininfo.flash_num_pages = BOARD_FLASH_SIZE / (128 * 1024);
+        resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / (128 * 1024);
         resp->bininfo.max_message_size = sizeof(pkt.buf);
         resp->bininfo.uf2_family = UF2_FAMILY;
         send_hf2_response(sizeof(resp->bininfo));
@@ -149,8 +155,8 @@ static void handle_command() {
         // userspace can also call hf2_handover() here
         break;
     case HF2_CMD_WRITE_FLASH_PAGE:
-        checkDataSize(write_flash_page, 256);
         // first send ACK and then start writing, while getting the next packet
+        checkDataSize(write_flash_page, 256);
         send_hf2_response(0);
         if (VALID_FLASH_ADDR(cmd->write_flash_page.target_addr, 256)) {
             flash_write(cmd->write_flash_page.target_addr,
@@ -185,15 +191,15 @@ static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
 
     len = usbd_ep_read_packet(usbd_dev, ep, buf, 64);
 
-    DMESG("HF2 read: %d", len);
+    // DMESG("HF2 read: %d", len);
     if (len <= 0)
         return;
 
     uint8_t tag = buf[0];
     // serial packets not allowed when in middle of command packet
-    usb_assert(pkt.size == 0 || !(tag & HF2_FLAG_SERIAL_OUT));
+    usb_assert(pkt.size == 0 || !(tag & HF2_FLAG_SERIAL_OUT), "*** ERROR: serial packets not allowed");
     int size = tag & HF2_SIZE_MASK;
-    usb_assert(pkt.size + size <= (int)sizeof(pkt.buf));
+    usb_assert(pkt.size + size <= (int)sizeof(pkt.buf), "*** ERROR: serial packets not allowed");
     memcpy(pkt.buf + pkt.size, buf + 1, size);
     pkt.size += size;
     tag &= HF2_FLAG_MASK;
