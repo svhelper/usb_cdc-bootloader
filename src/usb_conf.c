@@ -1,4 +1,3 @@
-//  CDC code from https://github.com/Apress/Beg-STM32-Devel-FreeRTOS-libopencm3-GCC/blob/master/rtos/usbcdcdemo/usbcdc.c
 /*
  * Copyright (c) 2016, Devan Lai
  *
@@ -36,6 +35,7 @@
 #include "usb21_standard.h"
 #include "usb_conf.h"
 #include "uf2.h"
+#include "hf2.h"
 
 static void set_aggregate_callback(
   usbd_device *usbd_dev,
@@ -58,6 +58,7 @@ static const char *usb_strings[] = {
     "Blue Pill Serial Port",   //  Serial Port
     "Blue Pill COMM",          //  COMM
     "Blue Pill DATA",          //  DATA
+    "Blue Pill HF2",           //  HID
 };
 
 #define MSC_VENDOR_ID "BluePill"  //  Max 8 chars
@@ -74,6 +75,7 @@ enum usb_strings_index {  //  Index of USB strings.  Must sync with above, start
     USB_STRINGS_SERIAL_PORT,
     USB_STRINGS_COMM,
     USB_STRINGS_DATA,
+    USB_STRINGS_HID,
 };
 
 //  USB Device
@@ -195,7 +197,26 @@ static const struct {
 		.bSubordinateInterface0 = INTF_DATA,  //  DATA Interface
 	 }
 };
-#endif  //  INTF_MSC
+#endif  //  INTF_COMM
+
+#ifdef INTF_HID
+//  HID Endpoints
+static const struct usb_endpoint_descriptor hid_endp[] = {{
+	.bLength = USB_DT_ENDPOINT_SIZE,
+	.bDescriptorType = USB_DT_ENDPOINT,
+	.bEndpointAddress = HID_OUT,
+	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
+	.wMaxPacketSize = MAX_USB_PACKET_SIZE,
+	.bInterval = 0,
+}, {
+	.bLength = USB_DT_ENDPOINT_SIZE,
+	.bDescriptorType = USB_DT_ENDPOINT,
+	.bEndpointAddress = HID_IN,
+	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
+	.wMaxPacketSize = MAX_USB_PACKET_SIZE,
+	.bInterval = 0,
+}};
+#endif  //  INTF_HID
 
 #ifdef INTF_DFU
 //  DFU Interface
@@ -275,6 +296,24 @@ static const struct usb_interface_descriptor data_iface = {
 };
 #endif  //  INTF_COMM
 
+#ifdef INTF_HID
+//  HID Interface
+static const struct usb_interface_descriptor hid_iface = {
+	.bLength = USB_DT_INTERFACE_SIZE,
+	.bDescriptorType = USB_DT_INTERFACE,
+	.bInterfaceNumber = INTF_HID,
+	.bAlternateSetting = 0,
+	.bNumEndpoints = 2,
+	.bInterfaceClass = 0xFF,
+	.bInterfaceSubClass = 42,
+	.bInterfaceProtocol = 1,
+	.iInterface = USB_STRINGS_HID,  //  Name of HID
+	.endpoint = hid_endp,
+	.extra = NULL,
+	.extralen = 0
+};
+#endif  //  INTF_HID
+
 //  All USB Interfaces
 static const struct usb_interface interfaces[] = {
 #ifdef INTF_DFU    
@@ -302,6 +341,12 @@ static const struct usb_interface interfaces[] = {
         .altsetting = &data_iface,  //  Index must sync with INTF_DATA.
     },
 #endif  //  INTF_COMM
+#ifdef INTF_HID
+    {
+        .num_altsetting = 1,
+        .altsetting = &hid_iface,   //  Index must sync with INTF_HID.
+    }, 	
+#endif  //  INTF_HID
 };
 
 //  USB Config
@@ -357,6 +402,9 @@ usbd_device* usb_setup(void) {
 #ifdef INTF_COMM    
     cdc_setup(usbd_dev);
 #endif  //  INTF_COMM
+#ifdef INTF_HID    
+    hf2_setup(usbd_dev);
+#endif  //  INTF_HID
 
 #ifdef USB21_INTERFACE
     //  Define USB 2.1 BOS interface used by WebUSB.

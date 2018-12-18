@@ -38,6 +38,7 @@
 #define INTF_MSC                1
 #define INTF_COMM               2
 #define INTF_DATA               3
+#define INTF_HID                4
 #endif  //  ALL_USB_INTERFACES
 
 #ifdef STORAGE_AND_SERIAL_USB_INTERFACE
@@ -53,20 +54,13 @@
 
 //  USB Endpoints.
 #define MSC_OUT                 0x01
+#define HID_OUT                 0x02
 #define DATA_OUT                0x03
 
-#define MSC_IN                  0x82
-#define DATA_IN                 0x84
-#define COMM_IN                 0x85
-
-#ifdef NOTUSED
-#define DATA_IN                 0x82
-#define COMM_IN                 0x83
-#define MSC_IN                  0x84
-
-#define DATA_OUT                0x01
-#define MSC_OUT                 0x02
-#endif  //  NOTUSED
+#define MSC_IN                  0x81
+#define HID_IN                  0x82
+#define DATA_IN                 0x83
+#define COMM_IN                 0x84
 
 extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);

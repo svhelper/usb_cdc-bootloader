@@ -11,6 +11,8 @@ USB CDC implementation from https://github.com/Apress/Beg-STM32-Devel-FreeRTOS-l
 
 USB MSC patch from https://habr.com/company/thirdpin/blog/304924/
 
+HF2 implementation from https://github.com/mmoskal/uf2-stm32f
+
 ## Build instructions
 
 
