@@ -200,24 +200,24 @@ static const struct {
 };
 #endif  //  INTF_COMM
 
-#ifdef INTF_HID
+#ifdef INTF_HF2
 //  HID Endpoints
 static const struct usb_endpoint_descriptor hid_endp[] = {{
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
-	.bEndpointAddress = HID_OUT,
+	.bEndpointAddress = HF2_OUT,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
 	.wMaxPacketSize = MAX_USB_PACKET_SIZE,
 	.bInterval = 0,
 }, {
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
-	.bEndpointAddress = HID_IN,
+	.bEndpointAddress = HF2_IN,
 	.bmAttributes = USB_ENDPOINT_ATTR_BULK,
 	.wMaxPacketSize = MAX_USB_PACKET_SIZE,
 	.bInterval = 0,
 }};
-#endif  //  INTF_HID
+#endif  //  INTF_HF2
 
 #ifdef INTF_DFU
 //  DFU Interface
@@ -297,7 +297,7 @@ static const struct usb_interface_descriptor data_iface = {
 };
 #endif  //  INTF_COMM
 
-#ifdef INTF_HID
+#ifdef INTF_HF2
 //  HID Interface
 
 //  From https://github.com/Microsoft/uf2-samdx1/blob/master/src/cdc_enumerate.c
@@ -386,19 +386,19 @@ static const struct {
 static const struct usb_interface_descriptor hid_iface = {
 	.bLength = USB_DT_INTERFACE_SIZE,
 	.bDescriptorType = USB_DT_INTERFACE,
-	.bInterfaceNumber = INTF_HID,
+	.bInterfaceNumber = INTF_HF2,
 	.bAlternateSetting = 0,
 	.bNumEndpoints = 2,
-	.bInterfaceClass = USB_CLASS_HID,  //  Previously 0xFF
-	.bInterfaceSubClass = 0,           //  Previously 42
-	.bInterfaceProtocol = 0,           //  Previously 1
+	.bInterfaceClass = 0xFF,  //  Must be 0xFF for pxt-maker
+	.bInterfaceSubClass = 42, //  Must be 42 for pxt-maker
+	.bInterfaceProtocol = 1,  //  Previously 1
 	.iInterface = USB_STRINGS_HID,     //  Name of HID
 	.endpoint = hid_endp,
-	.extra = &hid_function,
-	.extralen = sizeof(hid_function),
+	//.extra = &hid_function,
+	//.extralen = sizeof(hid_function),
 };
 
-#endif  //  INTF_HID
+#endif  //  INTF_HF2
 
 //  All USB Interfaces
 static const struct usb_interface interfaces[] = {
@@ -427,12 +427,12 @@ static const struct usb_interface interfaces[] = {
         .altsetting = &data_iface,  //  Index must sync with INTF_DATA.
     },
 #endif  //  INTF_COMM
-#ifdef INTF_HID
+#ifdef INTF_HF2
     {
         .num_altsetting = 1,
-        .altsetting = &hid_iface,   //  Index must sync with INTF_HID.
+        .altsetting = &hid_iface,   //  Index must sync with INTF_HF2.
     }, 	
-#endif  //  INTF_HID
+#endif  //  INTF_HF2
 };
 
 //  USB Config
@@ -488,9 +488,9 @@ usbd_device* usb_setup(void) {
 #ifdef INTF_COMM    
     cdc_setup(usbd_dev);
 #endif  //  INTF_COMM
-#ifdef INTF_HID    
-    hf2_setup(usbd_dev, hid_report_descriptor, sizeof(hid_report_descriptor));
-#endif  //  INTF_HID
+#ifdef INTF_HF2    
+    hf2_setup(usbd_dev);
+#endif  //  INTF_HF2
 
 #ifdef USB21_INTERFACE
     //  Define USB 2.1 BOS interface used by WebUSB.

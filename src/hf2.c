@@ -73,7 +73,7 @@ static void pokeSend() {
 
     if (sendIt) {
         debug_print("hid >> "); debug_print_unsigned(sizeof(buf)); debug_println(""); debug_flush(); ////
-        usbd_ep_write_packet(_usbd_dev, HID_IN, buf, sizeof(buf));
+        usbd_ep_write_packet(_usbd_dev, HF2_IN, buf, sizeof(buf));
     }
 }
 
@@ -262,7 +262,7 @@ static enum usbd_request_return_codes hid_control_request(usbd_device *dev, stru
     //  Is this a class callback?
     } else if ((req->bmRequestType & CONTROL_CALLBACK_MASK_CLASS) == CONTROL_CALLBACK_TYPE_CLASS
         && req->bRequest == 0x0a  //  SET_IDLE
-        && req->wIndex == INTF_HID
+        && req->wIndex == INTF_HF2
         && req->wValue == 0) {
         //  Handle the SET_IDLE request:
         //  >> typ 21, req 0a, val 0000, idx 0004, len 0000
@@ -278,27 +278,12 @@ static enum usbd_request_return_codes hid_control_request(usbd_device *dev, stru
 static void hf2_set_config(usbd_device *usbd_dev, uint16_t wValue) {
     LOG("HF2 config");
     (void)wValue;
-    usbd_ep_setup(usbd_dev, HID_IN, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, hf2_data_tx_cb);
-    usbd_ep_setup(usbd_dev, HID_OUT, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, hf2_data_rx_cb);
-    //  We support 2 types of callbacks: Standard and Class.
-    int status = aggregate_register_callback(
-        usbd_dev,
-        CONTROL_CALLBACK_TYPE_STANDARD,
-        CONTROL_CALLBACK_MASK_STANDARD,
-        hid_control_request);        
-	if (status < 0) { debug_println("*** hf2_set_config failed"); debug_flush(); }
-    status = aggregate_register_callback(
-        usbd_dev,
-        CONTROL_CALLBACK_TYPE_CLASS,
-        CONTROL_CALLBACK_MASK_CLASS,
-        hid_control_request);        
-	if (status < 0) { debug_println("*** hf2_set_config failed"); debug_flush(); }
+    usbd_ep_setup(usbd_dev, HF2_IN, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, hf2_data_tx_cb);
+    usbd_ep_setup(usbd_dev, HF2_OUT, USB_ENDPOINT_ATTR_BULK, MAX_USB_PACKET_SIZE, hf2_data_rx_cb);
 }
 
-void hf2_setup(usbd_device *usbd_dev, const uint8_t *hid_report_descriptor0, uint16_t hid_report_descriptor_size0) {
+void hf2_setup(usbd_device *usbd_dev) {
     _usbd_dev = usbd_dev;
-    hid_report_descriptor = hid_report_descriptor0;
-    hid_report_descriptor_size = hid_report_descriptor_size0;
     int status = aggregate_register_config_callback(usbd_dev, hf2_set_config);
     if (status < 0) { debug_println("*** hf2_setup failed"); debug_flush(); }
 }

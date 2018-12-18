@@ -38,7 +38,7 @@
 #define INTF_MSC                1
 #define INTF_COMM               2
 #define INTF_DATA               3
-#define INTF_HID                4
+#define INTF_HF2                4
 #endif  //  ALL_USB_INTERFACES
 
 #ifdef STORAGE_AND_SERIAL_USB_INTERFACE
@@ -54,11 +54,11 @@
 
 //  USB Endpoints.
 #define MSC_OUT                 0x01
-#define HID_OUT                 0x02
+#define HF2_OUT                 0x02
 #define DATA_OUT                0x03
 
 #define MSC_IN                  0x81
-#define HID_IN                  0x82
+#define HF2_IN                  0x82
 #define DATA_IN                 0x83
 #define COMM_IN                 0x84
 
