@@ -125,8 +125,10 @@ static void handle_command() {
     resp->tag = cmd->tag;
     resp->status16 = HF2_STATUS_OK;
 
+#ifdef TODO
     if (timer[TIMER_BL_WAIT] < 10000)
         timer[TIMER_BL_WAIT] = 10000;
+#endif  //  TODO
 
     switch (cmdId) {
     case HF2_CMD_INFO:
@@ -145,10 +147,16 @@ static void handle_command() {
         return;
 
     case HF2_CMD_RESET_INTO_APP:
+        debug_println("resetIntoApp"); debug_flush(); ////
+#ifdef TODO
         resetIntoApp();
+#endif  //  TODO
         break;
     case HF2_CMD_RESET_INTO_BOOTLOADER:
+        debug_println("resetIntoBootloader"); debug_flush(); ////
+#ifdef TODO
         resetIntoBootloader();
+#endif  //  TODO
         break;
     case HF2_CMD_START_FLASH:
         // userspace app should reboot into bootloader on this command; we just ignore it
