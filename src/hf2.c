@@ -236,6 +236,7 @@ static void hf2_data_tx_cb(usbd_device *usbd_dev, uint8_t ep) {
     pokeSend();
 }
 
+#ifdef NOTUSED
 static const uint8_t *hid_report_descriptor;
 static uint16_t hid_report_descriptor_size;
 static const uint8_t set_idle_response[] = { 0, 0 };  //  From microbit
@@ -273,6 +274,7 @@ static enum usbd_request_return_codes hid_control_request(usbd_device *dev, stru
     }
 	return USBD_REQ_NEXT_CALLBACK;
 }
+#endif  //  NOTUSED
 
 /** @brief Setup the endpoints to be bulk & register the callbacks. */
 static void hf2_set_config(usbd_device *usbd_dev, uint16_t wValue) {

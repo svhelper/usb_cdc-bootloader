@@ -76,7 +76,7 @@ enum usb_strings_index {  //  Index of USB strings.  Must sync with above, start
     USB_STRINGS_SERIAL_PORT,
     USB_STRINGS_COMM,
     USB_STRINGS_DATA,
-    USB_STRINGS_HID,
+    USB_STRINGS_HF2,
 };
 
 //  USB Device
@@ -201,8 +201,8 @@ static const struct {
 #endif  //  INTF_COMM
 
 #ifdef INTF_HF2
-//  HID Endpoints
-static const struct usb_endpoint_descriptor hid_endp[] = {{
+//  HF2 Endpoints
+static const struct usb_endpoint_descriptor hf2_endp[] = {{
 	.bLength = USB_DT_ENDPOINT_SIZE,
 	.bDescriptorType = USB_DT_ENDPOINT,
 	.bEndpointAddress = HF2_OUT,
@@ -298,92 +298,92 @@ static const struct usb_interface_descriptor data_iface = {
 #endif  //  INTF_COMM
 
 #ifdef INTF_HF2
-//  HID Interface
-
-//  From https://github.com/Microsoft/uf2-samdx1/blob/master/src/cdc_enumerate.c
-const uint8_t hid_report_descriptor[] = {
-    0x06, 0x97, 0xFF, // usage page vendor 0x97 (usage 0xff97 0x0001)
-    0x09, 0x01,       // usage 1
-    0xA1, 0x01,       // collection - application
-    0x15, 0x00,       // logical min 0
-    0x26, 0xFF, 0x00, // logical max 255
-    0x75, 8,          // report size 8
-    0x95, 64,         // report count 64
-    0x09, 0x01,       // usage 1
-    0x81, 0x02,       // input: data, variable, absolute
-    0x95, 64,         // report count 64
-    0x09, 0x01,       // usage 1
-    0x91, 0x02,       // output: data, variable, absolute
-    0x95, 1,          // report count 1
-    0x09, 0x01,       // usage 1
-    0xB1, 0x02,       // feature: data, variable, absolute
-    0xC0,             // end
-};
+//  HF2 Interface
 
 #ifdef NOTUSED
-const uint8_t hid_report_descriptor[] = {
-	0x05, 0x01, /* USAGE_PAGE (Generic Desktop)         */
-	0x09, 0x02, /* USAGE (Mouse)                        */
-	0xa1, 0x01, /* COLLECTION (Application)             */
-	0x09, 0x01, /*   USAGE (Pointer)                    */
-	0xa1, 0x00, /*   COLLECTION (Physical)              */
-	0x05, 0x09, /*     USAGE_PAGE (Button)              */
-	0x19, 0x01, /*     USAGE_MINIMUM (Button 1)         */
-	0x29, 0x03, /*     USAGE_MAXIMUM (Button 3)         */
-	0x15, 0x00, /*     LOGICAL_MINIMUM (0)              */
-	0x25, 0x01, /*     LOGICAL_MAXIMUM (1)              */
-	0x95, 0x03, /*     REPORT_COUNT (3)                 */
-	0x75, 0x01, /*     REPORT_SIZE (1)                  */
-	0x81, 0x02, /*     INPUT (Data,Var,Abs)             */
-	0x95, 0x01, /*     REPORT_COUNT (1)                 */
-	0x75, 0x05, /*     REPORT_SIZE (5)                  */
-	0x81, 0x01, /*     INPUT (Cnst,Ary,Abs)             */
-	0x05, 0x01, /*     USAGE_PAGE (Generic Desktop)     */
-	0x09, 0x30, /*     USAGE (X)                        */
-	0x09, 0x31, /*     USAGE (Y)                        */
-	0x09, 0x38, /*     USAGE (Wheel)                    */
-	0x15, 0x81, /*     LOGICAL_MINIMUM (-127)           */
-	0x25, 0x7f, /*     LOGICAL_MAXIMUM (127)            */
-	0x75, 0x08, /*     REPORT_SIZE (8)                  */
-	0x95, 0x03, /*     REPORT_COUNT (3)                 */
-	0x81, 0x06, /*     INPUT (Data,Var,Rel)             */
-	0xc0,       /*   END_COLLECTION                     */
-	0x09, 0x3c, /*   USAGE (Motion Wakeup)              */
-	0x05, 0xff, /*   USAGE_PAGE (Vendor Defined Page 1) */
-	0x09, 0x01, /*   USAGE (Vendor Usage 1)             */
-	0x15, 0x00, /*   LOGICAL_MINIMUM (0)                */
-	0x25, 0x01, /*   LOGICAL_MAXIMUM (1)                */
-	0x75, 0x01, /*   REPORT_SIZE (1)                    */
-	0x95, 0x02, /*   REPORT_COUNT (2)                   */
-	0xb1, 0x22, /*   FEATURE (Data,Var,Abs,NPrf)        */
-	0x75, 0x06, /*   REPORT_SIZE (6)                    */
-	0x95, 0x01, /*   REPORT_COUNT (1)                   */
-	0xb1, 0x01, /*   FEATURE (Cnst,Ary,Abs)             */
-	0xc0        /* END_COLLECTION                       */
-};
+    //  From https://github.com/Microsoft/uf2-samdx1/blob/master/src/cdc_enumerate.c
+    const uint8_t hid_report_descriptor[] = {
+        0x06, 0x97, 0xFF, // usage page vendor 0x97 (usage 0xff97 0x0001)
+        0x09, 0x01,       // usage 1
+        0xA1, 0x01,       // collection - application
+        0x15, 0x00,       // logical min 0
+        0x26, 0xFF, 0x00, // logical max 255
+        0x75, 8,          // report size 8
+        0x95, 64,         // report count 64
+        0x09, 0x01,       // usage 1
+        0x81, 0x02,       // input: data, variable, absolute
+        0x95, 64,         // report count 64
+        0x09, 0x01,       // usage 1
+        0x91, 0x02,       // output: data, variable, absolute
+        0x95, 1,          // report count 1
+        0x09, 0x01,       // usage 1
+        0xB1, 0x02,       // feature: data, variable, absolute
+        0xC0,             // end
+    };
+
+    const uint8_t hid_report_descriptor[] = {
+        0x05, 0x01, /* USAGE_PAGE (Generic Desktop)         */
+        0x09, 0x02, /* USAGE (Mouse)                        */
+        0xa1, 0x01, /* COLLECTION (Application)             */
+        0x09, 0x01, /*   USAGE (Pointer)                    */
+        0xa1, 0x00, /*   COLLECTION (Physical)              */
+        0x05, 0x09, /*     USAGE_PAGE (Button)              */
+        0x19, 0x01, /*     USAGE_MINIMUM (Button 1)         */
+        0x29, 0x03, /*     USAGE_MAXIMUM (Button 3)         */
+        0x15, 0x00, /*     LOGICAL_MINIMUM (0)              */
+        0x25, 0x01, /*     LOGICAL_MAXIMUM (1)              */
+        0x95, 0x03, /*     REPORT_COUNT (3)                 */
+        0x75, 0x01, /*     REPORT_SIZE (1)                  */
+        0x81, 0x02, /*     INPUT (Data,Var,Abs)             */
+        0x95, 0x01, /*     REPORT_COUNT (1)                 */
+        0x75, 0x05, /*     REPORT_SIZE (5)                  */
+        0x81, 0x01, /*     INPUT (Cnst,Ary,Abs)             */
+        0x05, 0x01, /*     USAGE_PAGE (Generic Desktop)     */
+        0x09, 0x30, /*     USAGE (X)                        */
+        0x09, 0x31, /*     USAGE (Y)                        */
+        0x09, 0x38, /*     USAGE (Wheel)                    */
+        0x15, 0x81, /*     LOGICAL_MINIMUM (-127)           */
+        0x25, 0x7f, /*     LOGICAL_MAXIMUM (127)            */
+        0x75, 0x08, /*     REPORT_SIZE (8)                  */
+        0x95, 0x03, /*     REPORT_COUNT (3)                 */
+        0x81, 0x06, /*     INPUT (Data,Var,Rel)             */
+        0xc0,       /*   END_COLLECTION                     */
+        0x09, 0x3c, /*   USAGE (Motion Wakeup)              */
+        0x05, 0xff, /*   USAGE_PAGE (Vendor Defined Page 1) */
+        0x09, 0x01, /*   USAGE (Vendor Usage 1)             */
+        0x15, 0x00, /*   LOGICAL_MINIMUM (0)                */
+        0x25, 0x01, /*   LOGICAL_MAXIMUM (1)                */
+        0x75, 0x01, /*   REPORT_SIZE (1)                    */
+        0x95, 0x02, /*   REPORT_COUNT (2)                   */
+        0xb1, 0x22, /*   FEATURE (Data,Var,Abs,NPrf)        */
+        0x75, 0x06, /*   REPORT_SIZE (6)                    */
+        0x95, 0x01, /*   REPORT_COUNT (1)                   */
+        0xb1, 0x01, /*   FEATURE (Cnst,Ary,Abs)             */
+        0xc0        /* END_COLLECTION                       */
+    };
+
+    static const struct {
+        struct usb_hid_descriptor hid_descriptor;
+        struct {
+            uint8_t bReportDescriptorType;
+            uint16_t wDescriptorLength;
+        } __attribute__((packed)) hid_report;
+    } __attribute__((packed)) hid_function = {
+        .hid_descriptor = {
+            .bLength = sizeof(hid_function),
+            .bDescriptorType = USB_DT_HID,
+            .bcdHID = 0x0100,
+            .bCountryCode = 0,
+            .bNumDescriptors = 1,
+        },
+        .hid_report = {
+            .bReportDescriptorType = USB_DT_REPORT,
+            .wDescriptorLength = sizeof(hid_report_descriptor),
+        }
+    };
 #endif  //  NOTUSED
 
-static const struct {
-	struct usb_hid_descriptor hid_descriptor;
-	struct {
-		uint8_t bReportDescriptorType;
-		uint16_t wDescriptorLength;
-	} __attribute__((packed)) hid_report;
-} __attribute__((packed)) hid_function = {
-	.hid_descriptor = {
-		.bLength = sizeof(hid_function),
-		.bDescriptorType = USB_DT_HID,
-		.bcdHID = 0x0100,
-		.bCountryCode = 0,
-		.bNumDescriptors = 1,
-	},
-	.hid_report = {
-		.bReportDescriptorType = USB_DT_REPORT,
-		.wDescriptorLength = sizeof(hid_report_descriptor),
-	}
-};
-
-static const struct usb_interface_descriptor hid_iface = {
+static const struct usb_interface_descriptor hf2_iface = {
 	.bLength = USB_DT_INTERFACE_SIZE,
 	.bDescriptorType = USB_DT_INTERFACE,
 	.bInterfaceNumber = INTF_HF2,
@@ -392,10 +392,8 @@ static const struct usb_interface_descriptor hid_iface = {
 	.bInterfaceClass = 0xFF,  //  Must be 0xFF for pxt-maker
 	.bInterfaceSubClass = 42, //  Must be 42 for pxt-maker
 	.bInterfaceProtocol = 1,  //  Previously 1
-	.iInterface = USB_STRINGS_HID,     //  Name of HID
-	.endpoint = hid_endp,
-	//.extra = &hid_function,
-	//.extralen = sizeof(hid_function),
+	.iInterface = USB_STRINGS_HF2, //  Name of HF2
+	.endpoint = hf2_endp,
 };
 
 #endif  //  INTF_HF2
@@ -430,7 +428,7 @@ static const struct usb_interface interfaces[] = {
 #ifdef INTF_HF2
     {
         .num_altsetting = 1,
-        .altsetting = &hid_iface,   //  Index must sync with INTF_HF2.
+        .altsetting = &hf2_iface,   //  Index must sync with INTF_HF2.
     }, 	
 #endif  //  INTF_HF2
 };
@@ -453,8 +451,10 @@ static const struct usb_config_descriptor config = {
 static const struct usb_device_capability_descriptor* capabilities[] = {
 	(const struct usb_device_capability_descriptor*) 
         &webusb_platform_capability_descriptor,
+#ifdef MSOS20_FUNCTION_COUNT        
 	(const struct usb_device_capability_descriptor*) 
         &microsoft_platform_capability_descriptor,
+#endif  //  MSOS20_FUNCTION_COUNT
 };
 
 //  BOS Descriptor for WebUSB and Microsoft Platform

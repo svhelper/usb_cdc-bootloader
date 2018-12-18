@@ -20,6 +20,7 @@
 #define WINUSB_DEFS_H_INCLUDED
 
 #include <stdint.h>
+#include "usb_conf.h"  //  For MSOS20_FUNCTION_COUNT
 
 //  Microsoft OS 2.0 descriptors.  See http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
 
@@ -104,8 +105,20 @@ struct msos20_feature_reg_property_struct {
 } __attribute__((packed));
 #define MSOS20_FEATURE_REG_PROPERTY_SIZE sizeof(struct msos20_feature_reg_property_struct)  //  Should be 0x84 (132)
 
+//  Function set: One interface is linked to one function
+struct msos20_subset_function_struct {
+	//  Function subset header: Which USB Interface this descriptor will apply.
+	struct msos20_subset_header_function_struct      subset_header_function;
+
+	//  Compatible ID descriptor
+	struct msos20_feature_compatible_id_struct       feature_compatible_id; 
+
+	//  Registry property descriptor: The properties that will be written to Windows registry.
+	struct msos20_feature_reg_property_struct        feature_reg_property;
+} __attribute__((packed));
+
 //  Should be 0xA0 (160). Size of entire function subset including header.
-#define MSOS20_SUBSET_FUNCTION_SIZE (MSOS20_SUBSET_HEADER_FUNCTION_SIZE + MSOS20_FEATURE_COMPATIBLE_ID_SIZE + MSOS20_FEATURE_REG_PROPERTY_SIZE)
+#define MSOS20_SUBSET_FUNCTION_SIZE sizeof(struct msos20_subset_function_struct)
 
 //  Should be 0xA8 (168). Size of entire configuration subset including header.
 #define MSOS20_SUBSET_CONFIGURATION_SIZE (MSOS20_SUBSET_FUNCTION_SIZE + MSOS20_SUBSET_HEADER_CONFIGURATION_SIZE)
@@ -118,14 +131,8 @@ struct msos20_descriptor_set_struct {
 	//  Configuration subset header: Which USB Configuration this descriptor will apply.
 	struct msos20_subset_header_configuration_struct subset_header_configuration;
 
-	//  Function subset header: Which USB Interface this descriptor will apply.
-	struct msos20_subset_header_function_struct      subset_header_function;
-
-	//  Compatible ID descriptor
-	struct msos20_feature_compatible_id_struct       feature_compatible_id; 
-
-	//  Registry property descriptor: The properties that will be written to Windows registry.
-	struct msos20_feature_reg_property_struct        feature_reg_property;
+	//  Function sets: One interface is linked to one function
+	struct msos20_subset_function_struct             subset_functions[MSOS20_FUNCTION_COUNT];
 } __attribute__((packed));
 #define MSOS20_DESCRIPTOR_SET_SIZE sizeof(struct msos20_descriptor_set_struct)  //  Should be 0xB2 (178)
 
@@ -193,5 +200,7 @@ struct winusb_extended_properties_descriptor {
 	struct winusb_extended_properties_descriptor_header header;
 	struct winusb_extended_properties_feature_descriptor features[];
 } __attribute__((packed));
+
+extern const struct microsoft_platform_descriptor microsoft_platform_capability_descriptor;
 
 #endif

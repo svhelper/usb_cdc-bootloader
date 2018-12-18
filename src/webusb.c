@@ -56,19 +56,6 @@ const struct webusb_platform_descriptor webusb_platform_capability_descriptor_no
 	.iLandingPage = 0
 };
 
-//  Microsoft Platform Descriptor.  From http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
-const struct microsoft_platform_descriptor microsoft_platform_capability_descriptor = {
-	.bLength = MICROSOFT_PLATFORM_DESCRIPTOR_SIZE,
-	.bDescriptorType = USB_DT_DEVICE_CAPABILITY,
-	.bDevCapabilityType = USB_DC_PLATFORM,
-	.bReserved = 0,
-	.platformCapabilityUUID = MSOS20_PLATFORM_UUID,
-	.dwWindowsVersion = MSOS20_WINDOWS_VERSION,  //  Windows version e.g. 0x00, 0x00, 0x03, 0x06
-	.wMSOSDescriptorSetTotalLength = MSOS20_DESCRIPTOR_SET_SIZE, //  Descriptor set length e.g. 0xb2
-	.bMS_VendorCode = WINUSB_MS_VENDOR_CODE,     //  Vendor code e.g. 0x21.  Host will call WinUSB to fetch descriptor.
-	.bAltEnumCode = 0  //  Alternate enumeration code e.g. 0x00
-};
-
 static const char* webusb_https_url;
 
 static int webusb_control_vendor_request(usbd_device *usbd_dev,

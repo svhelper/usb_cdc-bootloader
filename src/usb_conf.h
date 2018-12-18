@@ -65,6 +65,14 @@
 #define USB_DESCRIPTOR_TYPE(w)  (w >> 8)
 #define USB_DESCRIPTOR_INDEX(w) (w & 0xFF)
 
+#if defined(INTF_DFU) && defined(INTF_HF2)
+#define MSOS20_FUNCTION_COUNT 2
+#elif defined(INTF_DFU)
+#define MSOS20_FUNCTION_COUNT 1
+#elif defined(INTF_HF2)
+#define MSOS20_FUNCTION_COUNT 1
+#endif
+
 extern void usb_set_serial_number(const char* serial);
 extern usbd_device* usb_setup(void);
 extern void msc_setup(usbd_device* usbd_dev0);
