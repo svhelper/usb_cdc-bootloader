@@ -65,8 +65,10 @@ static void pokeSend() {
     }
     cm_enable_interrupts();
 
-    if (sendIt)
+    if (sendIt) {
+        debug_print("hid >> "); debug_print_unsigned(sizeof(buf)); debug_println(""); debug_flush(); ////
         usbd_ep_write_packet(_usbd_dev, HID_IN, buf, sizeof(buf));
+    }
 }
 
 static void send_hf2_response(int size) {
@@ -200,6 +202,7 @@ static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
     len = usbd_ep_read_packet(usbd_dev, ep, buf, 64);
 
     // DMESG("HF2 read: %d", len);
+    debug_print("hid << "); debug_print_unsigned(len); debug_println(""); debug_flush(); ////
     if (len <= 0)
         return;
 
