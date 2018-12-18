@@ -299,6 +299,28 @@ static const struct usb_interface_descriptor data_iface = {
 
 #ifdef INTF_HID
 //  HID Interface
+
+//  From https://github.com/Microsoft/uf2-samdx1/blob/master/src/cdc_enumerate.c
+const uint8_t hid_report_descriptor[] = {
+    0x06, 0x97, 0xFF, // usage page vendor 0x97 (usage 0xff97 0x0001)
+    0x09, 0x01,       // usage 1
+    0xA1, 0x01,       // collection - application
+    0x15, 0x00,       // logical min 0
+    0x26, 0xFF, 0x00, // logical max 255
+    0x75, 8,          // report size 8
+    0x95, 64,         // report count 64
+    0x09, 0x01,       // usage 1
+    0x81, 0x02,       // input: data, variable, absolute
+    0x95, 64,         // report count 64
+    0x09, 0x01,       // usage 1
+    0x91, 0x02,       // output: data, variable, absolute
+    0x95, 1,          // report count 1
+    0x09, 0x01,       // usage 1
+    0xB1, 0x02,       // feature: data, variable, absolute
+    0xC0,             // end
+};
+
+#ifdef NOTUSED
 const uint8_t hid_report_descriptor[] = {
 	0x05, 0x01, /* USAGE_PAGE (Generic Desktop)         */
 	0x09, 0x02, /* USAGE (Mouse)                        */
@@ -339,6 +361,7 @@ const uint8_t hid_report_descriptor[] = {
 	0xb1, 0x01, /*   FEATURE (Cnst,Ary,Abs)             */
 	0xc0        /* END_COLLECTION                       */
 };
+#endif  //  NOTUSED
 
 static const struct {
 	struct usb_hid_descriptor hid_descriptor;
@@ -374,6 +397,7 @@ static const struct usb_interface_descriptor hid_iface = {
 	.extra = &hid_function,
 	.extralen = sizeof(hid_function),
 };
+
 #endif  //  INTF_HID
 
 //  All USB Interfaces
