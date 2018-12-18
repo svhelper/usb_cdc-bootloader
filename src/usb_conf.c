@@ -321,6 +321,12 @@ static const struct usb_interface_descriptor hf2_iface = {
 
 //  All USB Interfaces
 static const struct usb_interface interfaces[] = {
+#ifdef INTF_HF2
+    {
+        .num_altsetting = 1,
+        .altsetting = &hf2_iface,   //  Index must sync with INTF_HF2.
+    }, 	
+#endif  //  INTF_HF2
 #ifdef INTF_DFU    
     {
         .num_altsetting = 1,
@@ -346,12 +352,6 @@ static const struct usb_interface interfaces[] = {
         .altsetting = &data_iface,  //  Index must sync with INTF_DATA.
     },
 #endif  //  INTF_COMM
-#ifdef INTF_HF2
-    {
-        .num_altsetting = 1,
-        .altsetting = &hf2_iface,   //  Index must sync with INTF_HF2.
-    }, 	
-#endif  //  INTF_HF2
 };
 
 //  USB Config
