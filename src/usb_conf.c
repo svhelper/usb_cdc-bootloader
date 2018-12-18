@@ -417,7 +417,12 @@ usbd_device* usb_setup(void) {
     //  Define USB 2.1 BOS interface used by WebUSB.
 	usb21_setup(usbd_dev, &bos_descriptor);
 	webusb_setup(usbd_dev, origin_url);
-	winusb_setup(usbd_dev, INTF_DFU);  //  Previously INTF_DFU
+#ifdef INTF_HF2
+	winusb_setup(usbd_dev, INTF_HF2);
+#endif  //  INTF_HF2
+#ifdef INTF_DFU
+	winusb_setup(usbd_dev, INTF_DFU);
+#endif  //  INTF_DFU
 #endif  //  USB21_INTERFACE
 
     //  Set the aggregate callback.    
