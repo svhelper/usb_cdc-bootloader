@@ -125,7 +125,6 @@ static void murmur3_core_2(const void *data, uint32_t len, uint32_t *dst) {
 #endif
 
 static void handle_command() {
-    debug_println("handle_command"); debug_flush(); ////
     int tmp;
 
     // one has to be careful dealing with these, as they share memory
@@ -144,12 +143,14 @@ static void handle_command() {
 
     switch (cmdId) {
     case HF2_CMD_INFO:
+        debug_println("hf2 info"); debug_flush(); ////
         tmp = strlen(infoUf2File);
         memcpy(pkt.resp.data8, infoUf2File, tmp);
         send_hf2_response(tmp);
         return;
 
     case HF2_CMD_BININFO:
+        debug_println("hf2 bininfo"); debug_flush(); ////
         resp->bininfo.mode = HF2_MODE_BOOTLOADER;
         resp->bininfo.flash_page_size = 128 * 1024;
         resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / (128 * 1024);
@@ -159,13 +160,13 @@ static void handle_command() {
         return;
 
     case HF2_CMD_RESET_INTO_APP:
-        debug_println("resetIntoApp"); debug_flush(); ////
+        debug_println("hf2 rst app"); debug_flush(); ////
 #ifdef TODO
         resetIntoApp();
 #endif  //  TODO
         break;
     case HF2_CMD_RESET_INTO_BOOTLOADER:
-        debug_println("resetIntoBootloader"); debug_flush(); ////
+        debug_println("hf2 rst boot"); debug_flush(); ////
 #ifdef TODO
         resetIntoBootloader();
 #endif  //  TODO
@@ -173,9 +174,11 @@ static void handle_command() {
     case HF2_CMD_START_FLASH:
         // userspace app should reboot into bootloader on this command; we just ignore it
         // userspace can also call hf2_handover() here
+        debug_println("hf2 start flash"); debug_flush(); ////
         break;
     case HF2_CMD_WRITE_FLASH_PAGE:
         // first send ACK and then start writing, while getting the next packet
+        debug_println("hf2 write flash"); debug_flush(); ////
         checkDataSize(write_flash_page, 256);
         send_hf2_response(0);
         if (VALID_FLASH_ADDR(cmd->write_flash_page.target_addr, 256)) {
@@ -184,6 +187,7 @@ static void handle_command() {
         }
         return;
     case HF2_CMD_READ_WORDS:
+        debug_println("hf2 read words"); debug_flush(); ////
         checkDataSize(read_words, 0);
         tmp = cmd->read_words.num_words;
         memcpy(resp->data32, (void *)cmd->read_words.target_addr, tmp << 2);
@@ -191,6 +195,7 @@ static void handle_command() {
         return;
 #if MURMUR3
     case HF2_CMD_MURMUR3:
+        debug_println("hf2 murmur"); debug_flush(); ////
         checkDataSize(murmur3, 0);
         murmur3_core_2((void *)cmd->murmur3.target_addr, cmd->murmur3.num_words, resp->data32);
         send_hf2_response(8);
@@ -198,6 +203,7 @@ static void handle_command() {
 #endif
     default:
         // command not understood
+        debug_print("hf2 unknown cmd "); debug_print_unsigned(cmdId); debug_println(""); debug_flush(); ////
         resp->status16 = HF2_STATUS_INVALID_CMD;
         break;
     }
