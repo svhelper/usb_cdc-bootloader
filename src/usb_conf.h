@@ -29,9 +29,9 @@
 
 #define USB21_INTERFACE                       //  Enable USB 2.1 with WebUSB and BOS support.
 //  #define ALL_USB_INTERFACES                    //  Enable all USB interfaces.
-#define HF2_USB_INTERFACE                     //  Enable only HF2 interface.  No storage and serial.
-//  #define STORAGE_AND_SERIAL_USB_INTERFACE  //  Enable only storage and serial USB interfaces.  No DFU.
-//  #define SERIAL_USB_INTERFACE              //  Enable only serial USB interface.  No DFU and storage.
+#define HF2_AND_SERIAL_USB_INTERFACE          //  Enable only HF2 and serial USB interfaces.  No storage.
+//  #define STORAGE_AND_SERIAL_USB_INTERFACE  //  Enable only storage and serial USB interfaces.  No HF2.
+//  #define SERIAL_USB_INTERFACE              //  Enable only serial USB interface.  No HF2 and storage.
 
 //  Index of each USB interface.  Must be consecutive and must sync with interfaces[].
 #ifdef ALL_USB_INTERFACES
@@ -41,9 +41,11 @@
 #define INTF_DATA               3
 #endif  //  ALL_USB_INTERFACES
 
-#ifdef HF2_USB_INTERFACE
+#ifdef HF2_AND_SERIAL_USB_INTERFACE
 #define INTF_HF2                0
-#endif  //  HF2_USB_INTERFACE
+#define INTF_COMM               1
+#define INTF_DATA               2
+#endif  //  HF2_AND_SERIAL_USB_INTERFACE
 
 #ifdef STORAGE_AND_SERIAL_USB_INTERFACE
 #define INTF_MSC                0
