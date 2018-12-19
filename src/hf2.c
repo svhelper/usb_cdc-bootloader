@@ -98,7 +98,7 @@ extern const char infoUf2File[];
 
 static void assert(bool assertion, const char *msg) {
     if (assertion) { return; }
-    debug_println(msg); debug_flush();
+    debug_print("*** ERROR: "); debug_println(msg); debug_flush();
 }
 
 #if MURMUR3
@@ -179,11 +179,11 @@ static void handle_command() {
     case HF2_CMD_START_FLASH:
         // userspace app should reboot into bootloader on this command; we just ignore it
         // userspace can also call hf2_handover() here
-        debug_println("hf2 start flash"); // debug_flush(); ////
+        debug_println("hf2 start"); // debug_flush(); ////
         break;
     case HF2_CMD_WRITE_FLASH_PAGE:
         // first send ACK and then start writing, while getting the next packet
-        debug_println("hf2 write flash"); // debug_flush(); ////
+        debug_println("hf2 write"); // debug_flush(); ////
         checkDataSize(write_flash_page, 256);
         send_hf2_response(0);
         if (VALID_FLASH_ADDR(cmd->write_flash_page.target_addr, 256)) {
@@ -192,7 +192,7 @@ static void handle_command() {
         }
         return;
     case HF2_CMD_READ_WORDS:
-        debug_println("hf2 read words"); // debug_flush(); ////
+        debug_println("hf2 read"); // debug_flush(); ////
         checkDataSize(read_words, 0);
         tmp = cmd->read_words.num_words;
         memcpy(resp->data32, (void *)cmd->read_words.target_addr, tmp << 2);
@@ -216,6 +216,7 @@ static void handle_command() {
     send_hf2_response(0);
 }
 
+static const char bad_packet_message[] = "bad packet";
 static uint8_t buf[64];
 
 static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
@@ -228,9 +229,9 @@ static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
 
     uint8_t tag = buf[0];
     // serial packets not allowed when in middle of command packet
-    usb_assert(pkt.size == 0 || !(tag & HF2_FLAG_SERIAL_OUT), "*** ERROR: serial packets not allowed");
+    usb_assert(pkt.size == 0 || !(tag & HF2_FLAG_SERIAL_OUT), bad_packet_message);
     int size = tag & HF2_SIZE_MASK;
-    usb_assert(pkt.size + size <= (int)sizeof(pkt.buf), "*** ERROR: serial packets not allowed");
+    usb_assert(pkt.size + size <= (int)sizeof(pkt.buf), bad_packet_message);
     memcpy(pkt.buf + pkt.size, buf + 1, size);
     pkt.size += size;
     tag &= HF2_FLAG_MASK;
