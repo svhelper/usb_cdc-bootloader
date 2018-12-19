@@ -16,6 +16,12 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+
+/* To enable MakeCode logging, browse to visualbluepill.github.io, open Chrome console and enter:
+pxt.HF2.enableLog()
+pxt.aiTrackEvent=console.log
+pxt.options.debug=true
+*/
 #include <string.h>
 #include <libopencm3/cm3/vector.h>
 #include <libopencm3/usb/usbd.h>

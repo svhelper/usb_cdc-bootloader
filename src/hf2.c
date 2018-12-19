@@ -76,7 +76,7 @@ static void pokeSend() {
 
     if (sendIt) {
         uint16_t len = sizeof(buf);
-        dump_buffer("hf2pkt >>", buf, len); // debug_flush(); ////
+        // dump_buffer("hf2pkt >>", buf, len); // debug_flush(); ////
         usbd_ep_write_packet(_usbd_dev, HF2_IN, buf, len);
     }
 }
@@ -85,7 +85,7 @@ static void send_hf2_response(int size) {
     dataToSend = pkt.buf;
     dataToSendFlag = HF2_FLAG_CMDPKT_LAST;
     dataToSendLength = 4 + size;
-    dump_buffer("hf2 >>", dataToSend, size); // debug_flush(); ////
+    // dump_buffer("hf2 >>", dataToSend, size); // debug_flush(); ////
     pokeSend();
 }
 
@@ -228,7 +228,7 @@ static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
 
     // DMESG("HF2 read: %d", len);
     debug_print("hf2 << tag "); debug_printhex(buf[0]); 
-    dump_buffer(",", buf, len); // debug_flush(); ////
+    // dump_buffer(",", buf, len); // debug_flush(); ////
     
     if (len <= 0) return;
 
@@ -290,13 +290,9 @@ hf2 >> 64 / 58 5c a4 00 00 01 00 00 00 00 04 00 00 00 01 00 00 10 04 00 00 72 10
 00 - statusinfo
 01 00 00 00 - mode: bootloader
 00 04 00 00 - flash_page_size: 1024 bytes
-00 01 00 00 - flash_num_pages: 255
-40 04 00 00 - 
-72 10 e2 5e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-
-58 e4 16 00 00 01 00 00 00 00 04 00 00 00 01 00 00 40 04 00
-00 72 10 e2 5e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 01 00 00 - flash_num_pages: 256
+40 04 00 00 - max_message_size: 1024 + 64 = 1088
+72 10 e2 5e - UF2_FAMILY 0x5ee21072
 
 struct HF2_BININFO_Result {
     uint32_t mode;
