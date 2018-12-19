@@ -1,9 +1,13 @@
 # bluepill-bootloader
 bluepill-bootloader is an open-source MakeCode UF2 USB bootloader for STM32 Blue Pill devices.
 
+_This is the HF2 branch that supports HF2 flashing over WebUSB by visualbluepill.github.io. USB Serial is supported but not USB Storage and USB DFU._ 
+
 See https://medium.com/@ly.lee/stm32-blue-pill-usb-bootloader-how-i-fixed-the-usb-storage-serial-dfu-and-webusb-interfaces-36d7fe245b5c
 
 https://medium.com/@ly.lee/work-in-progress-stm32-blue-pill-visual-programming-with-makecode-codal-and-libopencm3-422d308f252e
+
+Original bootloader implementation from https://github.com/mmoskal/uf2-stm32f103
 
 WebUSB and WinUSB implementation from https://github.com/trezor/trezor-mcu
 
@@ -15,23 +19,25 @@ HF2 implementation from https://github.com/mmoskal/uf2-stm32f
 
 ## Build instructions
 
+1. Clone this branch with git
 
-    git clone --recurse-submodules https://github.com/lupyuen/bluepill-bootloader
-    cd bluepill-bootloader
+1. Launch Visual Studio Code
 
-Launch Visual Studio Code.
+1. Install the PlatformIO extension for Visual Studio Code
 
-Install the PlatformIO extension for Visual Studio Code.
+1. Open the workspace file in the above folder
 
-Open the workspace file in the above folder.
+1. Build the bootloader
 
-Build the bootloader and firmware.
+1. Flash the bootloader to Blue Pill via ST-Link v2
 
-Flash the bootloader to Blue Pill via ST-Link 2.
+1. Browse to visualbluepill.github.io
 
-Copy firmware.uf2 to the USB drive exposed by the bootloader.
+1. Create a new program
 
-More details: https://github.com/mmoskal/uf2-stm32f103/blob/master/README.md
+1. At top right, click `Pair Device`. Select `DAPBoot DFU Bootloader`
+
+1. Click `Download` to flash
 
 ## Licensing
 All contents of the project are licensed under terms that are compatible with the terms of the GNU Lesser General Public License version 3.
