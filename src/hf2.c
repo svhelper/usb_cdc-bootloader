@@ -75,7 +75,7 @@ static void pokeSend() {
 
     if (sendIt) {
         uint16_t len = sizeof(buf);
-        dump_buffer("hf2 >> ", buf, len); debug_flush(); ////
+        dump_buffer("hf2 >>", buf, len); debug_flush(); ////
         usbd_ep_write_packet(_usbd_dev, HF2_IN, buf, len);
     }
 }
@@ -153,7 +153,8 @@ static void handle_command() {
         debug_println("hf2 bininfo"); debug_flush(); ////
         resp->bininfo.mode = HF2_MODE_BOOTLOADER;
         resp->bininfo.flash_page_size = 128 * 1024;
-        resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / (128 * 1024);
+        //// TODO: resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / (128 * 1024);
+        resp->bininfo.flash_num_pages = (256 * 1024) / (128 * 1024);  //// TODO: 256 KB
         resp->bininfo.max_message_size = sizeof(pkt.buf);
         resp->bininfo.uf2_family = UF2_FAMILY;
         send_hf2_response(sizeof(resp->bininfo));
