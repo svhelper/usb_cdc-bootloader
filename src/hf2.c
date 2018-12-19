@@ -76,7 +76,7 @@ static void pokeSend() {
 
     if (sendIt) {
         uint16_t len = sizeof(buf);
-        dump_buffer("hf2pkt >>", buf, len); debug_flush(); ////
+        dump_buffer("hf2pkt >>", buf, len); // debug_flush(); ////
         usbd_ep_write_packet(_usbd_dev, HF2_IN, buf, len);
     }
 }
@@ -85,7 +85,7 @@ static void send_hf2_response(int size) {
     dataToSend = pkt.buf;
     dataToSendFlag = HF2_FLAG_CMDPKT_LAST;
     dataToSendLength = 4 + size;
-    dump_buffer("hf2 >>", dataToSend, size); debug_flush(); ////
+    dump_buffer("hf2 >>", dataToSend, size); // debug_flush(); ////
     pokeSend();
 }
 
@@ -145,14 +145,14 @@ static void handle_command() {
 
     switch (cmdId) {
     case HF2_CMD_INFO:
-        debug_println("hf2 info"); debug_flush(); ////
+        debug_println("hf2 info"); // debug_flush(); ////
         tmp = strlen(infoUf2File);
         memcpy(pkt.resp.data8, infoUf2File, tmp);
         send_hf2_response(tmp);
         return;
 
     case HF2_CMD_BININFO:
-        debug_println("hf2 bininfo"); debug_flush(); ////
+        debug_println("hf2 bininfo"); // debug_flush(); ////
         resp->bininfo.mode = HF2_MODE_BOOTLOADER;
 
         ////resp->bininfo.flash_page_size = 128 * 1024;
@@ -162,17 +162,17 @@ static void handle_command() {
 
         resp->bininfo.max_message_size = sizeof(pkt.buf);
         resp->bininfo.uf2_family = UF2_FAMILY;
-        send_hf2_response(sizeof(struct HF2_BININFO_Result));  //  Previously sizeof(resp->bininfo), which gives incorrect size 20
+        send_hf2_response(sizeof(resp->bininfo));
         return;
 
     case HF2_CMD_RESET_INTO_APP:
-        debug_println("hf2 rst app"); debug_flush(); ////
+        debug_println("hf2 rst app"); // debug_flush(); ////
 #ifdef TODO
         resetIntoApp();
 #endif  //  TODO
         break;
     case HF2_CMD_RESET_INTO_BOOTLOADER:
-        debug_println("hf2 rst boot"); debug_flush(); ////
+        debug_println("hf2 rst boot"); // debug_flush(); ////
 #ifdef TODO
         resetIntoBootloader();
 #endif  //  TODO
@@ -180,11 +180,11 @@ static void handle_command() {
     case HF2_CMD_START_FLASH:
         // userspace app should reboot into bootloader on this command; we just ignore it
         // userspace can also call hf2_handover() here
-        debug_println("hf2 start flash"); debug_flush(); ////
+        debug_println("hf2 start flash"); // debug_flush(); ////
         break;
     case HF2_CMD_WRITE_FLASH_PAGE:
         // first send ACK and then start writing, while getting the next packet
-        debug_println("hf2 write flash"); debug_flush(); ////
+        debug_println("hf2 write flash"); // debug_flush(); ////
         checkDataSize(write_flash_page, 256);
         send_hf2_response(0);
         if (VALID_FLASH_ADDR(cmd->write_flash_page.target_addr, 256)) {
@@ -193,7 +193,7 @@ static void handle_command() {
         }
         return;
     case HF2_CMD_READ_WORDS:
-        debug_println("hf2 read words"); debug_flush(); ////
+        debug_println("hf2 read words"); // debug_flush(); ////
         checkDataSize(read_words, 0);
         tmp = cmd->read_words.num_words;
         memcpy(resp->data32, (void *)cmd->read_words.target_addr, tmp << 2);
@@ -201,7 +201,7 @@ static void handle_command() {
         return;
 #if MURMUR3
     case HF2_CMD_MURMUR3:
-        debug_println("hf2 murmur"); debug_flush(); ////
+        debug_println("hf2 murmur"); // debug_flush(); ////
         checkDataSize(murmur3, 0);
         murmur3_core_2((void *)cmd->murmur3.target_addr, cmd->murmur3.num_words, resp->data32);
         send_hf2_response(8);
@@ -209,7 +209,7 @@ static void handle_command() {
 #endif
     default:
         // command not understood
-        debug_print("hf2 unknown cmd "); debug_print_unsigned(cmdId); debug_println(""); debug_flush(); ////
+        debug_print("hf2 unknown cmd "); debug_print_unsigned(cmdId); debug_println(""); // debug_flush(); ////
         resp->status16 = HF2_STATUS_INVALID_CMD;
         break;
     }
@@ -221,14 +221,14 @@ static uint8_t buf[64];
 
 static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
     debug_print("hf2 << ep "); debug_printhex(ep); 
-    debug_println(""); debug_flush(); ////
+    debug_println(""); // debug_flush(); ////
 
     int len;
     len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
 
     // DMESG("HF2 read: %d", len);
     debug_print("hf2 << tag "); debug_printhex(buf[0]); 
-    dump_buffer(",", buf, len); debug_flush(); ////
+    dump_buffer(",", buf, len); // debug_flush(); ////
     
     if (len <= 0) return;
 

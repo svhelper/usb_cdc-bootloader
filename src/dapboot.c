@@ -116,6 +116,7 @@ int main(void) {
                     debug_println("target_manifest_app");  debug_flush();
                     target_manifest_app();
                 }
+                debug_flush();  //  Must flush here.  Arm Semihosting logging will interfere with USB processing.
             }
 
             usbd_poll(usbd_dev);
