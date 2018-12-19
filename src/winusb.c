@@ -77,7 +77,7 @@ static struct msos20_descriptor_set_struct msos20_descriptor_set = {
 		},
 		//  Function subsets: One interface is linked to one function
 		.subset_functions = {
-	#ifdef NOTUSED_INTF_DFU ////
+	#ifdef INTF_DFU //// DFU doesn't work together with HF2
 		//  DFU Interface Function subset header: Which USB Interface this descriptor will apply.
 		{
 			.subset_header_function = {
@@ -139,14 +139,14 @@ static struct msos20_descriptor_set_struct msos20_descriptor_set = {
 				.wPropertyNameLength = MSOS20_PROPERTY_NAME_LENGTH,  //  Length of property name
 				.propertyName        = PROPERTY_NAME,                //  Property name: DeviceInterfaceGUIDs
 				.wPropertyDataLength = MSOS20_PROPERTY_DATA_LENGTH,  //  Length of property data		
-				.propertyData = {  // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA227}
+				.propertyData = {  // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA228}
 					'{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
 					'8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
 					'B', 0x00, '2', 0x00, '-', 0x00, '4', 0x00, '4', 0x00, '8', 0x00,
 					'6', 0x00, '-', 0x00, '8', 0x00, '5', 0x00, '0', 0x00, '1', 0x00,
 					'-', 0x00, 'B', 0x00, '6', 0x00, '1', 0x00, '4', 0x00, '5', 0x00,
 					'B', 0x00, '5', 0x00, 'B', 0x00, 'A', 0x00, '2', 0x00, '2', 0x00,
-					'7', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
+					'8', 0x00, '}', 0x00, 0x00, 0x00, 0x00, 0x00
 				}
 			}
 		},

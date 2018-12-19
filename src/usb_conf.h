@@ -28,7 +28,8 @@
 #define MAX_USB_PACKET_SIZE     64   //  Previously 32
 
 #define USB21_INTERFACE                       //  Enable USB 2.1 with WebUSB and BOS support.
-#define ALL_USB_INTERFACES                    //  Enable all USB interfaces.
+//  #define ALL_USB_INTERFACES                    //  Enable all USB interfaces.
+#define HF2_USB_INTERFACE                     //  Enable only HF2 interface.  No storage and serial.
 //  #define STORAGE_AND_SERIAL_USB_INTERFACE  //  Enable only storage and serial USB interfaces.  No DFU.
 //  #define SERIAL_USB_INTERFACE              //  Enable only serial USB interface.  No DFU and storage.
 
