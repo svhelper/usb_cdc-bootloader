@@ -155,11 +155,10 @@ static void handle_command() {
     case HF2_CMD_BININFO:
         debug_println("hf2 bininfo"); // debug_flush(); ////
         resp->bininfo.mode = HF2_MODE_BOOTLOADER;
-
-        ////resp->bininfo.flash_page_size = 128 * 1024;
-        resp->bininfo.flash_page_size = HF2_PAGE_SIZE;
-        //// TODO: resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / (128 * 1024);
-        resp->bininfo.flash_num_pages = (256 * 1024) / HF2_PAGE_SIZE;  //// TODO: 256 KB
+        resp->bininfo.flash_page_size = HF2_PAGE_SIZE;  //  Previously 128 * 1024
+        //// TODO: 
+        resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / HF2_PAGE_SIZE;
+        ////resp->bininfo.flash_num_pages = (256 * 1024) / HF2_PAGE_SIZE;  //// TODO: 256 KB
 
         resp->bininfo.max_message_size = sizeof(pkt.buf);
         resp->bininfo.uf2_family = UF2_FAMILY;
