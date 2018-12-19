@@ -27,7 +27,7 @@
 #define VALID_FLASH_ADDR(addr, sz) (USER_FLASH_START <= (addr) && (addr) + (sz) <= USER_FLASH_END)
 ////#define HF2_BUF_SIZE 1024 + 16
 #define HF2_BUF_SIZE FLASH_PAGE_SIZE + 64 //// TODO: devices will typically limit it to the native flash page size + 64 bytes
-#define HF2_PAGE_SIZE 256  //  MakeCode fails to flash if page size is not the same as file page size.
+#define HF2_PAGE_SIZE 256  //  MakeCode fails to flash if page size is not the same as file page size: U.assert(b.payloadSize == this.pageSize)
 #define usb_assert assert
 #define LOG(s) debug_println(s)
 
