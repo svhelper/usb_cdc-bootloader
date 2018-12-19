@@ -85,7 +85,7 @@ static void send_hf2_response(int size) {
     dataToSend = pkt.buf;
     dataToSendFlag = HF2_FLAG_CMDPKT_LAST;
     dataToSendLength = 4 + size;
-    // dump_buffer("hf2 >>", dataToSend, size); // debug_flush(); ////
+    dump_buffer("hf2 >>", dataToSend, size); // debug_flush(); ////
     pokeSend();
 }
 

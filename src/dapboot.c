@@ -121,7 +121,7 @@ int main(void) {
                     debug_println("target_manifest_app");  debug_flush();
                     target_manifest_app();
                 }
-                if (flushCount++ % 10000 == 0) { debug_flush(); }  //  Must flush here.  Arm Semihosting logging will interfere with USB processing.
+                if (flushCount++ % 50000 == 0) { debug_flush(); }  //  Must flush here.  Arm Semihosting logging will interfere with USB processing.
             }
             usbd_poll(usbd_dev);
         }
