@@ -107,6 +107,7 @@ int main(void) {
         usbd_device* usbd_dev = usb_setup();
         debug_println("usbd polling...");  debug_flush();  ////
         uint32_t cycleCount = 0;        
+        uint32_t flushCount = 1;
         while (1) {
             cycleCount++;
             if (cycleCount >= 700) {
@@ -115,16 +116,15 @@ int main(void) {
 
                 int v = msTimer % 500;
                 target_set_led(v < 50);
-
+#ifdef INTF_MSC
                 ghostfat_1ms();
-
+#endif  //  INTF_MSC
                 if (appValid && !msc_started && msTimer > 1000) {
                     debug_println("target_manifest_app");  debug_flush();
                     target_manifest_app();
                 }
-                debug_flush();  //  Must flush here.  Arm Semihosting logging will interfere with USB processing.
+                if (flushCount++ % 2000 == 0) { debug_flush(); }  //  Must flush here.  Arm Semihosting logging will interfere with USB processing.
             }
-
             usbd_poll(usbd_dev);
         }
     } else {

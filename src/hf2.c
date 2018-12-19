@@ -227,7 +227,7 @@ static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
     len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
 
     // DMESG("HF2 read: %d", len);
-    debug_print("hf2 << tag "); debug_printhex(buf[0]); 
+    debug_print("hf2 << tag "); debug_printhex(buf[0]); debug_println("");
     // dump_buffer(",", buf, len); // debug_flush(); ////
     
     if (len <= 0) return;
