@@ -18,9 +18,7 @@
 
 
 /* To enable MakeCode logging, browse to visualbluepill.github.io, open Chrome console and enter:
-pxt.HF2.enableLog()
-pxt.aiTrackEvent=console.log
-pxt.options.debug=true
+pxt.HF2.enableLog(); pxt.aiTrackEvent=console.log; pxt.options.debug=true
 */
 #include <string.h>
 #include <libopencm3/cm3/vector.h>
@@ -123,7 +121,7 @@ int main(void) {
                     debug_println("target_manifest_app");  debug_flush();
                     target_manifest_app();
                 }
-                if (flushCount++ % 2000 == 0) { debug_flush(); }  //  Must flush here.  Arm Semihosting logging will interfere with USB processing.
+                if (flushCount++ % 10000 == 0) { debug_flush(); }  //  Must flush here.  Arm Semihosting logging will interfere with USB processing.
             }
             usbd_poll(usbd_dev);
         }
