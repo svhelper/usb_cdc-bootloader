@@ -25,8 +25,8 @@
 #define USB_VID                 0x1209
 #define USB_PID                 0xdb42
 #define USB_SERIAL_NUM_LENGTH   24
-#define USB_CONTROL_BUF_SIZE    FLASH_PAGE_SIZE + 64 //// TODO: For HF2, native flash page size (1024) + 64 bytes
-////#define USB_CONTROL_BUF_SIZE    256  //  Previously 1024
+////#define USB_CONTROL_BUF_SIZE    FLASH_PAGE_SIZE + 64 //// TODO: For HF2, native flash page size (1024) + 64 bytes
+#define USB_CONTROL_BUF_SIZE    256  //  Previously 1024
 #define MAX_USB_PACKET_SIZE     64   //  Previously 32
 
 #define USB21_INTERFACE                       //  Enable USB 2.1 with WebUSB and BOS support.

@@ -25,9 +25,9 @@
 #define CONTROL_CALLBACK_MASK_CLASS (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
 
 #define VALID_FLASH_ADDR(addr, sz) (USER_FLASH_START <= (addr) && (addr) + (sz) <= USER_FLASH_END)
-#define HF2_BUF_SIZE USB_CONTROL_BUF_SIZE
 ////#define HF2_BUF_SIZE 1024 + 16
-////#define HF2_BUF_SIZE FLASH_PAGE_SIZE + 64 //// TODO: devices will typically limit it to the native flash page size + 64 bytes
+#define HF2_BUF_SIZE FLASH_PAGE_SIZE + 64 //// TODO: devices will typically limit it to the native flash page size + 64 bytes
+#define HF2_PAGE_SIZE 256  //  MakeCode fails to flash if page size is not the same as file page size.
 #define usb_assert assert
 #define LOG(s) debug_println(s)
 
@@ -157,9 +157,9 @@ static void handle_command() {
         resp->bininfo.mode = HF2_MODE_BOOTLOADER;
 
         ////resp->bininfo.flash_page_size = 128 * 1024;
-        resp->bininfo.flash_page_size = FLASH_PAGE_SIZE;
+        resp->bininfo.flash_page_size = HF2_PAGE_SIZE;
         //// TODO: resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / (128 * 1024);
-        resp->bininfo.flash_num_pages = (256 * 1024) / FLASH_PAGE_SIZE;  //// TODO: 256 KB
+        resp->bininfo.flash_num_pages = (256 * 1024) / HF2_PAGE_SIZE;  //// TODO: 256 KB
 
         resp->bininfo.max_message_size = sizeof(pkt.buf);
         resp->bininfo.uf2_family = UF2_FAMILY;
