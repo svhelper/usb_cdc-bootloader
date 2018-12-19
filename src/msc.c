@@ -29,6 +29,7 @@
 #include <logger.h>
 #include "msc.h"
 #include "usb_conf.h"
+#ifdef INTF_MSC
 
 /* Definitions of Mass Storage Class from:
  *
@@ -980,3 +981,4 @@ usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
 }
 
 /** @} */
+#endif  //  INTF_MSC

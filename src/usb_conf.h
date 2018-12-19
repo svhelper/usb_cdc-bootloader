@@ -40,6 +40,10 @@
 #define INTF_DATA               3
 #endif  //  ALL_USB_INTERFACES
 
+#ifdef HF2_USB_INTERFACE
+#define INTF_HF2                0
+#endif  //  HF2_USB_INTERFACE
+
 #ifdef STORAGE_AND_SERIAL_USB_INTERFACE
 #define INTF_MSC                0
 #define INTF_COMM               1  //  COMM must be immediately before DATA because of Associated Interface Descriptor.

@@ -16,6 +16,7 @@
 #include "uf2hid.h"
 #include "uf2cfg.h"
 #include "hf2.h"
+#ifdef INTF_HF2
 
 #define CONTROL_CALLBACK_TYPE_STANDARD (USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE)
 #define CONTROL_CALLBACK_MASK_STANDARD (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
@@ -47,6 +48,7 @@ uint8_t dataToSendFlag;
 static usbd_device *_usbd_dev;
 
 static void pokeSend() {
+    debug_println("pokeSend"); debug_flush(); ////
     static uint8_t buf[64];
     bool sendIt = false;
 
@@ -253,3 +255,4 @@ void hf2_setup(usbd_device *usbd_dev) {
     int status = aggregate_register_config_callback(usbd_dev, hf2_set_config);
     if (status < 0) { debug_println("*** hf2_setup failed"); debug_flush(); }
 }
+#endif  //  INTF_HF2

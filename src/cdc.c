@@ -4,6 +4,7 @@
 #include <logger.h>
 #include "usb_conf.h"
 #include "cdc.h"
+#ifdef INTF_COMM
 
 #define CONTROL_CALLBACK_TYPE (USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE)
 #define CONTROL_CALLBACK_MASK (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
@@ -135,3 +136,4 @@ void cdc_setup(usbd_device* usbd_dev) {
 	int status = aggregate_register_config_callback(usbd_dev, cdcacm_set_config);
 	if (status < 0) { debug_println("*** cdc_setup failed"); debug_flush(); }
 }
+#endif  //  INTF_COMM
