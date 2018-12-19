@@ -470,7 +470,7 @@ struct control_callback_struct {
     usbd_control_callback cb;
 };
 
-#define MAX_CONTROL_CALLBACK 10
+#define MAX_CONTROL_CALLBACK 10  //  Allow up to 10 aggregated callbacks.
 static struct control_callback_struct control_callback[MAX_CONTROL_CALLBACK];
 static usbd_set_config_callback config_callback[MAX_CONTROL_CALLBACK];
 
@@ -589,6 +589,16 @@ void usb_set_serial_number(const char* serial) {
         strncpy(serial_number, serial, USB_SERIAL_NUM_LENGTH);
         serial_number[USB_SERIAL_NUM_LENGTH] = '\0';
     }
+}
+
+void dump_buffer(const char *msg, const uint8_t *buf, int len) {
+    debug_print(msg); debug_print(" ");
+    debug_print_unsigned(len); debug_print(" / ");
+    int i;
+    for (i = 0; i < len; i++) { 
+        debug_printhex(buf[i]); debug_print(" "); 
+    }
+    debug_println("");
 }
 
 void dump_usb_request(const char *msg, struct usb_setup_data *req) {

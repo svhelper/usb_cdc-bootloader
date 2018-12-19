@@ -48,7 +48,7 @@ uint8_t dataToSendFlag;
 static usbd_device *_usbd_dev;
 
 static void pokeSend() {
-    debug_println("pokeSend"); debug_flush(); ////
+    // debug_println("pokeSend"); debug_flush(); ////
     static uint8_t buf[64];
     bool sendIt = false;
 
@@ -74,8 +74,9 @@ static void pokeSend() {
     cm_enable_interrupts();
 
     if (sendIt) {
-        debug_print("hid >> "); debug_print_unsigned(sizeof(buf)); debug_println(""); debug_flush(); ////
-        usbd_ep_write_packet(_usbd_dev, HF2_IN, buf, sizeof(buf));
+        uint16_t len = sizeof(buf);
+        dump_buffer("hf2 >> ", buf, len); debug_flush(); ////
+        usbd_ep_write_packet(_usbd_dev, HF2_IN, buf, len);
     }
 }
 
@@ -207,15 +208,17 @@ static void handle_command() {
 static uint8_t buf[64];
 
 static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
-    debug_print("hid << ep "); debug_printhex(ep); 
+    debug_print("hf2 << ep "); debug_printhex(ep); 
     debug_println(""); debug_flush(); ////
+
     int len;
-    ////len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
-    len = usbd_ep_read_packet(usbd_dev, HF2_OUT, buf, sizeof(buf));
+    len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
+
     // DMESG("HF2 read: %d", len);
-    debug_print("hid << len "); debug_print_unsigned(len); 
+    debug_print("hf2 << len "); debug_print_unsigned(len); 
     debug_print(", tag "); debug_printhex(buf[0]); 
-    debug_println(""); debug_flush(); ////
+    dump_buffer(",", buf, len); debug_flush(); ////
+    
     if (len <= 0) return;
 
     uint8_t tag = buf[0];
