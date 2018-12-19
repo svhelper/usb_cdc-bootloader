@@ -122,6 +122,7 @@ static void murmur3_core_2(const void *data, uint32_t len, uint32_t *dst) {
 #endif
 
 static void handle_command() {
+    debug_println("handle_command"); debug_flush(); ////
     int tmp;
 
     // one has to be careful dealing with these, as they share memory
@@ -201,16 +202,19 @@ static void handle_command() {
     send_hf2_response(0);
 }
 
+static uint8_t buf[64];
+
 static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
+    debug_print("hid << ep "); debug_printhex(ep); 
+    debug_println(""); debug_flush(); ////
     int len;
-    static uint8_t buf[64];
-
-    len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
-
+    ////len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
+    len = usbd_ep_read_packet(usbd_dev, HF2_OUT, buf, sizeof(buf));
     // DMESG("HF2 read: %d", len);
-    debug_print("hid << "); debug_print_unsigned(len); debug_println(""); debug_flush(); ////
-    if (len <= 0)
-        return;
+    debug_print("hid << len "); debug_print_unsigned(len); 
+    debug_print(", tag "); debug_printhex(buf[0]); 
+    debug_println(""); debug_flush(); ////
+    if (len <= 0) return;
 
     uint8_t tag = buf[0];
     // serial packets not allowed when in middle of command packet
@@ -235,46 +239,6 @@ static void hf2_data_tx_cb(usbd_device *usbd_dev, uint8_t ep) {
     (void)ep;
     pokeSend();
 }
-
-#ifdef NOTUSED
-static const uint8_t *hid_report_descriptor;
-static uint16_t hid_report_descriptor_size;
-static const uint8_t set_idle_response[] = { 0, 0 };  //  From microbit
-
-static enum usbd_request_return_codes hid_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
-	void (**complete)(usbd_device *dev, struct usb_setup_data *req)) { (void)complete; (void)dev;
-    //  Handle HID requests like:
-    //  >> typ 21, req 0a, val 0000, idx 0004, len 0000 (HID report)
-    //  >> typ 81, req 06, val 2200, idx 0004, len 008a (Set Idle)
-    uint8_t desc_type = USB_DESCRIPTOR_TYPE(req->wValue);
-    uint8_t desc_index = USB_DESCRIPTOR_INDEX(req->wValue);
-    //  Is this a standard callback?
-	if ((req->bmRequestType & CONTROL_CALLBACK_MASK_STANDARD) == CONTROL_CALLBACK_TYPE_STANDARD
-        && req->bRequest == USB_REQ_GET_DESCRIPTOR
-        && desc_type == USB_DT_REPORT
-        && desc_index == 0) {
-        //  Handle the HID report descriptor:
-        //  >> typ 81, req 06, val 2200, idx 0004, len 008a
-        dump_usb_request("hidrep", req); debug_flush(); ////
-        *buf = (uint8_t *) hid_report_descriptor;
-        *len = hid_report_descriptor_size;
-        return USBD_REQ_HANDLED;
-
-    //  Is this a class callback?
-    } else if ((req->bmRequestType & CONTROL_CALLBACK_MASK_CLASS) == CONTROL_CALLBACK_TYPE_CLASS
-        && req->bRequest == 0x0a  //  SET_IDLE
-        && req->wIndex == INTF_HF2
-        && req->wValue == 0) {
-        //  Handle the SET_IDLE request:
-        //  >> typ 21, req 0a, val 0000, idx 0004, len 0000
-        dump_usb_request("hididle", req); debug_flush(); ////
-        *buf = (uint8_t *) set_idle_response;
-        *len = sizeof(set_idle_response);
-        return USBD_REQ_HANDLED;
-    }
-	return USBD_REQ_NEXT_CALLBACK;
-}
-#endif  //  NOTUSED
 
 /** @brief Setup the endpoints to be bulk & register the callbacks. */
 static void hf2_set_config(usbd_device *usbd_dev, uint16_t wValue) {
