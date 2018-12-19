@@ -77,7 +77,7 @@ int main(void) {
     }
 #endif  //  SKIP_BOOTLOADER         
     
-    enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
+    enable_debug();       //  Uncomment to allow display of debug messages in development devices via Arm Semihosting. NOTE: This will hang if no Semihosting debugger is attached (e.g. ST Link).
     //  disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
     platform_setup();     //  STM32 platform setup.
     debug_println("----bootloader");  // debug_flush();

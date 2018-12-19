@@ -2,6 +2,8 @@
 #ifndef UF2_HID_H
 #define UF2_HID_H 1
 
+#include <stdint.h>
+
 #define HF2_CMD_BININFO 0x0001
 // no arguments
 #define HF2_MODE_BOOTLOADER 0x01

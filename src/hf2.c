@@ -25,7 +25,8 @@
 #define CONTROL_CALLBACK_MASK_CLASS (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
 
 #define VALID_FLASH_ADDR(addr, sz) (USER_FLASH_START <= (addr) && (addr) + (sz) <= USER_FLASH_END)
-#define HF2_BUF_SIZE 1024 + 16
+////#define HF2_BUF_SIZE 1024 + 16
+#define HF2_BUF_SIZE FLASH_PAGE_SIZE + 64 //// TODO: devices will typically limit it to the native flash page size + 64 bytes
 #define usb_assert assert
 #define LOG(s) debug_println(s)
 
@@ -75,7 +76,7 @@ static void pokeSend() {
 
     if (sendIt) {
         uint16_t len = sizeof(buf);
-        dump_buffer("hf2 >>", buf, len); debug_flush(); ////
+        dump_buffer("hf2pkt >>", buf, len); debug_flush(); ////
         usbd_ep_write_packet(_usbd_dev, HF2_IN, buf, len);
     }
 }
@@ -84,6 +85,7 @@ static void send_hf2_response(int size) {
     dataToSend = pkt.buf;
     dataToSendFlag = HF2_FLAG_CMDPKT_LAST;
     dataToSendLength = 4 + size;
+    dump_buffer("hf2 >>", dataToSend, size); debug_flush(); ////
     pokeSend();
 }
 
@@ -152,15 +154,15 @@ static void handle_command() {
     case HF2_CMD_BININFO:
         debug_println("hf2 bininfo"); debug_flush(); ////
         resp->bininfo.mode = HF2_MODE_BOOTLOADER;
-        
+
         ////resp->bininfo.flash_page_size = 128 * 1024;
         resp->bininfo.flash_page_size = FLASH_PAGE_SIZE;
         //// TODO: resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / (128 * 1024);
-        resp->bininfo.flash_num_pages = (256 * 1024) /FLASH_PAGE_SIZE;  //// TODO: 256 KB
+        resp->bininfo.flash_num_pages = (256 * 1024) / FLASH_PAGE_SIZE;  //// TODO: 256 KB
 
         resp->bininfo.max_message_size = sizeof(pkt.buf);
         resp->bininfo.uf2_family = UF2_FAMILY;
-        send_hf2_response(sizeof(resp->bininfo));
+        send_hf2_response(sizeof(struct HF2_BININFO_Result));  //  Previously sizeof(resp->bininfo), which gives incorrect size 20
         return;
 
     case HF2_CMD_RESET_INTO_APP:
@@ -225,8 +227,7 @@ static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
     len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
 
     // DMESG("HF2 read: %d", len);
-    debug_print("hf2 << len "); debug_print_unsigned(len); 
-    debug_print(", tag "); debug_printhex(buf[0]); 
+    debug_print("hf2 << tag "); debug_printhex(buf[0]); 
     dump_buffer(",", buf, len); debug_flush(); ////
     
     if (len <= 0) return;
@@ -269,3 +270,36 @@ void hf2_setup(usbd_device *usbd_dev) {
     if (status < 0) { debug_println("*** hf2_setup failed"); debug_flush(); }
 }
 #endif  //  INTF_HF2
+
+#ifdef NOTUSED
+
+hf2 << len 64, tag 48, 64 / 48 01 00 00 00 5c a4 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+48 - len 8
+01 00 00 00 - cmd
+5c a4 - tag
+00 00 
+
+hf2 bininfo
+hf2 >> 64 / 58 5c a4 00 00 01 00 00 00 00 04 00 00 00 01 00 00 10 04 00 00 72 10 e2 5e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+58 - len 24
+5c a4 - tag
+00 - status
+00 - statusinfo
+01 00 00 00 - mode: bootloader
+00 04 00 00 - flash_page_size: 1024 bytes
+00 01 00 00 - flash_num_pages: 255
+40 04 00 00 - 
+72 10 e2 5e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+struct HF2_BININFO_Result {
+    uint32_t mode;
+    uint32_t flash_page_size;
+    uint32_t flash_num_pages;
+    uint32_t max_message_size;
+    uint32_t uf2_family;
+};
+
+#endif  //  NOTUSED

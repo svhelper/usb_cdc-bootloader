@@ -210,7 +210,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 	if ((req->bmRequestType & USB_REQ_TYPE_TYPE) != USB_REQ_TYPE_STANDARD) { return USBD_REQ_NEXT_CALLBACK; }
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR && usb_descriptor_type(req->wValue) == USB_DT_STRING) {
 		if (usb_descriptor_index(req->wValue) == WINUSB_EXTRA_STRING_INDEX) {
-			dump_usb_request("winee", req); debug_flush(); ////
+			dump_usb_request("winee", req); // debug_flush(); ////
 			*buf = (uint8_t*) &winusb_string_descriptor;
 			*len = MIN(*len, winusb_string_descriptor.bLength);
 			return USBD_REQ_HANDLED;
@@ -237,7 +237,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		//  Request for the MS OS 2.0 Descriptor referenced by the BOS, e.g.
 		//  >>  typ c0, req 21, val 0000, idx 0007, len 00b2
 		//  See http://download.microsoft.com/download/3/5/6/3563ED4A-F318-4B66-A181-AB1D8F6FD42D/MS_OS_2_0_desc.docx
-		dump_usb_request("windes", req); debug_flush(); ////
+		dump_usb_request("windes", req); // debug_flush(); ////
 		*buf = (uint8_t*) &msos20_descriptor_set;
 		*len = MIN(*len, MSOS20_DESCRIPTOR_SET_SIZE);
 		status = USBD_REQ_HANDLED;
@@ -250,7 +250,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		(req->wIndex == WINUSB_REQ_GET_COMPATIBLE_ID_FEATURE_DESCRIPTOR)) {
 		//  Request for the MS OS 1.0 Compatible ID feature ("WINUSB"), referenced by the Extended Properties e.g.
 		//  >>  type 0xc0, req 0x21, val 0, idx 4, len 16, type 0x00, index 0x00
-		dump_usb_request("winid", req); debug_flush(); ////
+		dump_usb_request("winid", req); // debug_flush(); ////
 		*buf = (uint8_t*)(&winusb_wcid);
 		*len = MIN(*len, winusb_wcid.header.dwLength);
 		status = USBD_REQ_HANDLED;
@@ -264,7 +264,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		//  Note that Windows queries this descriptor only once. It can be a hassle during development. Information that OS descriptors have been queried for some device is stored in registry under
 		//  HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\VVVVPPPPRRRR (VVVV - vendor ID; PPPP - product ID; RRRR - revision).
 		//  Delete VVVVPPPPRRRR key and also uninstall the device with utility like USDDeview to always get fresh device plug in behavior.
-		dump_usb_request("winprp", req); debug_flush(); ////
+		dump_usb_request("winprp", req); // debug_flush(); ////
 		*buf = (uint8_t*)(&guid);
 		*len = MIN(*len, guid.header.dwLength);
 		status = USBD_REQ_HANDLED;

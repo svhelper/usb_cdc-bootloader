@@ -74,7 +74,7 @@ static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
 		return USBD_REQ_NOTSUPP;
 	}
 	if (req->bRequest == USB_REQ_GET_DESCRIPTOR) {
-		dump_usb_request("bos", req); debug_flush(); ////
+		dump_usb_request("bos", req); // debug_flush(); ////
 		*len = MIN(*len, build_bos_descriptor(usb21_bos, *buf, *len));
 #ifdef NOTUSED
 		uint8_t *b = *buf; int i;

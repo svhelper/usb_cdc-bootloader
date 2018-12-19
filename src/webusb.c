@@ -79,7 +79,7 @@ static int webusb_control_vendor_request(usbd_device *usbd_dev,
 				return USBD_REQ_NOTSUPP;
 			}
 			if (index == 1) {
-				dump_usb_request("weburl", req); debug_flush(); ////
+				dump_usb_request("weburl", req); // debug_flush(); ////
 				size_t url_len = strlen(webusb_https_url);
 				url->bLength = WEBUSB_DT_URL_DESCRIPTOR_SIZE + url_len;
 				url->bDescriptorType = WEBUSB_DT_URL;
