@@ -25,8 +25,9 @@
 #define CONTROL_CALLBACK_MASK_CLASS (USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT)
 
 #define VALID_FLASH_ADDR(addr, sz) (USER_FLASH_START <= (addr) && (addr) + (sz) <= USER_FLASH_END)
+#define HF2_BUF_SIZE USB_CONTROL_BUF_SIZE
 ////#define HF2_BUF_SIZE 1024 + 16
-#define HF2_BUF_SIZE FLASH_PAGE_SIZE + 64 //// TODO: devices will typically limit it to the native flash page size + 64 bytes
+////#define HF2_BUF_SIZE FLASH_PAGE_SIZE + 64 //// TODO: devices will typically limit it to the native flash page size + 64 bytes
 #define usb_assert assert
 #define LOG(s) debug_println(s)
 
