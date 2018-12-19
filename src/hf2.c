@@ -156,22 +156,21 @@ static void handle_command() {
         debug_println("hf2 bininfo"); // debug_flush(); ////
         resp->bininfo.mode = HF2_MODE_BOOTLOADER;
         resp->bininfo.flash_page_size = HF2_PAGE_SIZE;  //  Previously 128 * 1024
-        //// TODO: 
         resp->bininfo.flash_num_pages = FLASH_SIZE_OVERRIDE / HF2_PAGE_SIZE;
-        ////resp->bininfo.flash_num_pages = (256 * 1024) / HF2_PAGE_SIZE;  //// TODO: 256 KB
-
         resp->bininfo.max_message_size = sizeof(pkt.buf);
         resp->bininfo.uf2_family = UF2_FAMILY;
         send_hf2_response(sizeof(resp->bininfo));
         return;
 
     case HF2_CMD_RESET_INTO_APP:
+        //  TODO: Flush flash
         debug_println("hf2 rst app"); // debug_flush(); ////
 #ifdef TODO
         resetIntoApp();
 #endif  //  TODO
         break;
     case HF2_CMD_RESET_INTO_BOOTLOADER:
+        //  TODO: Flush flash
         debug_println("hf2 rst boot"); // debug_flush(); ////
 #ifdef TODO
         resetIntoBootloader();
@@ -220,16 +219,11 @@ static void handle_command() {
 static uint8_t buf[64];
 
 static void hf2_data_rx_cb(usbd_device *usbd_dev, uint8_t ep) {
-    debug_print("hf2 << ep "); debug_printhex(ep); 
-    debug_println(""); // debug_flush(); ////
-
+    //  debug_print("hf2 << ep "); debug_printhex(ep); debug_println(""); // debug_flush(); ////
     int len;
-    len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));
-
-    // DMESG("HF2 read: %d", len);
-    debug_print("hf2 << tag "); debug_printhex(buf[0]); debug_println("");
-    // dump_buffer(",", buf, len); // debug_flush(); ////
-    
+    len = usbd_ep_read_packet(usbd_dev, ep, buf, sizeof(buf));    
+    debug_print("hf2 << tag "); debug_printhex(buf[0]); debug_println("");  // DMESG("HF2 read: %d", len);
+    // dump_buffer(",", buf, len); // debug_flush(); ////    
     if (len <= 0) return;
 
     uint8_t tag = buf[0];
