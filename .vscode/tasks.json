@@ -24,6 +24,25 @@
             }
         },
         {
+            "label": "🔗 Emulate Bootloader",
+            "type": "shell",
+            "windows": {
+                "command": "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -s -S -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"
+            },
+            "osx": {
+                "command": "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -s -S -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"
+            },
+            "linux": {
+                "command": "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -s -S -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"
+            },
+            "problemMatcher": [],
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
             "type": "PlatformIO",
             "task": "Build",
             "problemMatcher": [
