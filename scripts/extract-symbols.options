@@ -1,0 +1,2 @@
+--keep-symbol=led_on
+--keep-symbol=led_off
