@@ -36,6 +36,7 @@
                 "PLATFORMIO=30603",
                 "STM32F1",
                 "STM32F103xB",
+                "DISABLE_DEBUG",
                 "UF2_FAMILY=0x5ee21072",
                 "HAVE_LED=1",
                 "LED_GPIO_PORT=GPIOC",

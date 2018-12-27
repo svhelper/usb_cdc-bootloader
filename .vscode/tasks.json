@@ -24,10 +24,54 @@
             }
         },
         {
-            "label": "🔗 Emulate Bootloader",
+            "label": "🔗 Emulate STM32 Blue Pill",
             "type": "shell",
             "windows": {
-                "command": "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -s -S -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"
+                ]
+            },
+            "osx": {
+                "command": "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"
+            },
+            "linux": {
+                "command": "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"
+            },
+            "problemMatcher": {
+                // The file name for reported problems is relative to the opened folder.
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                // The actual pattern to match problems in the output.
+                "pattern": {
+                    // The regular expression e.g. src\../lib/nano-float/test/test.c:36:test_sqrt:FAIL: Expected 1.414214 Was 1.41421354
+                    "regexp": "^(.*):(\\d+):([^:]+):(FAIL):\\s+(.*)$",
+                    // The first match group matches the file name which is relative.
+                    "file": 1,
+                    // The second match group matches the line on which the problem occurred.
+                    "line": 2,
+                    "code": 3,
+                    // The fourth match group matches the problem's severity. Can be ignored. Then all problems are captured as errors.
+                    "severity": 4,
+                    // The fifth match group matches the message.
+                    "message": 5
+                }
+            },
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "🐛 Emulate STM32 Blue Pill (Debug)",
+            "type": "shell",
+            "windows": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -s -S -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"
+                ]
             },
             "osx": {
                 "command": "../qemu_stm32/arm-softmmu/qemu-system-arm -M stm32-f103c8 -s -S -semihosting -kernel .pioenvs/bluepill_f103c8_bootloader/firmware.bin"

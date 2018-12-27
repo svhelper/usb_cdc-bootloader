@@ -1,6 +1,7 @@
 //  Log messages to the debug console.  We use ARM Semihosting to display messages.
 #include "logger.h"
 #include <string.h>
+#ifndef DISABLE_DEBUG
 
 #define DEBUG_BUFFER_SIZE 256  //  Use a larger buffer size so that we don't interrupt USB processing.
 static char debugBuffer[DEBUG_BUFFER_SIZE + 1];  //  Buffer to hold output before flushing.
@@ -215,3 +216,5 @@ void debug_printhex(uint8_t v) {
 
     debug_append(buffer, strlen(buffer));
 }
+
+#endif  //  DISABLE_DEBUG

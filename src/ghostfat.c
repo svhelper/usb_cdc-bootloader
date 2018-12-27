@@ -2,7 +2,6 @@
 #include <logger.h>
 #include "uf2.h"
 #include "target.h"
-#include "dmesg.h"
 
 typedef struct {
     uint8_t JumpInstruction[3];
@@ -47,8 +46,9 @@ static size_t flashSize(void) {
     return FLASH_SIZE_OVERRIDE;
 }
 
-//#define DBG NOOP
-#define DBG DMESG
+// #define DBG NOOP
+// #define DBG DMESG
+#define DBG(a, b) {} 
 
 struct TextFile {
     const char name[11];
