@@ -1,3 +1,5 @@
+#ifdef DEBUG
+
 //  Log messages to the debug console.  We use ARM Semihosting to display messages.
 #include "logger.h"
 #include <string.h>
@@ -215,3 +217,5 @@ void debug_printhex(uint8_t v) {
 
     debug_append(buffer, strlen(buffer));
 }
+
+#endif /*DEBUG*/
