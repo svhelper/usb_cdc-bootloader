@@ -99,6 +99,9 @@ int main(void) {
         }
         debug_println("usb_setup");  // debug_flush();
         usbd_device* usbd_dev = usb_setup();
+        gpio_set(GPIOA, GPIO10);
+        gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_10_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO10);
+
         debug_println("usbd polling...");  debug_flush();  ////
         uint32_t cycleCount = 0;        
         while (1) {
