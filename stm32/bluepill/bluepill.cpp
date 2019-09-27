@@ -14,7 +14,7 @@
 void platform_setup(void) {
     //  Initialise the STM32 platform. At startup, the onboard LED will blink on-off-on-off-on and stays on.
 	//  If LED blinks on-off-on-off and stays off, then debug mode is enabled and no debugger is connected.
-	rcc_clock_setup_in_hse_8mhz_out_72mhz();
+	rcc_clock_setup_in_hse_16mhz_out_72mhz();
 	led_setup();
 	if (debugEnabled) {
 		led_on(); led_wait();
