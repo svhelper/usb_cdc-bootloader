@@ -6,10 +6,12 @@
 
 #define DEBUG_BUFFER_SIZE 80
 static char debugBuffer[DEBUG_BUFFER_SIZE + 1];  //  Buffer to hold output before flushing.
-static bool logEnabled = false;  //  Logging is off by default.  Developer must switch it on with enable_debug().
+//static bool logEnabled = false;  //  Logging is off by default.  Developer must switch it on with enable_debug().
+#define logEnabled		((*(volatile uint32_t*)0xE000EDF0) & 1)
 
-void enable_log(void) { logEnabled = true; debugBuffer[0] = 0; }
-void disable_log(void) { logEnabled = false; debugBuffer[0] = 0; }
+
+void enable_log(void) { /*logEnabled = true;*/ debugBuffer[0] = 0; }
+void disable_log(void) { /*logEnabled = false;*/ debugBuffer[0] = 0; }
 
 //  ARM Semihosting code from 
 //  http://www.keil.com/support/man/docs/ARMCC/armcc_pge1358787046598.htm

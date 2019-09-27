@@ -8,7 +8,8 @@
 #include "bluepill.h"
 
 //  Debugging is off by default.  Developer must switch it on with enable_debug().
-static bool debugEnabled = false;
+//static bool debugEnabled = false;
+#define debugEnabled		((*(volatile uint32_t*)0xE000EDF0) & 1)
 
 void platform_setup(void) {
     //  Initialise the STM32 platform. At startup, the onboard LED will blink on-off-on-off-on and stays on.
@@ -28,13 +29,13 @@ void platform_setup(void) {
 
 void enable_debug(void) {
 	//  Enable ARM Semihosting for displaying debug messages.
-	debugEnabled = true;
+	// debugEnabled = true;
 	enable_log();
 }
 
 void disable_debug(void) {
 	//  Disable ARM Semihosting for displaying debug messages.
-	debugEnabled = false;
+	// debugEnabled = false;
 	disable_log();
 }
 
